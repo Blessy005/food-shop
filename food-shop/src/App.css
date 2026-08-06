@@ -1,7 +1,4 @@
 .App {
   min-height: 100vh;
-}
-
-section {
-  padding: 60px 8%;
+  background: var(--background);
 }
