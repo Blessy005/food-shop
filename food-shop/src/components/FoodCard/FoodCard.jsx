@@ -8,11 +8,13 @@ function FoodCard({
 }) {
   return (
     <div className="food-card">
+
       <div className="food-image">
-        Food Image
+        <img src={item.image} alt={item.name} />
       </div>
 
       <div className="food-details">
+
         <div className="food-header">
           <h3>{item.name}</h3>
 
@@ -33,7 +35,9 @@ function FoodCard({
             Add to Cart
           </button>
         </div>
+
       </div>
+
     </div>
   );
 }
