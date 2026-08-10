@@ -4,16 +4,21 @@ import FoodCard from "../FoodCard/FoodCard";
 
 function FoodList({
   selectedCategory,
+  searchTerm,
   addToCart,
   toggleFavorite,
   favorites,
 }) {
-  const filteredFoods =
-    selectedCategory === "All"
-      ? menuData
-      : menuData.filter(
-          (item) => item.category === selectedCategory
-        );
+  const filteredFoods = menuData.filter((item) => {
+    const matchesCategory =
+      selectedCategory === "All" ||
+      item.category === selectedCategory;
+
+    const matchesSearch =
+      item.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <section className="food-list" id="food-list">
@@ -33,7 +38,7 @@ function FoodList({
 
         {filteredFoods.length === 0 ? (
           <p className="no-foods">
-            No foods found in this category.
+            No foods found.
           </p>
         ) : (
           <div className="food-list-grid">
@@ -54,6 +59,7 @@ function FoodList({
             })}
           </div>
         )}
+
       </div>
     </section>
   );
