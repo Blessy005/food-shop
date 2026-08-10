@@ -1,23 +1,43 @@
 const categoryData = [
   {
     id: 1,
-    name: "South Indian",
+    name: "North Indian",
   },
   {
     id: 2,
-    name: "Fast Food",
+    name: "South Indian",
   },
   {
     id: 3,
-    name: "International",
+    name: "Indian Street Food",
   },
   {
     id: 4,
-    name: "Beverages",
+    name: "Biryani",
   },
   {
     id: 5,
+    name: "Asian",
+  },
+  {
+    id: 6,
+    name: "Italian",
+  },
+  {
+    id: 7,
+    name: "Continental",
+  },
+  {
+    id: 8,
+    name: "Fast Food",
+  },
+  {
+    id: 9,
     name: "Desserts",
+  },
+  {
+    id: 10,
+    name: "Drinks",
   },
 ];
 

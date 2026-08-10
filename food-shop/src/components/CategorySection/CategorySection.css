@@ -68,3 +68,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+.category-card.active {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.category-card.active h3 {
+  color: #ffffff;
+}

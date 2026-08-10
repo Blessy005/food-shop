@@ -1,13 +1,7 @@
 import "./Header.css";
 
-function Header() {
-  const navLinks = [
-    "Home",
-    "Menu",
-    "Categories",
-    "About",
-    "Contact",
-  ];
+function Header({ cartCount }) {
+  const navLinks = ["Home", "Menu", "Categories", "About", "Contact"];
 
   return (
     <header className="header">
@@ -22,9 +16,7 @@ function Header() {
           <ul className="nav-links">
             {navLinks.map((link) => (
               <li key={link}>
-                <a href={`#${link.toLowerCase()}`}>
-                  {link}
-                </a>
+                <a href={`#${link.toLowerCase()}`}>{link}</a>
               </li>
             ))}
           </ul>
@@ -33,12 +25,10 @@ function Header() {
         {/* Right Side */}
         <div className="header-actions">
           <button className="cart-btn">
-            🛒 <span>0</span>
+            🛒 <span>{cartCount}</span>
           </button>
 
-          <button className="order-btn">
-            Order Now
-          </button>
+          <button className="order-btn">Order Now</button>
         </div>
       </div>
     </header>
