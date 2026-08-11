@@ -4,6 +4,9 @@ import FoodCard from "../FoodCard/FoodCard";
 
 function MenuSection({
   addToCart,
+  increaseQuantity,
+  decreaseQuantity,
+  cart,
   toggleFavorite,
   favorites,
 }) {
@@ -24,15 +27,27 @@ function MenuSection({
 
         <div className="menu-grid">
           {popularFoods.map((item) => {
+
             const isFavorite = favorites.some(
               (favorite) => favorite.id === item.id
             );
+
+            const cartItem = cart.find(
+              (cartItem) => cartItem.id === item.id
+            );
+
+            const quantity = cartItem
+              ? cartItem.quantity
+              : 0;
 
             return (
               <FoodCard
                 key={item.id}
                 item={item}
                 addToCart={addToCart}
+                increaseQuantity={increaseQuantity}
+                decreaseQuantity={decreaseQuantity}
+                quantity={quantity}
                 toggleFavorite={toggleFavorite}
                 isFavorite={isFavorite}
               />

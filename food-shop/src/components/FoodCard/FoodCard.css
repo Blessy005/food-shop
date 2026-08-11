@@ -103,3 +103,45 @@
 .favorite-btn.active {
   color: var(--primary);
 }
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity-controls button {
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: var(--primary);
+  color: #ffffff;
+
+  font-size: 1.2rem;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.quantity-controls button:hover {
+  background: var(--primary-dark);
+  transform: scale(1.05);
+}
+
+.quantity-controls span {
+  min-width: 20px;
+
+  text-align: center;
+
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 700;
+}

@@ -6,16 +6,19 @@ function FoodList({
   selectedCategory,
   searchTerm,
   addToCart,
+  increaseQuantity,
+  decreaseQuantity,
+  cart,
   toggleFavorite,
   favorites,
 }) {
   const filteredFoods = menuData.filter((item) => {
     const matchesCategory =
-      selectedCategory === "All" ||
-      item.category === selectedCategory;
+      selectedCategory === "All" || item.category === selectedCategory;
 
-    const matchesSearch =
-      item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
     return matchesCategory && matchesSearch;
   });
@@ -23,7 +26,6 @@ function FoodList({
   return (
     <section className="food-list" id="food-list">
       <div className="container">
-
         <div className="section-title">
           <h2>
             {selectedCategory === "All"
@@ -31,27 +33,29 @@ function FoodList({
               : `${selectedCategory} Foods`}
           </h2>
 
-          <p>
-            Explore delicious dishes from our menu.
-          </p>
+          <p>Explore delicious dishes from our menu.</p>
         </div>
 
         {filteredFoods.length === 0 ? (
-          <p className="no-foods">
-            No foods found.
-          </p>
+          <p className="no-foods">No foods found.</p>
         ) : (
           <div className="food-list-grid">
             {filteredFoods.map((item) => {
               const isFavorite = favorites.some(
-                (favorite) => favorite.id === item.id
+                (favorite) => favorite.id === item.id,
               );
+              const cartItem = cart.find((cartItem) => cartItem.id === item.id);
+
+              const quantity = cartItem ? cartItem.quantity : 0;
 
               return (
                 <FoodCard
                   key={item.id}
                   item={item}
                   addToCart={addToCart}
+                  increaseQuantity={increaseQuantity}
+                  decreaseQuantity={decreaseQuantity}
+                  quantity={quantity}
                   toggleFavorite={toggleFavorite}
                   isFavorite={isFavorite}
                 />
@@ -59,7 +63,6 @@ function FoodList({
             })}
           </div>
         )}
-
       </div>
     </section>
   );

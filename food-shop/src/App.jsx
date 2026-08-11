@@ -124,6 +124,9 @@ function App() {
         selectedCategory={selectedCategory}
         searchTerm={searchTerm}
         addToCart={addToCart}
+        increaseQuantity={increaseQuantity}
+        decreaseQuantity={decreaseQuantity}
+        cart={cart}
         toggleFavorite={toggleFavorite}
         favorites={favorites}
       />
@@ -131,6 +134,9 @@ function App() {
       {/* Popular Menu */}
       <MenuSection
         addToCart={addToCart}
+        increaseQuantity={increaseQuantity}
+        decreaseQuantity={decreaseQuantity}
+        cart={cart}
         toggleFavorite={toggleFavorite}
         favorites={favorites}
       />

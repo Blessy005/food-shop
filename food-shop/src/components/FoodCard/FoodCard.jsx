@@ -3,8 +3,11 @@ import "./FoodCard.css";
 function FoodCard({
   item,
   addToCart,
+  increaseQuantity,
+  decreaseQuantity,
   toggleFavorite,
   isFavorite,
+  quantity,
 }) {
   return (
     <div className="food-card">
@@ -31,9 +34,24 @@ function FoodCard({
         <div className="food-footer">
           <span>₹{item.price}</span>
 
-          <button onClick={() => addToCart(item)}>
-            Add to Cart
-          </button>
+          {quantity === 0 ? (
+            <button onClick={() => addToCart(item)}>
+              Add to Cart
+            </button>
+          ) : (
+            <div className="quantity-controls">
+              <button onClick={() => decreaseQuantity(item.id)}>
+                −
+              </button>
+
+              <span>{quantity}</span>
+
+              <button onClick={() => increaseQuantity(item.id)}>
+                +
+              </button>
+            </div>
+          )}
+
         </div>
 
       </div>
