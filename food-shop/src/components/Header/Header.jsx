@@ -24,7 +24,14 @@ function Header({ cartCount }) {
 
         {/* Right Side */}
         <div className="header-actions">
-          <button className="cart-btn">
+          <button
+            className="cart-btn"
+            onClick={() => {
+              document.getElementById("cart").scrollIntoView({
+                behavior: "smooth",
+              });
+            }}
+          >
             🛒 <span>{cartCount}</span>
           </button>
 

@@ -135,36 +135,42 @@ const menuData = [
     name: "Pani Puri",
     category: "Indian Street Food",
     price: 70,
+    image: "/images/foods/pani-puri.jpg",
   },
   {
     id: 20,
     name: "Pav Bhaji",
     category: "Indian Street Food",
     price: 120,
+    image: "/images/foods/pav-bhaji.jpg",
   },
   {
     id: 21,
     name: "Bhel",
     category: "Indian Street Food",
     price: 80,
+    image: "/images/foods/bhel.jpg",
   },
   {
     id: 22,
     name: "Kachori",
     category: "Indian Street Food",
     price: 60,
+    image: "/images/foods/kachori.jpg",
   },
   {
     id: 23,
     name: "Samosa",
     category: "Indian Street Food",
     price: 50,
+    image: "/images/foods/samosa.jpg",
   },
   {
     id: 24,
     name: "Dabeli",
     category: "Indian Street Food",
     price: 70,
+    image: "/images/foods/dabeli.jpg",
   },
 
   // Biryani
