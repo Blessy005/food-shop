@@ -1,0 +1,149 @@
+.checkout {
+  padding: 80px 8%;
+  background: var(--background);
+  min-height: 80vh;
+}
+
+.checkout .section-title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.checkout-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Delivery Form */
+
+.checkout-form {
+  background: var(--surface);
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.checkout-form h3,
+.checkout-summary h3 {
+  color: var(--text);
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--primary);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+/* Order Summary */
+
+.checkout-summary {
+  background: var(--surface);
+  padding: 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.checkout-item,
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+}
+
+.checkout-item span:first-child {
+  font-weight: 500;
+}
+
+.checkout-item span:last-child {
+  font-weight: 600;
+}
+
+.summary-line {
+  border-bottom: none;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 15px;
+  margin-top: 10px;
+  border-top: 1px solid var(--border);
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.summary-total strong:last-child {
+  color: var(--primary);
+}
+
+/* Place Order */
+
+.place-order-btn {
+  width: 100%;
+  margin-top: 25px;
+  padding: 14px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.place-order-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+  .checkout {
+    padding: 60px 5%;
+  }
+
+  .checkout-content {
+    grid-template-columns: 1fr;
+  }
+}

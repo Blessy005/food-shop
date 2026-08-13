@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import Header from "./components/Header/Header";
@@ -10,6 +11,8 @@ import MenuSection from "./components/MenuSection/MenuSection";
 import Favorites from "./components/Favorites/Favorites";
 import Cart from "./components/Cart/Cart";
 import SearchBar from "./components/SearchBar/SearchBar";
+import Checkout from "./components/Checkout/Checkout";
+import OrderPlaced from "./components/OrderPlaced/OrderPlaced";
 import ContactSection from "./components/ContactSection/ContactSection";
 
 function App() {
@@ -86,6 +89,11 @@ function App() {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
+  // Clear cart after placing order
+  const clearCart = () => {
+    setCart([]);
+  };
+
   // Add / Remove Favorites
   const toggleFavorite = (item) => {
     setFavorites((prevFavorites) => {
@@ -101,63 +109,91 @@ function App() {
     });
   };
 
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+
   return (
-    <div className="App">
-      <Header
-        cartCount={cart.reduce((total, item) => total + item.quantity, 0)}
-      />
+    <BrowserRouter>
+      <div className="App">
+        <Header cartCount={cartCount} />
 
-      <HeroSection />
+        <Routes>
+          {/* Landing Page */}
+          <Route
+            path="/"
+            element={
+              <>
+                <HeroSection />
 
-      <AboutSection />
+                <AboutSection />
 
-      {/* Browse by Category */}
-      <CategorySection
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
+                {/* Browse by Category */}
+                <CategorySection
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                />
 
-      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                <SearchBar
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
 
-      {/* Food List */}
-      <FoodList
-        selectedCategory={selectedCategory}
-        searchTerm={searchTerm}
-        addToCart={addToCart}
-        increaseQuantity={increaseQuantity}
-        decreaseQuantity={decreaseQuantity}
-        cart={cart}
-        toggleFavorite={toggleFavorite}
-        favorites={favorites}
-      />
+                {/* Food List */}
+                <FoodList
+                  selectedCategory={selectedCategory}
+                  searchTerm={searchTerm}
+                  addToCart={addToCart}
+                  increaseQuantity={increaseQuantity}
+                  decreaseQuantity={decreaseQuantity}
+                  cart={cart}
+                  toggleFavorite={toggleFavorite}
+                  favorites={favorites}
+                />
 
-      {/* Popular Menu */}
-      <MenuSection
-        addToCart={addToCart}
-        increaseQuantity={increaseQuantity}
-        decreaseQuantity={decreaseQuantity}
-        cart={cart}
-        toggleFavorite={toggleFavorite}
-        favorites={favorites}
-      />
+                {/* Popular Menu */}
+                <MenuSection
+                  addToCart={addToCart}
+                  increaseQuantity={increaseQuantity}
+                  decreaseQuantity={decreaseQuantity}
+                  cart={cart}
+                  toggleFavorite={toggleFavorite}
+                  favorites={favorites}
+                />
 
-      {/* Favorites */}
-      <Favorites
-        favorites={favorites}
-        addToCart={addToCart}
-        toggleFavorite={toggleFavorite}
-      />
+                {/* Favorites */}
+                <Favorites
+                  favorites={favorites}
+                  addToCart={addToCart}
+                  toggleFavorite={toggleFavorite}
+                />
 
-      <ContactSection />
+                <ContactSection />
+              </>
+            }
+          />
 
-      {/* Cart */}
-      <Cart
-        cart={cart}
-        increaseQuantity={increaseQuantity}
-        decreaseQuantity={decreaseQuantity}
-        removeFromCart={removeFromCart}
-      />
-    </div>
+          {/* Cart Page */}
+          <Route
+            path="/cart"
+            element={
+              <Cart
+                cart={cart}
+                increaseQuantity={increaseQuantity}
+                decreaseQuantity={decreaseQuantity}
+                removeFromCart={removeFromCart}
+              />
+            }
+          />
+
+          {/* Checkout Page */}
+          <Route
+            path="/checkout"
+            element={<Checkout cart={cart} clearCart={clearCart} />}
+          />
+          {/* Order Placed Page */}
+          <Route path="/order-placed" element={<OrderPlaced />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 

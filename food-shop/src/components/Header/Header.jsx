@@ -1,8 +1,10 @@
 import "./Header.css";
+import { useNavigate } from "react-router-dom";
 
 function Header({ cartCount }) {
-  const navLinks = ["Home", "Menu", "Categories", "About", "Contact"];
+  const navigate = useNavigate();
 
+  const navLinks = ["Home", "Menu", "Categories", "About", "Contact"];
   return (
     <header className="header">
       <div className="container header-container">
@@ -24,14 +26,7 @@ function Header({ cartCount }) {
 
         {/* Right Side */}
         <div className="header-actions">
-          <button
-            className="cart-btn"
-            onClick={() => {
-              document.getElementById("cart").scrollIntoView({
-                behavior: "smooth",
-              });
-            }}
-          >
+          <button className="cart-btn" onClick={() => navigate("/cart")}>
             🛒 <span>{cartCount}</span>
           </button>
 

@@ -1,14 +1,11 @@
 import "./Cart.css";
+import { useNavigate } from "react-router-dom";
 
-function Cart({
-  cart,
-  increaseQuantity,
-  decreaseQuantity,
-  removeFromCart,
-}) {
+function Cart({ cart, increaseQuantity, decreaseQuantity, removeFromCart }) {
+  const navigate = useNavigate();
   const subtotal = cart.reduce(
     (total, item) => total + Number(item.price) * item.quantity,
-    0
+    0,
   );
 
   const deliveryFee = cart.length > 0 ? 50 : 0;
@@ -24,9 +21,7 @@ function Cart({
         </div>
 
         {cart.length === 0 ? (
-          <p className="empty-cart">
-            Your cart is empty.
-          </p>
+          <p className="empty-cart">Your cart is empty.</p>
         ) : (
           <>
             <div className="cart-items">
@@ -39,19 +34,11 @@ function Cart({
                   </div>
 
                   <div className="cart-controls">
-                    <button
-                      onClick={() => decreaseQuantity(item.id)}
-                    >
-                      −
-                    </button>
+                    <button onClick={() => decreaseQuantity(item.id)}>−</button>
 
                     <span>{item.quantity}</span>
 
-                    <button
-                      onClick={() => increaseQuantity(item.id)}
-                    >
-                      +
-                    </button>
+                    <button onClick={() => increaseQuantity(item.id)}>+</button>
 
                     <button
                       className="remove-btn"
@@ -80,7 +67,10 @@ function Cart({
                 <strong>₹{total}</strong>
               </div>
 
-              <button className="checkout-btn">
+              <button
+                className="checkout-btn"
+                onClick={() => navigate("/checkout")}
+              >
                 Checkout
               </button>
             </div>
