@@ -72,6 +72,31 @@
   gap: 1rem;
 }
 
+.favorite-header-btn {
+  width: 42px;
+  height: 42px;
+
+  border: 2px solid var(--border);
+  border-radius: 50%;
+
+  background: transparent;
+  color: var(--primary);
+
+  font-size: 1.4rem;
+  cursor: pointer;
+
+  transition: var(--transition);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favorite-header-btn:hover {
+  border-color: var(--primary);
+  transform: scale(1.08);
+}
+
 .cart-btn {
   background: transparent;
   border: 2px solid var(--border);

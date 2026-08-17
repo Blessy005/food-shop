@@ -4,6 +4,7 @@ function Favorites({ favorites, addToCart, toggleFavorite }) {
   return (
     <section className="favorites" id="favorites">
       <div className="container">
+
         <div className="section-title">
           <h2>Your Favorites</h2>
           <p>Foods you love, all in one place.</p>
@@ -15,13 +16,19 @@ function Favorites({ favorites, addToCart, toggleFavorite }) {
           </p>
         ) : (
           <div className="favorites-grid">
+
             {favorites.map((item) => (
               <div className="favorite-card" key={item.id}>
+
                 <div className="favorite-image">
-                  Food Image
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                  />
                 </div>
 
                 <div className="favorite-details">
+
                   <div className="favorite-header">
                     <h3>{item.name}</h3>
 
@@ -45,9 +52,11 @@ function Favorites({ favorites, addToCart, toggleFavorite }) {
                       Add to Cart
                     </button>
                   </div>
+
                 </div>
               </div>
             ))}
+
           </div>
         )}
       </div>

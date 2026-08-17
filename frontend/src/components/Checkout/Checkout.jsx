@@ -23,7 +23,6 @@ function Checkout({ cart, clearCart }) {
   return (
     <section className="checkout">
       <div className="container">
-
         <div className="section-title">
           <h2>Checkout</h2>
           <p>Enter your details to place your order.</p>
@@ -31,18 +30,13 @@ function Checkout({ cart, clearCart }) {
 
         <form onSubmit={handleSubmit}>
           <div className="checkout-content">
-
             {/* Customer Details */}
             <div className="checkout-form">
               <h3>Delivery Details</h3>
 
               <div className="form-group">
                 <label>Name</label>
-                <input
-                  type="text"
-                  placeholder="Enter your name"
-                  required
-                />
+                <input type="text" placeholder="Enter your name" required />
               </div>
 
               <div className="form-group">
@@ -62,6 +56,13 @@ function Checkout({ cart, clearCart }) {
                   required
                 ></textarea>
               </div>
+              <div className="form-group">
+                <label>Special Instructions </label>
+                <textarea
+                  placeholder="Any special requests? e.g. less spicy, no onions..."
+                  rows="4"
+                ></textarea>
+              </div>
             </div>
 
             {/* Order Summary */}
@@ -78,9 +79,7 @@ function Checkout({ cart, clearCart }) {
                         {item.name} × {item.quantity}
                       </span>
 
-                      <span>
-                        ₹{Number(item.price) * item.quantity}
-                      </span>
+                      <span>₹{Number(item.price) * item.quantity}</span>
                     </div>
                   ))}
 
@@ -99,19 +98,14 @@ function Checkout({ cart, clearCart }) {
                     <strong>₹{total}</strong>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="place-order-btn"
-                  >
+                  <button type="submit" className="place-order-btn">
                     Place Order
                   </button>
                 </>
               )}
             </div>
-
           </div>
         </form>
-
       </div>
     </section>
   );

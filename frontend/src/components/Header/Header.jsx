@@ -5,9 +5,21 @@ function Header({ cartCount }) {
   const navigate = useNavigate();
 
   const navLinks = ["Home", "Menu", "Categories", "About", "Contact"];
+
+  const goToFavorites = () => {
+    navigate("/");
+
+    setTimeout(() => {
+      document.getElementById("favorites")?.scrollIntoView({
+        behavior: "smooth",
+      });
+    }, 100);
+  };
+
   return (
     <header className="header">
       <div className="container header-container">
+
         {/* Logo */}
         <div className="logo">
           <h2>Flavor Feast</h2>
@@ -26,11 +38,28 @@ function Header({ cartCount }) {
 
         {/* Right Side */}
         <div className="header-actions">
-          <button className="cart-btn" onClick={() => navigate("/cart")}>
+
+          {/* Favorites */}
+          <button
+            className="favorite-header-btn"
+            onClick={goToFavorites}
+          >
+            ♥
+          </button>
+
+          {/* Cart */}
+          <button
+            className="cart-btn"
+            onClick={() => navigate("/cart")}
+          >
             🛒 <span>{cartCount}</span>
           </button>
 
-          <button className="order-btn">Order Now</button>
+          {/* Order Now */}
+          <button className="order-btn">
+            Order Now
+          </button>
+
         </div>
       </div>
     </header>
