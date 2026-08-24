@@ -4,6 +4,7 @@
 
 .sidebar {
   position: fixed;
+
   top: 0;
   left: 0;
 
@@ -17,6 +18,8 @@
   border-right: 1px solid var(--border);
 
   z-index: 1000;
+
+  transition: transform 0.25s ease;
 }
 
 /* =========================================
@@ -29,7 +32,8 @@
   display: flex;
   align-items: center;
 
-  gap: 10px;
+  gap: 11px;
+
   padding: 0 20px;
 
   border-bottom: 1px solid var(--border);
@@ -43,18 +47,24 @@
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
   background-color: var(--accent);
+
   border-radius: 10px;
 
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .sidebar-brand h2 {
   margin: 0;
 
   color: var(--text);
-  font-size: 17px;
-  font-weight: 700;
+
+  font-family: var(--font-family);
+
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .sidebar-brand span {
@@ -63,7 +73,42 @@
   margin-top: 2px;
 
   color: var(--secondary-text);
-  font-size: 11px;
+
+  font-family: var(--font-family);
+
+  font-size: 10px;
+  font-weight: 400;
+}
+
+/* =========================================
+   Mobile Close Button
+   ========================================= */
+
+.sidebar-close {
+  display: none;
+
+  margin-left: auto;
+
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: var(--secondary-text);
+
+  font-family: var(--font-family);
+  font-size: 24px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.sidebar-close:hover {
+  background-color: rgba(255, 209, 102, 0.2);
+  color: var(--text);
 }
 
 /* =========================================
@@ -73,24 +118,30 @@
 .sidebar-nav {
   flex: 1;
 
-  padding: 22px 12px;
+  padding: 24px 12px;
 
   overflow-y: auto;
 }
 
 .nav-section {
-  margin-bottom: 24px;
+  margin-bottom: 26px;
+}
+
+.nav-section:last-child {
+  margin-bottom: 0;
 }
 
 .nav-section-title {
-  margin: 0 10px 8px;
+  margin: 0 10px 9px;
 
-  color: var(--secondary-text);
+  color: #999999;
 
-  font-size: 10px;
-  font-weight: 700;
+  font-family: var(--font-family);
 
-  letter-spacing: 0.08em;
+  font-size: 9px;
+  font-weight: 600;
+
+  letter-spacing: 0.12em;
 }
 
 /* =========================================
@@ -105,43 +156,54 @@
 
   gap: 12px;
 
-  padding: 11px 12px;
+  box-sizing: border-box;
+
+  padding: 10px 12px;
+
   margin-bottom: 4px;
 
   border: none;
   border-radius: var(--button-radius);
 
   background-color: transparent;
+
   color: var(--text);
 
-  font-family: inherit;
-  font-size: 14px;
+  font-family: var(--font-family);
+
+  font-size: 12px;
   font-weight: 500;
 
+  text-decoration: none;
   text-align: left;
 
   cursor: pointer;
 
   transition:
     background-color 0.2s ease,
-    color 0.2s ease;
+    color 0.2s ease,
+    transform 0.15s ease;
 }
+
+/* Hover */
 
 .nav-link:hover {
-  background-color: rgba(255, 209, 102, 0.25);
+  background-color: rgba(255, 209, 102, 0.18);
+  color: var(--text);
 }
 
-/* =========================================
-   Active Navigation
-   ========================================= */
+/* Active */
 
 .nav-link.active {
   background-color: var(--primary);
   color: var(--white);
+
+  font-weight: 500;
 }
 
 .nav-link.active:hover {
   background-color: var(--primary);
+  color: var(--white);
 }
 
 /* =========================================
@@ -150,12 +212,18 @@
 
 .nav-icon {
   width: 20px;
+  height: 20px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
+  flex-shrink: 0;
+
+  color: #777777;
+
   font-size: 15px;
+  line-height: 1;
 }
 
 .nav-link.active .nav-icon {
@@ -168,6 +236,40 @@
 
 .nav-button {
   appearance: none;
+  -webkit-appearance: none;
+}
+
+/* =========================================
+   Sidebar Footer
+   ========================================= */
+
+.sidebar-footer {
+  padding: 14px 20px;
+
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-footer span {
+  display: block;
+
+  color: var(--text);
+
+  font-family: var(--font-family);
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.sidebar-footer small {
+  display: block;
+
+  margin-top: 2px;
+
+  color: var(--secondary-text);
+
+  font-family: var(--font-family);
+
+  font-size: 9px;
 }
 
 /* =========================================
@@ -175,20 +277,14 @@
    ========================================= */
 
 .sidebar-nav::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb {
   background-color: var(--border);
   border-radius: 10px;
-}
-
-/* =========================================
-   Responsive
-   ========================================= */
-
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-  }
 }

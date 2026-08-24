@@ -1,4 +1,6 @@
+import { useNavigate } from "react-router-dom";
 import "./Orders.css";
+
 
 const orders = [
   {
@@ -59,6 +61,8 @@ const statusOptions = [
 ];
 
 function Orders() {
+  const navigate = useNavigate();
+
   return (
     <div className="orders-page">
 
@@ -232,9 +236,12 @@ function Orders() {
                   </td>
 
                   <td>
-                    <button className="view-order-button">
-                      View
-                    </button>
+                    <button
+  className="view-order-button"
+  onClick={() => navigate(`/admin/orders/${order.id}`)}
+>
+  View
+</button>
                   </td>
 
                 </tr>

@@ -22,10 +22,6 @@
   z-index: 900;
 }
 
-/* =========================================
-   Left Side
-   ========================================= */
-
 .topbar-left {
   display: flex;
   align-items: center;
@@ -35,24 +31,17 @@
   margin: 0;
 
   color: var(--text);
+  font-family: var(--font-family);
 
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 600;
 }
-
-/* =========================================
-   Right Side
-   ========================================= */
 
 .topbar-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
-
-/* =========================================
-   Notification
-   ========================================= */
 
 .notification-button {
   position: relative;
@@ -64,12 +53,12 @@
   align-items: center;
   justify-content: center;
 
+  padding: 0;
+
   border: none;
   border-radius: 50%;
 
   background-color: transparent;
-
-  font-size: 17px;
 
   cursor: pointer;
 
@@ -77,10 +66,13 @@
 }
 
 .notification-button:hover {
-  background-color: rgba(255, 209, 102, 0.25);
+  background-color: rgba(255, 209, 102, 0.2);
 }
 
-/* Small notification indicator */
+.notification-icon {
+  font-size: 16px;
+  line-height: 1;
+}
 
 .notification-dot {
   position: absolute;
@@ -92,14 +84,10 @@
   height: 7px;
 
   background-color: var(--primary);
-  border: 2px solid var(--white);
 
+  border: 2px solid var(--white);
   border-radius: 50%;
 }
-
-/* =========================================
-   Admin Profile
-   ========================================= */
 
 .admin-profile {
   display: flex;
@@ -109,7 +97,12 @@
 
   padding: 5px 8px;
 
+  border: none;
   border-radius: var(--button-radius);
+
+  background-color: transparent;
+
+  font-family: var(--font-family);
 
   cursor: pointer;
 
@@ -119,8 +112,6 @@
 .admin-profile:hover {
   background-color: rgba(255, 209, 102, 0.18);
 }
-
-/* Avatar */
 
 .admin-avatar {
   width: 36px;
@@ -133,60 +124,38 @@
   border-radius: 50%;
 
   background-color: var(--primary);
+
   color: var(--white);
-
-  font-size: 14px;
-  font-weight: 700;
-}
-
-/* Admin information */
-
-.admin-info {
-  display: flex;
-  flex-direction: column;
-
-  gap: 2px;
-}
-
-.admin-name {
-  color: var(--text);
 
   font-size: 13px;
   font-weight: 600;
 }
 
+.admin-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 1px;
+
+  text-align: left;
+}
+
+.admin-name {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .admin-role {
   color: var(--secondary-text);
-
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 400;
 }
 
-/* Arrow */
-
 .profile-arrow {
-  margin-left: 3px;
+  margin-left: 2px;
 
   color: var(--secondary-text);
 
-  font-size: 16px;
-}
-
-/* =========================================
-   Responsive
-   ========================================= */
-
-@media (max-width: 768px) {
-  .topbar {
-    left: 0;
-    padding: 0 20px;
-  }
-
-  .admin-info,
-  .profile-arrow {
-    display: none;
-  }
-
-  .topbar-right {
-    gap: 8px;
-  }
+  font-size: 15px;
 }

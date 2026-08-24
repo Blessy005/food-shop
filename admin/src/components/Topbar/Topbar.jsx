@@ -13,24 +13,36 @@ function Topbar() {
       <div className="topbar-right">
 
         {/* Notification */}
-        <button className="notification-button" aria-label="Notifications">
-          🔔
+        <button
+          className="notification-button"
+          aria-label="Notifications"
+        >
+          <span className="notification-icon">🔔</span>
           <span className="notification-dot"></span>
         </button>
 
         {/* Admin Profile */}
-        <div className="admin-profile">
+        <button className="admin-profile">
+
           <div className="admin-avatar">
             A
           </div>
 
           <div className="admin-info">
-            <span className="admin-name">Admin</span>
-            <span className="admin-role">Administrator</span>
+            <span className="admin-name">
+              Admin
+            </span>
+
+            <span className="admin-role">
+              Administrator
+            </span>
           </div>
 
-          <span className="profile-arrow">⌄</span>
-        </div>
+          <span className="profile-arrow">
+            ⌄
+          </span>
+
+        </button>
 
       </div>
 
