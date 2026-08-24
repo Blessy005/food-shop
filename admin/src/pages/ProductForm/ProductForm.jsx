@@ -1,6 +1,78 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import "./ProductForm.css";
 
 function ProductForm() {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    price: "",
+    stock: "",
+    isAvailable: true,
+    description: "",
+    image: "",
+  });
+
+  const [saving, setSaving] = useState(false);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleAvailabilityChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      isAvailable: e.target.value === "available",
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setSaving(true);
+
+      const response = await fetch("http://localhost:5000/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          price: Number(formData.price),
+          stock: Number(formData.stock),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create product");
+      }
+
+      await response.json();
+
+      alert("Product added successfully!");
+
+      navigate("/admin/products");
+    } catch (error) {
+      console.error("Error adding product:", error);
+      alert("Failed to add product.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    navigate("/admin/products");
+  };
+
   return (
     <div className="product-form-page">
 
@@ -13,7 +85,7 @@ function ProductForm() {
       </div>
 
       {/* Form */}
-      <form className="product-form">
+      <form className="product-form" onSubmit={handleSubmit}>
 
         {/* Product Image */}
         <section className="form-section">
@@ -43,21 +115,23 @@ function ProductForm() {
 
         {/* Basic Information */}
         <section className="form-section">
-
           <h2>Basic Information</h2>
 
           <div className="form-grid">
 
             {/* Product Name */}
             <div className="form-group full-width">
-              <label htmlFor="product-name">
+              <label htmlFor="name">
                 Product Name
               </label>
 
               <input
-                id="product-name"
+                id="name"
                 type="text"
                 placeholder="Enter product name"
+                value={formData.name}
+                onChange={handleChange}
+                required
               />
             </div>
 
@@ -67,20 +141,55 @@ function ProductForm() {
                 Category
               </label>
 
-              <select id="category" defaultValue="">
+              <select
+                id="category"
+                value={formData.category}
+                onChange={handleChange}
+                required
+              >
                 <option value="" disabled>
                   Select category
                 </option>
 
-                <option>South Indian</option>
-                <option>North Indian</option>
-                <option>Indian Street Food</option>
-                <option>Biryani</option>
-                <option>Asian</option>
-                <option>Italian</option>
-                <option>Continental</option>
-                <option>Desserts</option>
-                <option>Drinks</option>
+                <option value="South Indian">
+                  South Indian
+                </option>
+
+                <option value="North Indian">
+                  North Indian
+                </option>
+
+                <option value="Indian Street Food">
+                  Indian Street Food
+                </option>
+
+                <option value="Biryani">
+                  Biryani
+                </option>
+
+                <option value="Asian">
+                  Asian
+                </option>
+
+                <option value="Italian">
+                  Italian
+                </option>
+
+                <option value="Continental">
+                  Continental
+                </option>
+
+                <option value="Fast Food">
+                  Fast Food
+                </option>
+
+                <option value="Desserts">
+                  Desserts
+                </option>
+
+                <option value="Drinks">
+                  Drinks
+                </option>
               </select>
             </div>
 
@@ -98,6 +207,9 @@ function ProductForm() {
                   type="number"
                   placeholder="0.00"
                   min="0"
+                  value={formData.price}
+                  onChange={handleChange}
+                  required
                 />
               </div>
             </div>
@@ -113,6 +225,9 @@ function ProductForm() {
                 type="number"
                 placeholder="Enter stock quantity"
                 min="0"
+                value={formData.stock}
+                onChange={handleChange}
+                required
               />
             </div>
 
@@ -122,7 +237,15 @@ function ProductForm() {
                 Availability
               </label>
 
-              <select id="availability" defaultValue="available">
+              <select
+                id="availability"
+                value={
+                  formData.isAvailable
+                    ? "available"
+                    : "unavailable"
+                }
+                onChange={handleAvailabilityChange}
+              >
                 <option value="available">
                   Available
                 </option>
@@ -143,11 +266,12 @@ function ProductForm() {
                 id="description"
                 rows="5"
                 placeholder="Describe your food item..."
+                value={formData.description}
+                onChange={handleChange}
               />
             </div>
 
           </div>
-
         </section>
 
         {/* Actions */}
@@ -156,6 +280,7 @@ function ProductForm() {
           <button
             type="button"
             className="cancel-button"
+            onClick={handleCancel}
           >
             Cancel
           </button>
@@ -163,16 +288,16 @@ function ProductForm() {
           <button
             type="submit"
             className="save-product-button"
+            disabled={saving}
           >
-            Add Product
+            {saving ? "Adding..." : "Add Product"}
           </button>
 
         </div>
 
       </form>
-
     </div>
   );
 }
-
+np
 export default ProductForm;
