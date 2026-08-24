@@ -10,8 +10,10 @@ const {
   deleteProduct,
 } = require("../controllers/productController");
 
+const upload = require("../upload");
+
 // CREATE
-router.post("/", createProduct);
+router.post("/", upload.single("image"), createProduct);
 
 // READ ALL
 router.get("/", getProducts);
@@ -20,7 +22,7 @@ router.get("/", getProducts);
 router.get("/:id", getProduct);
 
 // UPDATE
-router.put("/:id", updateProduct);
+router.put("/:id", upload.single("image"), updateProduct);
 
 // DELETE
 router.delete("/:id", deleteProduct);
