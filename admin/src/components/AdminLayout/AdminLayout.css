@@ -1,0 +1,35 @@
+/* =========================================
+   Flavor Feast Admin - Layout
+   ========================================= */
+
+.admin-layout {
+  min-height: 100vh;
+  display: flex;
+  background-color: var(--background);
+}
+
+.admin-main {
+  flex: 1;
+  min-width: 0;
+  margin-left: var(--sidebar-width);
+  padding-top: var(--topbar-height);
+}
+
+.admin-content {
+  min-height: calc(100vh - var(--topbar-height));
+  padding: 30px;
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
+
+@media (max-width: 768px) {
+  .admin-main {
+    margin-left: 0;
+  }
+
+  .admin-content {
+    padding: 20px;
+  }
+}

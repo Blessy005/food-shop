@@ -1,0 +1,50 @@
+:root {
+  /* ================================
+     Flavor Feast - Brand Colors
+     ================================ */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+  --primary: #E63946;
+  --accent: #FFD166;
+  --background: #FFF8E7;
+  --text: #333333;
+
+  /* ================================
+     Neutral Colors
+     ================================ */
+
+  --white: #FFFFFF;
+  --secondary-text: #777777;
+  --border: #E8E1D5;
+
+  /* ================================
+     Status Colors
+     ================================ */
+
+  --success: #2E9B62;
+  --warning: #FFD166;
+  --warning-text: #B77900;
+  --danger: #D62828;
+
+  /* ================================
+     Admin UI
+     ================================ */
+
+  --sidebar-width: 240px;
+  --topbar-height: 70px;
+
+  --card-radius: 12px;
+  --button-radius: 8px;
+  --input-radius: 8px;
+
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  /* ================================
+     Typography
+     ================================ */
+
+  --font-family: 'Poppins', sans-serif;
+
+  --heading-color: var(--text);
+  --body-color: var(--text);
+  --muted-color: var(--secondary-text);
+}

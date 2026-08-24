@@ -1,0 +1,433 @@
+/* =========================================
+   Flavor Feast Admin - Orders
+   ========================================= */
+
+.orders-page {
+  width: 100%;
+}
+
+/* =========================================
+   Page Header
+   ========================================= */
+
+.orders-header {
+  margin-bottom: 24px;
+}
+
+.orders-header h1 {
+  margin: 0;
+
+  color: var(--text);
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.orders-header p {
+  margin: 6px 0 0;
+
+  color: var(--secondary-text);
+  font-size: 13px;
+}
+
+/* =========================================
+   Order Statistics
+   ========================================= */
+
+.orders-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+
+  margin-bottom: 22px;
+}
+
+.order-stat-card {
+  min-height: 85px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 18px;
+
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+
+  box-shadow: var(--card-shadow);
+}
+
+.order-stat-indicator {
+  width: 8px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+}
+
+/* Different indicators */
+
+.order-stat-indicator.all {
+  background-color: var(--primary);
+}
+
+.order-stat-indicator.pending {
+  background-color: var(--accent);
+}
+
+.order-stat-indicator.preparing {
+  background-color: #E89B3C;
+}
+
+.order-stat-indicator.delivered {
+  background-color: var(--success);
+}
+
+.order-stat-card span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: var(--secondary-text);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.order-stat-card h2 {
+  margin: 0;
+
+  color: var(--text);
+  font-size: 23px;
+  font-weight: 600;
+}
+
+/* =========================================
+   Search & Filters
+   ========================================= */
+
+.orders-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 18px;
+}
+
+.order-search {
+  flex: 1;
+  max-width: 420px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 10px 13px;
+
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--input-radius);
+}
+
+.order-search span {
+  color: var(--secondary-text);
+  font-size: 18px;
+}
+
+.order-search input {
+  width: 100%;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.order-search input::placeholder {
+  color: #999999;
+}
+
+/* =========================================
+   Filters
+   ========================================= */
+
+.order-filters {
+  display: flex;
+  gap: 10px;
+}
+
+.order-filters select {
+  min-width: 125px;
+
+  padding: 10px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--input-radius);
+
+  background-color: var(--white);
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 12px;
+
+  outline: none;
+  cursor: pointer;
+}
+
+.order-filters select:focus {
+  border-color: var(--primary);
+}
+
+/* =========================================
+   Orders Table Card
+   ========================================= */
+
+.orders-table-card {
+  overflow: hidden;
+
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+
+  box-shadow: var(--card-shadow);
+}
+
+.orders-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* =========================================
+   Orders Table
+   ========================================= */
+
+.orders-table {
+  width: 100%;
+
+  min-width: 900px;
+
+  border-collapse: collapse;
+}
+
+.orders-table th {
+  padding: 14px 18px;
+
+  background-color: #FFFCF5;
+  border-bottom: 1px solid var(--border);
+
+  color: var(--secondary-text);
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-align: left;
+  white-space: nowrap;
+}
+
+.orders-table td {
+  padding: 14px 18px;
+
+  border-bottom: 1px solid var(--border);
+
+  font-size: 12px;
+
+  vertical-align: middle;
+}
+
+.orders-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.orders-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.orders-table tbody tr:hover {
+  background-color: #FFFCF7;
+}
+
+/* =========================================
+   Order Information
+   ========================================= */
+
+.order-id {
+  color: var(--primary);
+  font-size: 12px;
+}
+
+.customer-name {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.order-date,
+.order-items {
+  color: var(--secondary-text);
+}
+
+.order-total {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* =========================================
+   Payment Status
+   ========================================= */
+
+.payment-status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.payment-paid {
+  background-color: rgba(46, 155, 98, 0.1);
+  color: var(--success);
+}
+
+.payment-pending {
+  background-color: rgba(255, 209, 102, 0.2);
+  color: #B77900;
+}
+
+/* =========================================
+   Order Status
+   ========================================= */
+
+.order-status {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 9px;
+
+  border-radius: 20px;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Pending */
+
+.status-pending {
+  background-color: rgba(255, 209, 102, 0.25);
+  color: #B77900;
+}
+
+/* Confirmed */
+
+.status-confirmed {
+  background-color: rgba(80, 120, 200, 0.1);
+  color: #4F6FAE;
+}
+
+/* Preparing */
+
+.status-preparing {
+  background-color: rgba(232, 155, 60, 0.12);
+  color: #B56F16;
+}
+
+/* Out for Delivery */
+
+.status-out-for-delivery {
+  background-color: rgba(230, 57, 70, 0.1);
+  color: var(--primary);
+}
+
+/* Delivered */
+
+.status-delivered {
+  background-color: rgba(46, 155, 98, 0.1);
+  color: var(--success);
+}
+
+/* Cancelled */
+
+.status-cancelled {
+  background-color: rgba(214, 40, 40, 0.1);
+  color: var(--danger);
+}
+
+/* =========================================
+   View Button
+   ========================================= */
+
+.view-order-button {
+  padding: 7px 12px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--button-radius);
+
+  background-color: var(--white);
+  color: var(--primary);
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.view-order-button:hover {
+  background-color: rgba(230, 57, 70, 0.06);
+  border-color: var(--primary);
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
+
+@media (max-width: 1100px) {
+  .orders-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .orders-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .order-search {
+    max-width: none;
+  }
+
+  .order-filters {
+    width: 100%;
+  }
+
+  .order-filters select {
+    flex: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .orders-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .order-filters {
+    flex-direction: column;
+  }
+
+  .order-filters select {
+    width: 100%;
+  }
+}

@@ -1,0 +1,327 @@
+/* =========================================
+   Flavor Feast Admin - Dashboard
+   ========================================= */
+
+.dashboard {
+  width: 100%;
+}
+
+/* =========================================
+   Page Header
+   ========================================= */
+
+.dashboard-header {
+  margin-bottom: 25px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+
+  color: var(--text);
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.dashboard-header p {
+  margin: 6px 0 0;
+
+  color: var(--secondary-text);
+  font-size: 13px;
+}
+
+/* =========================================
+   Statistics Cards
+   ========================================= */
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+
+  margin-bottom: 22px;
+}
+
+.stat-card {
+  padding: 20px;
+
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+
+  box-shadow: var(--card-shadow);
+}
+
+.stat-label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  color: var(--secondary-text);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.stat-card h2 {
+  margin: 0 0 8px;
+
+  color: var(--text);
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.stat-growth,
+.stat-warning {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.stat-growth {
+  color: var(--success);
+}
+
+.stat-warning {
+  color: var(--danger);
+}
+
+/* =========================================
+   Dashboard Section
+   ========================================= */
+
+.dashboard-section {
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--card-radius);
+
+  box-shadow: var(--card-shadow);
+}
+
+.sales-section {
+  margin-bottom: 22px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 20px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header h2 {
+  margin: 0;
+
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.section-header p {
+  margin: 4px 0 0;
+
+  color: var(--secondary-text);
+  font-size: 12px;
+}
+
+/* =========================================
+   Select
+   ========================================= */
+
+.dashboard-select {
+  min-width: 120px;
+
+  padding: 8px 10px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--input-radius);
+
+  background-color: var(--white);
+  color: var(--text);
+
+  font-family: inherit;
+  font-size: 12px;
+
+  outline: none;
+  cursor: pointer;
+}
+
+.dashboard-select:focus {
+  border-color: var(--primary);
+}
+
+/* =========================================
+   Chart Placeholder
+   ========================================= */
+
+.sales-chart {
+  width: 100%;
+  height: 300px;
+  padding: 20px;
+}
+/* =========================================
+   Bottom Section
+   ========================================= */
+
+.dashboard-bottom {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+
+  gap: 22px;
+}
+
+/* =========================================
+   Recent Orders
+   ========================================= */
+
+.orders-list {
+  padding: 5px 20px;
+}
+
+.order-row {
+  min-height: 70px;
+
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+
+  align-items: center;
+  gap: 20px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.order-row:last-child {
+  border-bottom: none;
+}
+
+.order-row > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.order-row strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.order-row span:not(.status-badge) {
+  color: var(--secondary-text);
+  font-size: 11px;
+}
+
+/* =========================================
+   Top Products
+   ========================================= */
+
+.products-list {
+  padding: 5px 20px;
+}
+
+.product-row {
+  min-height: 70px;
+
+  display: grid;
+  grid-template-columns: 35px 1fr auto;
+
+  align-items: center;
+  gap: 12px;
+
+  border-bottom: 1px solid var(--border);
+}
+
+.product-row:last-child {
+  border-bottom: none;
+}
+
+.product-rank {
+  color: var(--secondary-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.product-info strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.product-info span {
+  color: var(--secondary-text);
+  font-size: 11px;
+}
+
+.product-row > strong {
+  color: var(--text);
+  font-size: 12px;
+}
+
+/* =========================================
+   View All Button
+   ========================================= */
+
+.text-button {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+  color: var(--primary);
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.text-button:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   Responsive
+   ========================================= */
+
+@media (max-width: 1100px) {
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-bottom {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .order-row {
+    grid-template-columns: 1fr auto;
+  }
+
+  .order-row .status-badge {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .product-row {
+    grid-template-columns: 30px 1fr auto;
+  }
+}
