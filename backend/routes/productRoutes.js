@@ -12,19 +12,50 @@ const {
 
 const upload = require("../upload");
 
-// CREATE
-router.post("/", upload.single("image"), createProduct);
+const {
+  verifyToken,
+  verifyAdmin,
+} = require("../middleware/authMiddleware");
 
-// READ ALL
+// ==========================================
+// PUBLIC ROUTES
+// ==========================================
+
+// Get all products
 router.get("/", getProducts);
 
-// READ ONE
+// Get one product
 router.get("/:id", getProduct);
 
-// UPDATE
-router.put("/:id", upload.single("image"), updateProduct);
 
-// DELETE
-router.delete("/:id", deleteProduct);
+// ==========================================
+// ADMIN-ONLY ROUTES
+// ==========================================
+
+// Create product
+router.post(
+  "/",
+  verifyToken,
+  verifyAdmin,
+  upload.single("image"),
+  createProduct
+);
+
+// Update product
+router.put(
+  "/:id",
+  verifyToken,
+  verifyAdmin,
+  upload.single("image"),
+  updateProduct
+);
+
+// Delete product
+router.delete(
+  "/:id",
+  verifyToken,
+  verifyAdmin,
+  deleteProduct
+);
 
 module.exports = router;

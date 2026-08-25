@@ -7,7 +7,6 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,25 +39,20 @@ function Login() {
         throw new Error(data.message || "Login failed.");
       }
 
-      // Make sure this account is an admin
+      // Check if the logged-in user is an admin
       if (data.user.role !== "admin") {
-        throw new Error("Admin access required.");
+        throw new Error("Access denied. Admin account required.");
       }
 
-      // Save admin authentication
+      // Save admin login information
       localStorage.setItem("adminToken", data.token);
       localStorage.setItem("adminUser", JSON.stringify(data.user));
-
-      // Optional remember-me behavior
-      localStorage.setItem(
-        "adminRememberMe",
-        rememberMe ? "true" : "false"
-      );
 
       // Go to admin dashboard
       navigate("/admin");
     } catch (error) {
-      console.error("Admin Login Error:", error);
+      console.error("Admin login error:", error);
+
       setError(error.message || "Something went wrong.");
     } finally {
       setLoading(false);
@@ -120,21 +114,6 @@ function Login() {
             />
           </div>
 
-          {/* Remember Me */}
-          <div className="login-options">
-            <label className="remember-me">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) =>
-                  setRememberMe(e.target.checked)
-                }
-              />
-
-              <span>Remember me</span>
-            </label>
-          </div>
-
           {/* Error */}
           {error && (
             <p className="login-error">
@@ -152,7 +131,6 @@ function Login() {
           </button>
 
         </form>
-
       </div>
     </div>
   );

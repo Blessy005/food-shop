@@ -135,6 +135,34 @@
   background: var(--primary-dark);
 }
 
+.user-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.logout-btn,
+.login-header-btn {
+  border: none;
+  cursor: pointer;
+  padding: 9px 15px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: #e63946;
+  color: white;
+}
+
+.logout-btn:hover,
+.login-header-btn:hover {
+  opacity: 0.9;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 768px) {

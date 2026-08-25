@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import "./App.css";
 
 import Header from "./components/Header/Header";
@@ -14,6 +15,8 @@ import SearchBar from "./components/SearchBar/SearchBar";
 import Checkout from "./components/Checkout/Checkout";
 import OrderPlaced from "./components/OrderPlaced/OrderPlaced";
 import ContactSection from "./components/ContactSection/ContactSection";
+import Register from "./components/Register/Register";
+import Login from "./components/Login/Login";
 
 function App() {
   // Cart
@@ -171,6 +174,12 @@ function App() {
             }
           />
 
+          {/* Customer Register */}
+          <Route path="/register" element={<Register />} />
+
+          {/* Customer Login */}
+          <Route path="/login" element={<Login />} />
+
           {/* Cart Page */}
           <Route
             path="/cart"
@@ -189,6 +198,7 @@ function App() {
             path="/checkout"
             element={<Checkout cart={cart} clearCart={clearCart} />}
           />
+
           {/* Order Placed Page */}
           <Route path="/order-placed" element={<OrderPlaced />} />
         </Routes>

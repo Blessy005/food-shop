@@ -71,13 +71,15 @@ function ProductForm() {
         data.append("image", image);
       }
 
-      const response = await fetch(
-        "http://localhost:5000/api/products",
-        {
-          method: "POST",
-          body: data,
-        }
-      );
+      const token = localStorage.getItem("adminToken");
+
+      const response = await fetch("http://localhost:5000/api/products", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: data,
+      });
 
       if (!response.ok) {
         throw new Error("Failed to create product");
@@ -102,29 +104,21 @@ function ProductForm() {
 
   return (
     <div className="product-form-page">
-
       {/* Header */}
       <div className="product-form-header">
         <div>
           <h1>Add New Product</h1>
-          <p>
-            Add a new food item to your Flavor Feast menu.
-          </p>
+          <p>Add a new food item to your Flavor Feast menu.</p>
         </div>
       </div>
 
       {/* Form */}
-      <form
-        className="product-form"
-        onSubmit={handleSubmit}
-      >
-
+      <form className="product-form" onSubmit={handleSubmit}>
         {/* Product Image */}
         <section className="form-section">
           <h2>Product Image</h2>
 
           <div className="image-upload">
-
             {imagePreview ? (
               <img
                 src={imagePreview}
@@ -132,24 +126,15 @@ function ProductForm() {
                 className="image-preview"
               />
             ) : (
-              <div className="upload-icon">
-                📷
-              </div>
+              <div className="upload-icon">📷</div>
             )}
 
-            <strong>
-              {image
-                ? image.name
-                : "Upload Product Image"}
-            </strong>
+            <strong>{image ? image.name : "Upload Product Image"}</strong>
 
-            <span>
-              PNG, JPG or JPEG
-            </span>
+            <span>PNG, JPG or JPEG</span>
 
             <label className="upload-button">
               Choose Image
-
               <input
                 type="file"
                 accept="image/png, image/jpeg"
@@ -157,23 +142,17 @@ function ProductForm() {
                 hidden
               />
             </label>
-
           </div>
         </section>
 
         {/* Basic Information */}
         <section className="form-section">
-
           <h2>Basic Information</h2>
 
           <div className="form-grid">
-
             {/* Product Name */}
             <div className="form-group full-width">
-
-              <label htmlFor="name">
-                Product Name
-              </label>
+              <label htmlFor="name">Product Name</label>
 
               <input
                 id="name"
@@ -183,15 +162,11 @@ function ProductForm() {
                 onChange={handleChange}
                 required
               />
-
             </div>
 
             {/* Category */}
             <div className="form-group">
-
-              <label htmlFor="category">
-                Category
-              </label>
+              <label htmlFor="category">Category</label>
 
               <select
                 id="category"
@@ -203,58 +178,33 @@ function ProductForm() {
                   Select category
                 </option>
 
-                <option value="South Indian">
-                  South Indian
-                </option>
+                <option value="South Indian">South Indian</option>
 
-                <option value="North Indian">
-                  North Indian
-                </option>
+                <option value="North Indian">North Indian</option>
 
-                <option value="Indian Street Food">
-                  Indian Street Food
-                </option>
+                <option value="Indian Street Food">Indian Street Food</option>
 
-                <option value="Biryani">
-                  Biryani
-                </option>
+                <option value="Biryani">Biryani</option>
 
-                <option value="Asian">
-                  Asian
-                </option>
+                <option value="Asian">Asian</option>
 
-                <option value="Italian">
-                  Italian
-                </option>
+                <option value="Italian">Italian</option>
 
-                <option value="Continental">
-                  Continental
-                </option>
+                <option value="Continental">Continental</option>
 
-                <option value="Fast Food">
-                  Fast Food
-                </option>
+                <option value="Fast Food">Fast Food</option>
 
-                <option value="Desserts">
-                  Desserts
-                </option>
+                <option value="Desserts">Desserts</option>
 
-                <option value="Drinks">
-                  Drinks
-                </option>
+                <option value="Drinks">Drinks</option>
               </select>
-
             </div>
 
             {/* Price */}
             <div className="form-group">
-
-              <label htmlFor="price">
-                Price
-              </label>
+              <label htmlFor="price">Price</label>
 
               <div className="price-input">
-
                 <span>₹</span>
 
                 <input
@@ -266,17 +216,12 @@ function ProductForm() {
                   onChange={handleChange}
                   required
                 />
-
               </div>
-
             </div>
 
             {/* Stock */}
             <div className="form-group">
-
-              <label htmlFor="stock">
-                Stock
-              </label>
+              <label htmlFor="stock">Stock</label>
 
               <input
                 id="stock"
@@ -287,44 +232,26 @@ function ProductForm() {
                 onChange={handleChange}
                 required
               />
-
             </div>
 
             {/* Availability */}
             <div className="form-group">
-
-              <label htmlFor="availability">
-                Availability
-              </label>
+              <label htmlFor="availability">Availability</label>
 
               <select
                 id="availability"
-                value={
-                  formData.isAvailable
-                    ? "available"
-                    : "unavailable"
-                }
+                value={formData.isAvailable ? "available" : "unavailable"}
                 onChange={handleAvailabilityChange}
               >
+                <option value="available">Available</option>
 
-                <option value="available">
-                  Available
-                </option>
-
-                <option value="unavailable">
-                  Unavailable
-                </option>
-
+                <option value="unavailable">Unavailable</option>
               </select>
-
             </div>
 
             {/* Description */}
             <div className="form-group full-width">
-
-              <label htmlFor="description">
-                Description
-              </label>
+              <label htmlFor="description">Description</label>
 
               <textarea
                 id="description"
@@ -333,16 +260,12 @@ function ProductForm() {
                 value={formData.description}
                 onChange={handleChange}
               />
-
             </div>
-
           </div>
-
         </section>
 
         {/* Actions */}
         <div className="form-actions">
-
           <button
             type="button"
             className="cancel-button"
@@ -356,15 +279,10 @@ function ProductForm() {
             className="save-product-button"
             disabled={saving}
           >
-            {saving
-              ? "Adding..."
-              : "Add Product"}
+            {saving ? "Adding..." : "Add Product"}
           </button>
-
         </div>
-
       </form>
-
     </div>
   );
 }

@@ -1,4 +1,6 @@
 const Product = require("../models/Product");
+const fs = require("fs");
+const path = require("path");
 
 // CREATE
 exports.createProduct = async (req, res) => {
@@ -101,7 +103,7 @@ exports.updateProduct = async (req, res) => {
 // DELETE
 exports.deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const product = await Product.findById(req.params.id);
 
     if (!product) {
       return res.status(404).json({
@@ -109,8 +111,22 @@ exports.deleteProduct = async (req, res) => {
       });
     }
 
+    // Delete uploaded image from backend/uploads
+    if (product.image && product.image.startsWith("/uploads/")) {
+      const imageName = path.basename(product.image);
+      const imagePath = path.join(__dirname, "..", "uploads", imageName);
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+        console.log("Image deleted:", imageName);
+      }
+    }
+
+    // Delete product from MongoDB
+    await Product.findByIdAndDelete(req.params.id);
+
     res.json({
-      message: "Product Deleted Successfully",
+      message: "Product and image deleted successfully",
     });
   } catch (err) {
     console.error("Delete Product Error:", err);

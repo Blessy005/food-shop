@@ -1,7 +1,7 @@
 import "./Header.css";
 import { useNavigate } from "react-router-dom";
 
-function Header({ cartCount }) {
+function Header({ cartCount, user, onLogout }) {
   const navigate = useNavigate();
 
   const navLinks = ["Home", "Menu", "Categories", "About", "Contact"];
@@ -30,7 +30,9 @@ function Header({ cartCount }) {
           <ul className="nav-links">
             {navLinks.map((link) => (
               <li key={link}>
-                <a href={`#${link.toLowerCase()}`}>{link}</a>
+                <a href={`#${link.toLowerCase()}`}>
+                  {link}
+                </a>
               </li>
             ))}
           </ul>
@@ -38,6 +40,29 @@ function Header({ cartCount }) {
 
         {/* Right Side */}
         <div className="header-actions">
+
+          {/* Customer Account */}
+          {user ? (
+            <div className="user-account">
+              <span className="user-name">
+                Hi, {user.name}
+              </span>
+
+              <button
+                className="logout-btn"
+                onClick={onLogout}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button
+              className="login-header-btn"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </button>
+          )}
 
           {/* Favorites */}
           <button
@@ -56,7 +81,10 @@ function Header({ cartCount }) {
           </button>
 
           {/* Order Now */}
-          <button className="order-btn">
+          <button
+            className="order-btn"
+            onClick={() => navigate("/cart")}
+          >
             Order Now
           </button>
 

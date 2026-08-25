@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Products.css";
 
 const categories = [
@@ -17,13 +17,22 @@ const categories = [
 
 function Products() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+
     fetch("http://localhost:5000/api/products")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
+        return res.json();
+      })
       .then((data) => {
         setProducts(data);
         setLoading(false);
@@ -32,7 +41,7 @@ function Products() {
         console.error("Error fetching products:", err);
         setLoading(false);
       });
-  }, []);
+  }, [location]);
 
   if (loading) {
     return <p>Loading products...</p>;
@@ -76,14 +85,19 @@ function Products() {
 
           <select defaultValue="all">
             <option value="all">All Status</option>
+
             <option value="active">Active</option>
+
             <option value="inactive">Inactive</option>
           </select>
 
           <select defaultValue="newest">
             <option value="newest">Newest</option>
+
             <option value="price-low">Price: Low to High</option>
+
             <option value="price-high">Price: High to Low</option>
+
             <option value="stock-low">Stock: Low to High</option>
           </select>
         </div>
@@ -106,69 +120,119 @@ function Products() {
             </thead>
 
             <tbody>
-              {products.map((product) => (
-                <tr key={product._id}>
-                  {/* Image */}
-                  <td>
-                    <div className="product-image">
-                      <img src={product.image} alt={product.name} />
-                    </div>
-                  </td>
+              {products.map((product) => {
+                const imageUrl = product.image
+                  ? product.image.startsWith("/uploads")
+                    ? `http://localhost:5000${product.image}`
+                    : product.image
+                  : "";
 
-                  {/* Product Name */}
-                  <td>
-                    <div className="product-name">{product.name}</div>
-                  </td>
+                return (
+                  <tr key={product._id}>
+                    {/* Image */}
+                    <td>
+                      <div className="product-image">
+                        {imageUrl ? (
+                          <img src={imageUrl} alt={product.name} />
+                        ) : (
+                          <span>No Image</span>
+                        )}
+                      </div>
+                    </td>
 
-                  {/* Category */}
-                  <td>
-                    <span className="product-category">{product.category}</span>
-                  </td>
+                    {/* Product Name */}
+                    <td>
+                      <div className="product-name">{product.name}</div>
+                    </td>
 
-                  {/* Price */}
-                  <td>
-                    <strong>₹{product.price}</strong>
-                  </td>
+                    {/* Category */}
+                    <td>
+                      <span className="product-category">
+                        {product.category}
+                      </span>
+                    </td>
 
-                  {/* Stock */}
-                  <td>
-                    <span
-                      className={
-                        product.stock === 0
-                          ? "stock stock-out"
-                          : product.stock <= 10
-                            ? "stock stock-low"
-                            : "stock"
-                      }
-                    >
-                      {product.stock}
-                    </span>
-                  </td>
+                    {/* Price */}
+                    <td>
+                      <strong>₹{product.price}</strong>
+                    </td>
 
-                  {/* Status */}
-                  <td>
-                    <span
-                      className={`product-status ${
-                        product.isAvailable
-                          ? "status-active"
-                          : "status-inactive"
-                      }`}
-                    >
-                      {product.isAvailable ? "Active" : "Inactive"}
-                    </span>
-                  </td>
+                    {/* Stock */}
+                    <td>
+                      <span
+                        className={
+                          product.stock === 0
+                            ? "stock stock-out"
+                            : product.stock <= 10
+                              ? "stock stock-low"
+                              : "stock"
+                        }
+                      >
+                        {product.stock}
+                      </span>
+                    </td>
 
-                  {/* Action */}
-                  <td>
-                    <button
-                      className="product-action-button"
-                      aria-label={`Actions for ${product.name}`}
-                    >
-                      ⋮
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                    {/* Status */}
+                    <td>
+                      <span
+                        className={`product-status ${
+                          product.isAvailable
+                            ? "status-active"
+                            : "status-inactive"
+                        }`}
+                      >
+                        {product.isAvailable ? "Active" : "Inactive"}
+                      </span>
+                    </td>
+
+                    {/* Action */}
+                    <td>
+                      <button
+                        className="product-delete-button"
+                        onClick={async () => {
+                          const confirmed = window.confirm(
+                            `Are you sure you want to delete ${product.name}?`,
+                          );
+
+                          if (!confirmed) return;
+
+                          try {
+                            const token = localStorage.getItem("adminToken");
+
+                            const response = await fetch(
+                              `http://localhost:5000/api/products/${product._id}`,
+                              {
+                                method: "DELETE",
+                                headers: {
+                                  Authorization: `Bearer ${token}`,
+                                },
+                              },
+                            );
+
+                            if (!response.ok) {
+                              throw new Error("Failed to delete product");
+                            }
+
+                            // Remove immediately from Admin UI
+                            setProducts((prevProducts) =>
+                              prevProducts.filter(
+                                (item) => item._id !== product._id,
+                              ),
+                            );
+
+                            alert("Product deleted successfully!");
+                          } catch (error) {
+                            console.error("Delete Product Error:", error);
+                            alert("Failed to delete product.");
+                          }
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

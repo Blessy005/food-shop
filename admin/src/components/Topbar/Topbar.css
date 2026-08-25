@@ -159,3 +159,67 @@
 
   font-size: 15px;
 }
+
+
+/* Admin Profile Dropdown*/
+  
+
+.admin-profile-wrapper {
+  position: relative;
+}
+
+.admin-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  padding: 10px;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--button-radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+}
+
+.dropdown-user {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 10px;
+}
+
+.dropdown-user strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dropdown-user span {
+  color: var(--secondary-text);
+  font-size: 11px;
+  word-break: break-word;
+}
+
+.dropdown-divider {
+  height: 1px;
+  margin: 6px 0;
+  background-color: var(--border);
+}
+
+.logout-button {
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--text);
+  font-family: var(--font-family);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: rgba(230, 57, 70, 0.1);
+}
