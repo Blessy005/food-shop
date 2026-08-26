@@ -27,11 +27,12 @@ function Products() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Filters
-  const [selectedCategory, setSelectedCategory] =
-    useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const [selectedStatus, setSelectedStatus] =
-    useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+
+  // Sort
+  const [sortOption, setSortOption] = useState("newest");
 
   useEffect(() => {
     setLoading(true);
@@ -54,35 +55,43 @@ function Products() {
       });
   }, [location]);
 
-  // ==========================================
-  // FILTER PRODUCTS
-  // ==========================================
+  // FILTER + SORT PRODUCTS
 
-  const filteredProducts = products.filter((product) => {
-    // Search filter
-    const matchesSearch = product.name
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
+  const filteredProducts = products
+    .filter((product) => {
+      // Search filter
+      const matchesSearch = product.name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
-    // Category filter
-    const matchesCategory =
-      selectedCategory === "all" ||
-      product.category === selectedCategory;
+      // Category filter
+      const matchesCategory =
+        selectedCategory === "all" || product.category === selectedCategory;
 
-    // Status filter
-    const matchesStatus =
-      selectedStatus === "all" ||
-      (selectedStatus === "active" &&
-        product.isAvailable === true) ||
-      (selectedStatus === "inactive" &&
-        product.isAvailable === false);
+      // Status filter
+      const matchesStatus =
+        selectedStatus === "all" ||
+        (selectedStatus === "active" && product.isAvailable === true) ||
+        (selectedStatus === "inactive" && product.isAvailable === false);
 
-    return (
-      matchesSearch &&
-      matchesCategory &&
-      matchesStatus
-    );
-  });
+      return matchesSearch && matchesCategory && matchesStatus;
+    })
+    .sort((a, b) => {
+      switch (sortOption) {
+        case "price-low":
+          return a.price - b.price;
+
+        case "price-high":
+          return b.price - a.price;
+
+        case "stock-low":
+          return a.stock - b.stock;
+
+        case "newest":
+        default:
+          return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+    });
 
   if (loading) {
     return <p>Loading products...</p>;
@@ -90,21 +99,16 @@ function Products() {
 
   return (
     <div className="products-page">
-
       {/* Page Header */}
       <div className="products-header">
         <div>
           <h1>Products</h1>
-          <p>
-            Manage your food items and availability.
-          </p>
+          <p>Manage your food items and availability.</p>
         </div>
 
         <button
           className="add-product-button"
-          onClick={() =>
-            navigate("/admin/products/add")
-          }
+          onClick={() => navigate("/admin/products/add")}
         >
           + Add Product
         </button>
@@ -112,7 +116,6 @@ function Products() {
 
       {/* Search & Filters */}
       <div className="products-toolbar">
-
         {/* Search */}
         <div className="product-search">
           <span>⌕</span>
@@ -121,31 +124,21 @@ function Products() {
             type="text"
             placeholder="Search products..."
             value={searchTerm}
-            onChange={(e) =>
-              setSearchTerm(e.target.value)
-            }
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
         {/* Filters */}
         <div className="product-filters">
-
           {/* Category */}
           <select
             value={selectedCategory}
-            onChange={(e) =>
-              setSelectedCategory(e.target.value)
-            }
+            onChange={(e) => setSelectedCategory(e.target.value)}
           >
-            <option value="all">
-              All Categories
-            </option>
+            <option value="all">All Categories</option>
 
             {categories.slice(1).map((category) => (
-              <option
-                key={category}
-                value={category}
-              >
+              <option key={category} value={category}>
                 {category}
               </option>
             ))}
@@ -154,52 +147,35 @@ function Products() {
           {/* Status */}
           <select
             value={selectedStatus}
-            onChange={(e) =>
-              setSelectedStatus(e.target.value)
-            }
+            onChange={(e) => setSelectedStatus(e.target.value)}
           >
-            <option value="all">
-              All Status
-            </option>
+            <option value="all">All Status</option>
 
-            <option value="active">
-              Active
-            </option>
+            <option value="active">Active</option>
 
-            <option value="inactive">
-              Inactive
-            </option>
+            <option value="inactive">Inactive</option>
           </select>
 
           {/* Sort - we'll implement next */}
-          <select defaultValue="newest">
-            <option value="newest">
-              Newest
-            </option>
+          <select
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="newest">Newest</option>
 
-            <option value="price-low">
-              Price: Low to High
-            </option>
+            <option value="price-low">Price: Low to High</option>
 
-            <option value="price-high">
-              Price: High to Low
-            </option>
+            <option value="price-high">Price: High to Low</option>
 
-            <option value="stock-low">
-              Stock: Low to High
-            </option>
+            <option value="stock-low">Stock: Low to High</option>
           </select>
-
         </div>
       </div>
 
       {/* Product Table */}
       <div className="products-table-card">
-
         <div className="products-table-wrapper">
-
           <table className="products-table">
-
             <thead>
               <tr>
                 <th>Image</th>
@@ -213,11 +189,8 @@ function Products() {
             </thead>
 
             <tbody>
-
               {filteredProducts.length > 0 ? (
-
                 filteredProducts.map((product) => {
-
                   const imageUrl = product.image
                     ? product.image.startsWith("/uploads")
                       ? `http://localhost:5000${product.image}`
@@ -226,28 +199,20 @@ function Products() {
 
                   return (
                     <tr key={product._id}>
-
                       {/* Image */}
                       <td>
                         <div className="product-image">
-
                           {imageUrl ? (
-                            <img
-                              src={imageUrl}
-                              alt={product.name}
-                            />
+                            <img src={imageUrl} alt={product.name} />
                           ) : (
                             <span>No Image</span>
                           )}
-
                         </div>
                       </td>
 
                       {/* Product */}
                       <td>
-                        <div className="product-name">
-                          {product.name}
-                        </div>
+                        <div className="product-name">{product.name}</div>
                       </td>
 
                       {/* Category */}
@@ -259,9 +224,7 @@ function Products() {
 
                       {/* Price */}
                       <td>
-                        <strong>
-                          ₹{product.price}
-                        </strong>
+                        <strong>₹{product.price}</strong>
                       </td>
 
                       {/* Stock */}
@@ -288,24 +251,18 @@ function Products() {
                               : "status-inactive"
                           }`}
                         >
-                          {product.isAvailable
-                            ? "Active"
-                            : "Inactive"}
+                          {product.isAvailable ? "Active" : "Inactive"}
                         </span>
                       </td>
 
                       {/* Actions */}
                       <td>
-
                         <div className="product-actions">
-
                           {/* Edit */}
                           <button
                             className="product-edit-button"
                             onClick={() =>
-                              navigate(
-                                `/admin/products/${product._id}/edit`
-                              )
+                              navigate(`/admin/products/${product._id}/edit`)
                             }
                           >
                             Edit
@@ -315,78 +272,52 @@ function Products() {
                           <button
                             className="product-delete-button"
                             onClick={async () => {
-
-                              const confirmed =
-                                window.confirm(
-                                  `Are you sure you want to delete ${product.name}?`
-                                );
+                              const confirmed = window.confirm(
+                                `Are you sure you want to delete ${product.name}?`,
+                              );
 
                               if (!confirmed) return;
 
                               try {
-
                                 const token =
-                                  localStorage.getItem(
-                                    "adminToken"
-                                  );
+                                  localStorage.getItem("adminToken");
 
-                                const response =
-                                  await fetch(
-                                    `http://localhost:5000/api/products/${product._id}`,
-                                    {
-                                      method: "DELETE",
-                                      headers: {
-                                        Authorization:
-                                          `Bearer ${token}`,
-                                      },
-                                    }
-                                  );
+                                const response = await fetch(
+                                  `http://localhost:5000/api/products/${product._id}`,
+                                  {
+                                    method: "DELETE",
+                                    headers: {
+                                      Authorization: `Bearer ${token}`,
+                                    },
+                                  },
+                                );
 
                                 if (!response.ok) {
-                                  throw new Error(
-                                    "Failed to delete product"
-                                  );
+                                  throw new Error("Failed to delete product");
                                 }
 
-                                setProducts(
-                                  (prevProducts) =>
-                                    prevProducts.filter(
-                                      (item) =>
-                                        item._id !==
-                                        product._id
-                                    )
+                                setProducts((prevProducts) =>
+                                  prevProducts.filter(
+                                    (item) => item._id !== product._id,
+                                  ),
                                 );
 
-                                alert(
-                                  "Product deleted successfully!"
-                                );
-
+                                alert("Product deleted successfully!");
                               } catch (error) {
+                                console.error("Delete Product Error:", error);
 
-                                console.error(
-                                  "Delete Product Error:",
-                                  error
-                                );
-
-                                alert(
-                                  "Failed to delete product."
-                                );
+                                alert("Failed to delete product.");
                               }
                             }}
                           >
                             Delete
                           </button>
-
                         </div>
-
                       </td>
-
                     </tr>
                   );
                 })
-
               ) : (
-
                 <tr>
                   <td
                     colSpan="7"
@@ -398,16 +329,11 @@ function Products() {
                     No products found.
                   </td>
                 </tr>
-
               )}
-
             </tbody>
-
           </table>
-
         </div>
       </div>
-
     </div>
   );
 }
