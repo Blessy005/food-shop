@@ -299,6 +299,12 @@
    Action Button
    ========================================= */
 
+.product-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .product-action-button {
   width: 30px;
   height: 30px;
