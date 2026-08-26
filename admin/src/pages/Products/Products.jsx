@@ -49,6 +49,7 @@ function Products() {
 
   return (
     <div className="products-page">
+
       {/* Page Header */}
       <div className="products-header">
         <div>
@@ -66,13 +67,17 @@ function Products() {
 
       {/* Search & Filters */}
       <div className="products-toolbar">
+
         <div className="product-search">
           <span>⌕</span>
-
-          <input type="text" placeholder="Search products..." />
+          <input
+            type="text"
+            placeholder="Search products..."
+          />
         </div>
 
         <div className="product-filters">
+
           <select defaultValue="all">
             <option value="all">All Categories</option>
 
@@ -85,28 +90,27 @@ function Products() {
 
           <select defaultValue="all">
             <option value="all">All Status</option>
-
             <option value="active">Active</option>
-
             <option value="inactive">Inactive</option>
           </select>
 
           <select defaultValue="newest">
             <option value="newest">Newest</option>
-
             <option value="price-low">Price: Low to High</option>
-
             <option value="price-high">Price: High to Low</option>
-
             <option value="stock-low">Stock: Low to High</option>
           </select>
+
         </div>
       </div>
 
       {/* Product Table */}
       <div className="products-table-card">
+
         <div className="products-table-wrapper">
+
           <table className="products-table">
+
             <thead>
               <tr>
                 <th>Image</th>
@@ -120,7 +124,9 @@ function Products() {
             </thead>
 
             <tbody>
+
               {products.map((product) => {
+
                 const imageUrl = product.image
                   ? product.image.startsWith("/uploads")
                     ? `http://localhost:5000${product.image}`
@@ -129,20 +135,28 @@ function Products() {
 
                 return (
                   <tr key={product._id}>
+
                     {/* Image */}
                     <td>
                       <div className="product-image">
+
                         {imageUrl ? (
-                          <img src={imageUrl} alt={product.name} />
+                          <img
+                            src={imageUrl}
+                            alt={product.name}
+                          />
                         ) : (
                           <span>No Image</span>
                         )}
+
                       </div>
                     </td>
 
                     {/* Product Name */}
                     <td>
-                      <div className="product-name">{product.name}</div>
+                      <div className="product-name">
+                        {product.name}
+                      </div>
                     </td>
 
                     {/* Category */}
@@ -181,62 +195,103 @@ function Products() {
                             : "status-inactive"
                         }`}
                       >
-                        {product.isAvailable ? "Active" : "Inactive"}
+                        {product.isAvailable
+                          ? "Active"
+                          : "Inactive"}
                       </span>
                     </td>
 
-                    {/* Action */}
+                    {/* Actions */}
                     <td>
-                      <button
-                        className="product-delete-button"
-                        onClick={async () => {
-                          const confirmed = window.confirm(
-                            `Are you sure you want to delete ${product.name}?`,
-                          );
 
-                          if (!confirmed) return;
+                      <div className="product-actions">
 
-                          try {
-                            const token = localStorage.getItem("adminToken");
-
-                            const response = await fetch(
-                              `http://localhost:5000/api/products/${product._id}`,
-                              {
-                                method: "DELETE",
-                                headers: {
-                                  Authorization: `Bearer ${token}`,
-                                },
-                              },
-                            );
-
-                            if (!response.ok) {
-                              throw new Error("Failed to delete product");
-                            }
-
-                            // Remove immediately from Admin UI
-                            setProducts((prevProducts) =>
-                              prevProducts.filter(
-                                (item) => item._id !== product._id,
-                              ),
-                            );
-
-                            alert("Product deleted successfully!");
-                          } catch (error) {
-                            console.error("Delete Product Error:", error);
-                            alert("Failed to delete product.");
+                        {/* EDIT */}
+                        <button
+                          className="product-edit-button"
+                          onClick={() =>
+                            navigate(
+                              `/admin/products/${product._id}/edit`
+                            )
                           }
-                        }}
-                      >
-                        Delete
-                      </button>
+                        >
+                          Edit
+                        </button>
+
+                        {/* DELETE */}
+                        <button
+                          className="product-delete-button"
+                          onClick={async () => {
+
+                            const confirmed = window.confirm(
+                              `Are you sure you want to delete ${product.name}?`
+                            );
+
+                            if (!confirmed) return;
+
+                            try {
+
+                              const token =
+                                localStorage.getItem("adminToken");
+
+                              const response = await fetch(
+                                `http://localhost:5000/api/products/${product._id}`,
+                                {
+                                  method: "DELETE",
+                                  headers: {
+                                    Authorization: `Bearer ${token}`,
+                                  },
+                                }
+                              );
+
+                              if (!response.ok) {
+                                throw new Error(
+                                  "Failed to delete product"
+                                );
+                              }
+
+                              setProducts((prevProducts) =>
+                                prevProducts.filter(
+                                  (item) =>
+                                    item._id !== product._id
+                                )
+                              );
+
+                              alert(
+                                "Product deleted successfully!"
+                              );
+
+                            } catch (error) {
+
+                              console.error(
+                                "Delete Product Error:",
+                                error
+                              );
+
+                              alert(
+                                "Failed to delete product."
+                              );
+                            }
+                          }}
+                        >
+                          Delete
+                        </button>
+
+                      </div>
+
                     </td>
+
                   </tr>
                 );
               })}
+
             </tbody>
+
           </table>
+
         </div>
       </div>
+
     </div>
   );
 }
