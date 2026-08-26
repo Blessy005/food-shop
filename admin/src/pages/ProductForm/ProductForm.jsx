@@ -1,9 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
 import "./ProductForm.css";
 
 function ProductForm() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const isEditMode = Boolean(id);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -17,7 +21,63 @@ function ProductForm() {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
 
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  // ==========================================
+  // LOAD PRODUCT FOR EDIT
+  // ==========================================
+
+  useEffect(() => {
+    if (!isEditMode) return;
+
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch(
+          `http://localhost:5000/api/products/${id}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch product");
+        }
+
+        const product = await response.json();
+
+        setFormData({
+          name: product.name || "",
+          category: product.category || "",
+          price: product.price ?? "",
+          stock: product.stock ?? "",
+          isAvailable: product.isAvailable ?? true,
+          description: product.description || "",
+        });
+
+        // Show existing image
+        if (product.image) {
+          const imageUrl = product.image.startsWith("/uploads")
+            ? `http://localhost:5000${product.image}`
+            : product.image;
+
+          setImagePreview(imageUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        setError("Failed to load product.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id, isEditMode]);
+
+  // ==========================================
+  // HANDLE INPUT CHANGES
+  // ==========================================
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -28,6 +88,10 @@ function ProductForm() {
     }));
   };
 
+  // ==========================================
+  // HANDLE AVAILABILITY
+  // ==========================================
+
   const handleAvailabilityChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -35,7 +99,10 @@ function ProductForm() {
     }));
   };
 
-  // Handle image selection
+  // ==========================================
+  // HANDLE IMAGE
+  // ==========================================
+
   const handleImageChange = (e) => {
     const selectedImage = e.target.files[0];
 
@@ -45,18 +112,21 @@ function ProductForm() {
 
     setImage(selectedImage);
 
-    // Create preview
     const previewUrl = URL.createObjectURL(selectedImage);
     setImagePreview(previewUrl);
   };
+
+  // ==========================================
+  // SUBMIT
+  // ==========================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setSaving(true);
+      setError("");
 
-      // Create FormData
       const data = new FormData();
 
       data.append("name", formData.name);
@@ -66,59 +136,119 @@ function ProductForm() {
       data.append("isAvailable", formData.isAvailable);
       data.append("description", formData.description);
 
-      // Add image
+      // Add image only if a new image was selected
       if (image) {
         data.append("image", image);
       }
 
       const token = localStorage.getItem("adminToken");
 
-      const response = await fetch("http://localhost:5000/api/products", {
-        method: "POST",
+      // Add = POST
+      // Edit = PUT
+      const url = isEditMode
+        ? `http://localhost:5000/api/products/${id}`
+        : "http://localhost:5000/api/products";
+
+      const method = isEditMode ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
         headers: {
           Authorization: `Bearer ${token}`,
         },
         body: data,
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        throw new Error("Failed to create product");
+        throw new Error(
+          result.message ||
+            `Failed to ${isEditMode ? "update" : "create"} product`
+        );
       }
 
-      await response.json();
-
-      alert("Product added successfully!");
+      alert(
+        isEditMode
+          ? "Product updated successfully!"
+          : "Product added successfully!"
+      );
 
       navigate("/admin/products");
     } catch (error) {
-      console.error("Error adding product:", error);
-      alert("Failed to add product.");
+      console.error(
+        isEditMode
+          ? "Error updating product:"
+          : "Error adding product:",
+        error
+      );
+
+      setError(
+        error.message ||
+          `Failed to ${isEditMode ? "update" : "add"} product.`
+      );
     } finally {
       setSaving(false);
     }
   };
 
+  // ==========================================
+  // CANCEL
+  // ==========================================
+
   const handleCancel = () => {
     navigate("/admin/products");
   };
 
+  // ==========================================
+  // LOADING
+  // ==========================================
+
+  if (loading) {
+    return <p>Loading product...</p>;
+  }
+
+  // ==========================================
+  // UI
+  // ==========================================
+
   return (
     <div className="product-form-page">
+
       {/* Header */}
       <div className="product-form-header">
         <div>
-          <h1>Add New Product</h1>
-          <p>Add a new food item to your Flavor Feast menu.</p>
+          <h1>
+            {isEditMode ? "Edit Product" : "Add New Product"}
+          </h1>
+
+          <p>
+            {isEditMode
+              ? "Update your food item details."
+              : "Add a new food item to your Flavor Feast menu."}
+          </p>
         </div>
       </div>
 
+      {/* Error */}
+      {error && (
+        <p className="login-error">
+          {error}
+        </p>
+      )}
+
       {/* Form */}
-      <form className="product-form" onSubmit={handleSubmit}>
+      <form
+        className="product-form"
+        onSubmit={handleSubmit}
+      >
+
         {/* Product Image */}
         <section className="form-section">
           <h2>Product Image</h2>
 
           <div className="image-upload">
+
             {imagePreview ? (
               <img
                 src={imagePreview}
@@ -126,15 +256,28 @@ function ProductForm() {
                 className="image-preview"
               />
             ) : (
-              <div className="upload-icon">📷</div>
+              <div className="upload-icon">
+                📷
+              </div>
             )}
 
-            <strong>{image ? image.name : "Upload Product Image"}</strong>
+            <strong>
+              {image
+                ? image.name
+                : isEditMode && imagePreview
+                  ? "Current Product Image"
+                  : "Upload Product Image"}
+            </strong>
 
-            <span>PNG, JPG or JPEG</span>
+            <span>
+              PNG, JPG or JPEG
+            </span>
 
             <label className="upload-button">
-              Choose Image
+              {isEditMode
+                ? "Choose New Image"
+                : "Choose Image"}
+
               <input
                 type="file"
                 accept="image/png, image/jpeg"
@@ -142,17 +285,23 @@ function ProductForm() {
                 hidden
               />
             </label>
+
           </div>
         </section>
 
         {/* Basic Information */}
         <section className="form-section">
+
           <h2>Basic Information</h2>
 
           <div className="form-grid">
+
             {/* Product Name */}
             <div className="form-group full-width">
-              <label htmlFor="name">Product Name</label>
+
+              <label htmlFor="name">
+                Product Name
+              </label>
 
               <input
                 id="name"
@@ -162,11 +311,15 @@ function ProductForm() {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
             {/* Category */}
             <div className="form-group">
-              <label htmlFor="category">Category</label>
+
+              <label htmlFor="category">
+                Category
+              </label>
 
               <select
                 id="category"
@@ -174,37 +327,64 @@ function ProductForm() {
                 onChange={handleChange}
                 required
               >
+
                 <option value="" disabled>
                   Select category
                 </option>
 
-                <option value="South Indian">South Indian</option>
+                <option value="South Indian">
+                  South Indian
+                </option>
 
-                <option value="North Indian">North Indian</option>
+                <option value="North Indian">
+                  North Indian
+                </option>
 
-                <option value="Indian Street Food">Indian Street Food</option>
+                <option value="Indian Street Food">
+                  Indian Street Food
+                </option>
 
-                <option value="Biryani">Biryani</option>
+                <option value="Biryani">
+                  Biryani
+                </option>
 
-                <option value="Asian">Asian</option>
+                <option value="Asian">
+                  Asian
+                </option>
 
-                <option value="Italian">Italian</option>
+                <option value="Italian">
+                  Italian
+                </option>
 
-                <option value="Continental">Continental</option>
+                <option value="Continental">
+                  Continental
+                </option>
 
-                <option value="Fast Food">Fast Food</option>
+                <option value="Fast Food">
+                  Fast Food
+                </option>
 
-                <option value="Desserts">Desserts</option>
+                <option value="Desserts">
+                  Desserts
+                </option>
 
-                <option value="Drinks">Drinks</option>
+                <option value="Drinks">
+                  Drinks
+                </option>
+
               </select>
+
             </div>
 
             {/* Price */}
             <div className="form-group">
-              <label htmlFor="price">Price</label>
+
+              <label htmlFor="price">
+                Price
+              </label>
 
               <div className="price-input">
+
                 <span>₹</span>
 
                 <input
@@ -216,12 +396,17 @@ function ProductForm() {
                   onChange={handleChange}
                   required
                 />
+
               </div>
+
             </div>
 
             {/* Stock */}
             <div className="form-group">
-              <label htmlFor="stock">Stock</label>
+
+              <label htmlFor="stock">
+                Stock
+              </label>
 
               <input
                 id="stock"
@@ -232,26 +417,44 @@ function ProductForm() {
                 onChange={handleChange}
                 required
               />
+
             </div>
 
             {/* Availability */}
             <div className="form-group">
-              <label htmlFor="availability">Availability</label>
+
+              <label htmlFor="availability">
+                Availability
+              </label>
 
               <select
                 id="availability"
-                value={formData.isAvailable ? "available" : "unavailable"}
+                value={
+                  formData.isAvailable
+                    ? "available"
+                    : "unavailable"
+                }
                 onChange={handleAvailabilityChange}
               >
-                <option value="available">Available</option>
 
-                <option value="unavailable">Unavailable</option>
+                <option value="available">
+                  Available
+                </option>
+
+                <option value="unavailable">
+                  Unavailable
+                </option>
+
               </select>
+
             </div>
 
             {/* Description */}
             <div className="form-group full-width">
-              <label htmlFor="description">Description</label>
+
+              <label htmlFor="description">
+                Description
+              </label>
 
               <textarea
                 id="description"
@@ -260,12 +463,16 @@ function ProductForm() {
                 value={formData.description}
                 onChange={handleChange}
               />
+
             </div>
+
           </div>
+
         </section>
 
         {/* Actions */}
         <div className="form-actions">
+
           <button
             type="button"
             className="cancel-button"
@@ -279,10 +486,19 @@ function ProductForm() {
             className="save-product-button"
             disabled={saving}
           >
-            {saving ? "Adding..." : "Add Product"}
+            {saving
+              ? isEditMode
+                ? "Updating..."
+                : "Adding..."
+              : isEditMode
+                ? "Update Product"
+                : "Add Product"}
           </button>
+
         </div>
+
       </form>
+
     </div>
   );
 }
