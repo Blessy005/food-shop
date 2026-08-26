@@ -39,20 +39,24 @@ function Login() {
         throw new Error(data.message || "Login failed.");
       }
 
-      // Check if the logged-in user is an admin
-      if (data.user.role !== "admin") {
-        throw new Error("Access denied. Admin account required.");
+      // Only customers can log in through the customer website
+      if (data.user.role !== "customer") {
+        throw new Error(
+          "Admin accounts cannot log in through the customer website."
+        );
       }
 
-      // Save admin login information
-      localStorage.setItem("adminToken", data.token);
-      localStorage.setItem("adminUser", JSON.stringify(data.user));
+      // Save customer login information
+      localStorage.setItem("customerToken", data.token);
+      localStorage.setItem(
+        "customerUser",
+        JSON.stringify(data.user)
+      );
 
-      // Go to admin dashboard
-      navigate("/admin");
+      // Go to customer homepage
+      navigate("/");
     } catch (error) {
-      console.error("Admin login error:", error);
-
+      console.error("Customer login error:", error);
       setError(error.message || "Something went wrong.");
     } finally {
       setLoading(false);
@@ -63,20 +67,15 @@ function Login() {
     <div className="login-page">
       <div className="login-card">
 
-        {/* Brand */}
-        <div className="login-brand">
-          <div className="login-brand-icon">🍴</div>
-
-          <div>
-            <h1>Flavor Feast</h1>
-            <span>Admin Panel</span>
-          </div>
-        </div>
-
         {/* Header */}
         <div className="login-header">
-          <h2>Admin Login</h2>
-          <p>Sign in to manage your store.</p>
+          <div className="login-icon">🍴</div>
+
+          <h1>Flavor Feast</h1>
+
+          <p>
+            Sign in to your Flavor Feast account.
+          </p>
         </div>
 
         {/* Login Form */}
@@ -91,7 +90,7 @@ function Login() {
             <input
               id="email"
               type="email"
-              placeholder="admin@example.com"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -129,8 +128,20 @@ function Login() {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-
         </form>
+
+        {/* Register */}
+        <div className="login-register">
+          <span>Don't have an account?</span>
+
+          <button
+            type="button"
+            onClick={() => navigate("/register")}
+          >
+            Register
+          </button>
+        </div>
+
       </div>
     </div>
   );
