@@ -1,24 +1,64 @@
 import { useState } from "react";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 
 import Header from "./components/Header/Header";
+
 import HeroSection from "./components/HeroSection/HeroSection";
+
 import CategorySection from "./components/CategorySection/CategorySection";
+
 import AboutSection from "./components/AboutSection/AboutSection";
+
 import FoodList from "./components/FoodList/FoodList";
+
 import MenuSection from "./components/MenuSection/MenuSection";
+
 import Favorites from "./components/Favorites/Favorites";
+
 import Cart from "./components/Cart/Cart";
+
 import SearchBar from "./components/SearchBar/SearchBar";
+
 import Checkout from "./components/Checkout/Checkout";
+
 import OrderPlaced from "./components/OrderPlaced/OrderPlaced";
+
 import ContactSection from "./components/ContactSection/ContactSection";
+
 import Register from "./components/Register/Register";
+
 import Login from "./components/Login/Login";
 
 function App() {
+  // Customer Authentication
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("customerUser");
+
+    if (!storedUser) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(storedUser);
+    } catch (error) {
+      console.error("Failed to load customer user:", error);
+      localStorage.removeItem("customerUser");
+      localStorage.removeItem("customerToken");
+      return null;
+    }
+  });
+
+  // Customer Logout
+  const handleLogout = () => {
+    localStorage.removeItem("customerToken");
+    localStorage.removeItem("customerUser");
+
+    setUser(null);
+  };
+
   // Cart
   const [cart, setCart] = useState([]);
 
@@ -117,7 +157,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <Header cartCount={cartCount} />
+        <Header cartCount={cartCount} user={user} onLogout={handleLogout} />
 
         <Routes>
           {/* Landing Page */}
@@ -178,7 +218,12 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/* Customer Login */}
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <Login onLogin={(loggedInUser) => setUser(loggedInUser)} />
+            }
+          />
 
           {/* Cart Page */}
           <Route

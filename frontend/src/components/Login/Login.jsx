@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-function Login() {
+function Login({ onLogin }) {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -19,19 +19,16 @@ function Login() {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        "http://localhost:5000/api/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
       const data = await response.json();
 
@@ -42,16 +39,16 @@ function Login() {
       // Only customers can log in through the customer website
       if (data.user.role !== "customer") {
         throw new Error(
-          "Admin accounts cannot log in through the customer website."
+          "Admin accounts cannot log in through the customer website.",
         );
       }
 
       // Save customer login information
       localStorage.setItem("customerToken", data.token);
-      localStorage.setItem(
-        "customerUser",
-        JSON.stringify(data.user)
-      );
+      localStorage.setItem("customerUser", JSON.stringify(data.user));
+
+      // Update App authentication state
+      onLogin(data.user);
 
       // Go to customer homepage
       navigate("/");
@@ -66,26 +63,20 @@ function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
-
         {/* Header */}
         <div className="login-header">
           <div className="login-icon">🍴</div>
 
           <h1>Flavor Feast</h1>
 
-          <p>
-            Sign in to your Flavor Feast account.
-          </p>
+          <p>Sign in to your Flavor Feast account.</p>
         </div>
 
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
-
           {/* Email */}
           <div className="login-field">
-            <label htmlFor="email">
-              Email
-            </label>
+            <label htmlFor="email">Email</label>
 
             <input
               id="email"
@@ -99,9 +90,7 @@ function Login() {
 
           {/* Password */}
           <div className="login-field">
-            <label htmlFor="password">
-              Password
-            </label>
+            <label htmlFor="password">Password</label>
 
             <input
               id="password"
@@ -114,18 +103,10 @@ function Login() {
           </div>
 
           {/* Error */}
-          {error && (
-            <p className="login-error">
-              {error}
-            </p>
-          )}
+          {error && <p className="login-error">{error}</p>}
 
           {/* Login Button */}
-          <button
-            type="submit"
-            className="login-button"
-            disabled={loading}
-          >
+          <button type="submit" className="login-button" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
@@ -134,14 +115,10 @@ function Login() {
         <div className="login-register">
           <span>Don't have an account?</span>
 
-          <button
-            type="button"
-            onClick={() => navigate("/register")}
-          >
+          <button type="button" onClick={() => navigate("/register")}>
             Register
           </button>
         </div>
-
       </div>
     </div>
   );
