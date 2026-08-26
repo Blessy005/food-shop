@@ -26,6 +26,13 @@ function Products() {
   // Search
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Filters
+  const [selectedCategory, setSelectedCategory] =
+    useState("all");
+
+  const [selectedStatus, setSelectedStatus] =
+    useState("all");
+
   useEffect(() => {
     setLoading(true);
 
@@ -48,14 +55,34 @@ function Products() {
   }, [location]);
 
   // ==========================================
-  // FILTER PRODUCTS BY SEARCH
+  // FILTER PRODUCTS
   // ==========================================
 
-  const filteredProducts = products.filter((product) =>
-    product.name
+  const filteredProducts = products.filter((product) => {
+    // Search filter
+    const matchesSearch = product.name
       ?.toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+      .includes(searchTerm.toLowerCase());
+
+    // Category filter
+    const matchesCategory =
+      selectedCategory === "all" ||
+      product.category === selectedCategory;
+
+    // Status filter
+    const matchesStatus =
+      selectedStatus === "all" ||
+      (selectedStatus === "active" &&
+        product.isAvailable === true) ||
+      (selectedStatus === "inactive" &&
+        product.isAvailable === false);
+
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesStatus
+    );
+  });
 
   if (loading) {
     return <p>Loading products...</p>;
@@ -68,12 +95,16 @@ function Products() {
       <div className="products-header">
         <div>
           <h1>Products</h1>
-          <p>Manage your food items and availability.</p>
+          <p>
+            Manage your food items and availability.
+          </p>
         </div>
 
         <button
           className="add-product-button"
-          onClick={() => navigate("/admin/products/add")}
+          onClick={() =>
+            navigate("/admin/products/add")
+          }
         >
           + Add Product
         </button>
@@ -90,14 +121,22 @@ function Products() {
             type="text"
             placeholder="Search products..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) =>
+              setSearchTerm(e.target.value)
+            }
           />
         </div>
 
         {/* Filters */}
         <div className="product-filters">
 
-          <select defaultValue="all">
+          {/* Category */}
+          <select
+            value={selectedCategory}
+            onChange={(e) =>
+              setSelectedCategory(e.target.value)
+            }
+          >
             <option value="all">
               All Categories
             </option>
@@ -112,7 +151,13 @@ function Products() {
             ))}
           </select>
 
-          <select defaultValue="all">
+          {/* Status */}
+          <select
+            value={selectedStatus}
+            onChange={(e) =>
+              setSelectedStatus(e.target.value)
+            }
+          >
             <option value="all">
               All Status
             </option>
@@ -126,6 +171,7 @@ function Products() {
             </option>
           </select>
 
+          {/* Sort - we'll implement next */}
           <select defaultValue="newest">
             <option value="newest">
               Newest
@@ -290,7 +336,8 @@ function Products() {
                                     {
                                       method: "DELETE",
                                       headers: {
-                                        Authorization: `Bearer ${token}`,
+                                        Authorization:
+                                          `Bearer ${token}`,
                                       },
                                     }
                                   );
