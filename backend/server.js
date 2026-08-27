@@ -9,6 +9,7 @@ const connectDB = require("./config/db");
 
 const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -27,6 +28,9 @@ app.use("/api/products", productRoutes);
 
 // Authentication routes
 app.use("/api/auth", authRoutes);
+
+// User routes
+app.use("/api/users", userRoutes);
 
 // Test route
 app.get("/", (req, res) => {
