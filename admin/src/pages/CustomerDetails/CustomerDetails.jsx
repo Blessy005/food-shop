@@ -1,43 +1,62 @@
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+
 import "./CustomerDetails.css";
 
-const customer = {
-  id: "CUS001",
-  name: "Arun Kumar",
-  email: "arun@gmail.com",
-  phone: "9876543210",
-
-  totalOrders: 12,
-  totalSpent: 4250,
-
-  orders: [
-    {
-      id: "FF1024",
-      date: "Aug 24, 2026",
-      amount: 540,
-      status: "Delivered",
-    },
-    {
-      id: "FF0988",
-      date: "Aug 20, 2026",
-      amount: 320,
-      status: "Delivered",
-    },
-    {
-      id: "FF0921",
-      date: "Aug 15, 2026",
-      amount: 450,
-      status: "Delivered",
-    },
-    {
-      id: "FF0875",
-      date: "Aug 10, 2026",
-      amount: 680,
-      status: "Delivered",
-    },
-  ],
-};
-
 function CustomerDetails() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [customer, setCustomer] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+
+        const response = await fetch(
+          `http://localhost:5000/api/users/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch customer");
+        }
+
+        const data = await response.json();
+
+        setCustomer(data);
+      } catch (error) {
+        console.error("Error fetching customer:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomer();
+  }, [id]);
+
+  if (loading) {
+    return <p>Loading customer...</p>;
+  }
+
+  if (!customer) {
+    return (
+      <div className="customer-details-page">
+        <h1>Customer not found</h1>
+
+        <button onClick={() => navigate("/admin/customers")}>
+          Back to Customers
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="customer-details-page">
 
@@ -50,17 +69,18 @@ function CustomerDetails() {
 
           <h1>{customer.name}</h1>
 
-          <p>Customer ID: {customer.id}</p>
+          <p>
+            Customer ID: {customer._id}
+          </p>
         </div>
 
         <span className="customer-details-status">
-          Active
+          {customer.role === "customer" ? "Active" : "Admin"}
         </span>
       </div>
 
       {/* Customer Information */}
       <div className="customer-details-card">
-
         <div className="customer-card-header">
           <h2>Customer Information</h2>
         </div>
@@ -68,7 +88,7 @@ function CustomerDetails() {
         <div className="customer-profile">
 
           <div className="customer-profile-avatar">
-            {customer.name.charAt(0)}
+            {customer.name.charAt(0).toUpperCase()}
           </div>
 
           <div className="customer-profile-info">
@@ -76,42 +96,45 @@ function CustomerDetails() {
 
             <p>{customer.email}</p>
 
-            <p>{customer.phone}</p>
+            <p>
+              Joined:{" "}
+              {new Date(customer.createdAt).toLocaleDateString(
+                "en-IN",
+                {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                }
+              )}
+            </p>
           </div>
 
         </div>
-
       </div>
 
       {/* Customer Statistics */}
       <div className="customer-detail-stats">
 
         <div className="customer-detail-stat-card">
-
           <div className="customer-detail-stat-icon orders">
             🛍
           </div>
 
           <div>
             <span>Total Orders</span>
-            <h2>{customer.totalOrders}</h2>
+            <h2>0</h2>
           </div>
-
         </div>
 
         <div className="customer-detail-stat-card">
-
           <div className="customer-detail-stat-icon spent">
             ₹
           </div>
 
           <div>
             <span>Total Spent</span>
-            <h2>
-              ₹{customer.totalSpent.toLocaleString("en-IN")}
-            </h2>
+            <h2>₹0</h2>
           </div>
-
         </div>
 
       </div>
@@ -122,12 +145,12 @@ function CustomerDetails() {
         <div className="customer-card-header">
           <div>
             <h2>Order History</h2>
-            <p>Recent orders placed by this customer.</p>
+            <p>
+              Recent orders placed by this customer.
+            </p>
           </div>
 
-          <span>
-            {customer.orders.length} recent orders
-          </span>
+          <span>0 recent orders</span>
         </div>
 
         <div className="customer-order-table-wrapper">
@@ -144,43 +167,16 @@ function CustomerDetails() {
             </thead>
 
             <tbody>
-
-              {customer.orders.map((order) => (
-                <tr key={order.id}>
-
-                  <td>
-                    <strong className="customer-order-id">
-                      #{order.id}
-                    </strong>
-                  </td>
-
-                  <td>
-                    <span className="customer-order-date">
-                      {order.date}
-                    </span>
-                  </td>
-
-                  <td>
-                    <strong className="customer-order-amount">
-                      ₹{order.amount}
-                    </strong>
-                  </td>
-
-                  <td>
-                    <span className="customer-order-status">
-                      {order.status}
-                    </span>
-                  </td>
-
-                </tr>
-              ))}
-
+              <tr>
+                <td colSpan="4" style={{ textAlign: "center" }}>
+                  No orders found.
+                </td>
+              </tr>
             </tbody>
 
           </table>
 
         </div>
-
       </div>
 
     </div>
