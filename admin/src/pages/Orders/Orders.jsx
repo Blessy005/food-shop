@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import "./Orders.css";
 
 const statusOptions = [
@@ -16,24 +15,22 @@ const statusOptions = [
 function Orders() {
   const navigate = useNavigate();
 
-  // Store orders fetched from the backend
   const [orders, setOrders] = useState([]);
-
-  // Loading and error states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All Status");
+  const [dateFilter, setDateFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Search and filter states
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("all");
-  const [paymentFilter, setPaymentFilter] = useState("all");
-
-  // FETCH ORDERS FROM BACKEND
-
+  // Fetch all orders from MongoDB
   useEffect(() => {
     const fetchOrders = async () => {
       try {
+        setLoading(true);
+        setError("");
+
+        // Get the logged-in admin token
         const token = localStorage.getItem("adminToken");
 
         const response = await fetch(
@@ -42,19 +39,19 @@ function Orders() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch orders");
-        }
 
         const data = await response.json();
 
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch orders.");
+        }
+
         setOrders(data);
       } catch (err) {
-        console.error("Error fetching orders:", err);
-        setError("Failed to load orders.");
+        console.error("Fetch Orders Error:", err);
+        setError("Unable to load orders. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -63,104 +60,137 @@ function Orders() {
     fetchOrders();
   }, []);
 
-  // DATE FILTER HELPER
+  // Filter orders based on search and selected filters
+  const filteredOrders = orders.filter((order) => {
+    const customerName = order.customer?.name || "";
+    const customerEmail = order.customer?.email || "";
 
-  const matchesDateFilter = (order) => {
-    if (dateFilter === "all") {
-      return true;
-    }
+    // Search by order number, customer name, or email
+    const matchesSearch =
+      !searchTerm ||
+      order.orderNumber
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      customerName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      customerEmail
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
+    // Filter by order status
+    const matchesStatus =
+      statusFilter === "All Status" ||
+      order.status === statusFilter;
+
+    // Filter by payment status
+    const matchesPayment =
+      paymentFilter === "all" ||
+      order.paymentStatus?.toLowerCase() === paymentFilter;
+
+    // Filter by date
     const orderDate = new Date(order.createdAt);
     const today = new Date();
 
-    // Reset time for date comparison
-    today.setHours(0, 0, 0, 0);
-    orderDate.setHours(0, 0, 0, 0);
+    const startOfToday = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+    );
 
-    const differenceInDays =
-      (today - orderDate) / (1000 * 60 * 60 * 24);
+    const startOfYesterday = new Date(startOfToday);
+    startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+
+    const startOfWeek = new Date(startOfToday);
+    startOfWeek.setDate(
+      startOfWeek.getDate() - startOfWeek.getDay(),
+    );
+
+    const startOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1,
+    );
+
+    let matchesDate = true;
 
     if (dateFilter === "today") {
-      return differenceInDays === 0;
+      matchesDate = orderDate >= startOfToday;
     }
 
     if (dateFilter === "yesterday") {
-      return differenceInDays === 1;
+      matchesDate =
+        orderDate >= startOfYesterday &&
+        orderDate < startOfToday;
     }
 
     if (dateFilter === "week") {
-      return differenceInDays >= 0 && differenceInDays < 7;
+      matchesDate = orderDate >= startOfWeek;
     }
 
     if (dateFilter === "month") {
-      return (
-        orderDate.getMonth() === today.getMonth() &&
-        orderDate.getFullYear() === today.getFullYear()
-      );
+      matchesDate = orderDate >= startOfMonth;
     }
-
-    return true;
-  };
-
-  // FILTER ORDERS
-
-  const filteredOrders = orders.filter((order) => {
-    const search = searchTerm.toLowerCase();
-
-    const orderNumber = order.orderNumber?.toLowerCase() || "";
-    const customerName =
-      order.customer?.name?.toLowerCase() || "";
-    const customerEmail =
-      order.customer?.email?.toLowerCase() || "";
-
-    const matchesSearch =
-      orderNumber.includes(search) ||
-      customerName.includes(search) ||
-      customerEmail.includes(search);
-
-    const matchesStatus =
-      statusFilter === "all" ||
-      order.status === statusFilter;
-
-    const matchesPayment =
-      paymentFilter === "all" ||
-      order.paymentStatus?.toLowerCase() ===
-        paymentFilter.toLowerCase();
 
     return (
       matchesSearch &&
       matchesStatus &&
       matchesPayment &&
-      matchesDateFilter(order)
+      matchesDate
     );
   });
 
-  // ORDER STATISTICS
+  // Calculate dashboard statistics from real orders
+  const allOrdersCount = orders.length;
 
-  const totalOrders = orders.length;
-
-  const pendingOrders = orders.filter(
-    (order) => order.status === "Pending"
+  const pendingCount = orders.filter(
+    (order) => order.status === "Pending",
   ).length;
 
-  const preparingOrders = orders.filter(
-    (order) => order.status === "Preparing"
+  const preparingCount = orders.filter(
+    (order) => order.status === "Preparing",
   ).length;
 
-  const deliveredOrders = orders.filter(
-    (order) => order.status === "Delivered"
+  const deliveredCount = orders.filter(
+    (order) => order.status === "Delivered",
   ).length;
 
-  // LOADING STATE
-
+  // Loading state
   if (loading) {
-    return <p>Loading orders...</p>;
+    return (
+      <div className="orders-page">
+        <div className="orders-header">
+          <div>
+            <h1>Orders</h1>
+            <p>Track and manage customer orders.</p>
+          </div>
+        </div>
+
+        <div className="orders-table-card">
+          <p style={{ padding: "24px" }}>
+            Loading orders...
+          </p>
+        </div>
+      </div>
+    );
   }
 
-  // ERROR STATE
-
+  // Error state
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <div className="orders-page">
+        <div className="orders-header">
+          <div>
+            <h1>Orders</h1>
+            <p>Track and manage customer orders.</p>
+          </div>
+        </div>
+
+        <div className="orders-table-card">
+          <p style={{ padding: "24px" }}>{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -179,42 +209,45 @@ function Orders() {
 
         <div className="order-stat-card">
           <div className="order-stat-indicator all"></div>
+
           <div>
             <span>All Orders</span>
-            <h2>{totalOrders}</h2>
+            <h2>{allOrdersCount}</h2>
           </div>
         </div>
 
         <div className="order-stat-card">
           <div className="order-stat-indicator pending"></div>
+
           <div>
             <span>Pending</span>
-            <h2>{pendingOrders}</h2>
+            <h2>{pendingCount}</h2>
           </div>
         </div>
 
         <div className="order-stat-card">
           <div className="order-stat-indicator preparing"></div>
+
           <div>
             <span>Preparing</span>
-            <h2>{preparingOrders}</h2>
+            <h2>{preparingCount}</h2>
           </div>
         </div>
 
         <div className="order-stat-card">
           <div className="order-stat-indicator delivered"></div>
+
           <div>
             <span>Delivered</span>
-            <h2>{deliveredOrders}</h2>
+            <h2>{deliveredCount}</h2>
           </div>
         </div>
 
       </div>
 
-      {/* Filters */}
+      {/* Search & Filters */}
       <div className="orders-toolbar">
 
-        {/* Search */}
         <div className="order-search">
           <span>⌕</span>
 
@@ -222,25 +255,18 @@ function Orders() {
             type="text"
             placeholder="Search order/customer..."
             value={searchTerm}
-            onChange={(e) =>
-              setSearchTerm(e.target.value)
-            }
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        {/* Filters */}
         <div className="order-filters">
 
           {/* Status Filter */}
           <select
             value={statusFilter}
-            onChange={(e) =>
-              setStatusFilter(e.target.value)
-            }
+            onChange={(e) => setStatusFilter(e.target.value)}
           >
-            <option value="all">All Status</option>
-
-            {statusOptions.slice(1).map((status) => (
+            {statusOptions.map((status) => (
               <option key={status} value={status}>
                 {status}
               </option>
@@ -250,9 +276,7 @@ function Orders() {
           {/* Date Filter */}
           <select
             value={dateFilter}
-            onChange={(e) =>
-              setDateFilter(e.target.value)
-            }
+            onChange={(e) => setDateFilter(e.target.value)}
           >
             <option value="all">All Dates</option>
             <option value="today">Today</option>
@@ -269,9 +293,9 @@ function Orders() {
             }
           >
             <option value="all">All Payments</option>
-            <option value="Paid">Paid</option>
-            <option value="Pending">Pending</option>
-            <option value="Failed">Failed</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+            <option value="failed">Failed</option>
           </select>
 
         </div>
@@ -279,7 +303,6 @@ function Orders() {
 
       {/* Orders Table */}
       <div className="orders-table-card">
-
         <div className="orders-table-wrapper">
 
           <table className="orders-table">
@@ -299,105 +322,7 @@ function Orders() {
 
             <tbody>
 
-              {filteredOrders.length > 0 ? (
-
-                filteredOrders.map((order) => (
-
-                  <tr key={order._id}>
-
-                    {/* Order ID */}
-                    <td>
-                      <strong className="order-id">
-                        #{order.orderNumber}
-                      </strong>
-                    </td>
-
-                    {/* Customer */}
-                    <td>
-                      <span className="customer-name">
-                        {order.customer?.name ||
-                          "Unknown Customer"}
-                      </span>
-                    </td>
-
-                    {/* Date */}
-                    <td>
-                      <span className="order-date">
-                        {new Date(
-                          order.createdAt
-                        ).toLocaleDateString("en-IN", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        })}
-                      </span>
-                    </td>
-
-                    {/* Items */}
-                    <td>
-                      <span className="order-items">
-                        {order.items?.reduce(
-                          (total, item) =>
-                            total + item.quantity,
-                          0
-                        )}
-                      </span>
-                    </td>
-
-                    {/* Total */}
-                    <td>
-                      <strong className="order-total">
-                        ₹
-                        {order.total?.toLocaleString(
-                          "en-IN"
-                        )}
-                      </strong>
-                    </td>
-
-                    {/* Payment */}
-                    <td>
-                      <span
-                        className={`payment-status ${
-                          order.paymentStatus === "Paid"
-                            ? "payment-paid"
-                            : "payment-pending"
-                        }`}
-                      >
-                        {order.paymentStatus}
-                      </span>
-                    </td>
-
-                    {/* Status */}
-                    <td>
-                      <span
-                        className={`order-status status-${order.status
-                          ?.toLowerCase()
-                          .replaceAll(" ", "-")}`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
-
-                    {/* Action */}
-                    <td>
-                      <button
-                        className="view-order-button"
-                        onClick={() =>
-                          navigate(
-                            `/admin/orders/${order._id}`
-                          )
-                        }
-                      >
-                        View
-                      </button>
-                    </td>
-
-                  </tr>
-
-                ))
-
-              ) : (
-
+              {filteredOrders.length === 0 ? (
                 <tr>
                   <td
                     colSpan="8"
@@ -409,7 +334,102 @@ function Orders() {
                     No orders found.
                   </td>
                 </tr>
+              ) : (
+                filteredOrders.map((order) => {
 
+                  // Format the MongoDB date
+                  const formattedDate = new Date(
+                    order.createdAt,
+                  ).toLocaleDateString("en-IN", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  });
+
+                  return (
+                    <tr key={order._id}>
+
+                      {/* Order ID */}
+                      <td>
+                        <strong className="order-id">
+                          #{order.orderNumber}
+                        </strong>
+                      </td>
+
+                      {/* Customer */}
+                      <td>
+                        <span className="customer-name">
+                          {order.customer?.name ||
+                            "Unknown Customer"}
+                        </span>
+                      </td>
+
+                      {/* Date */}
+                      <td>
+                        <span className="order-date">
+                          {formattedDate}
+                        </span>
+                      </td>
+
+                      {/* Items */}
+                      <td>
+                        <span className="order-items">
+                          {order.items?.reduce(
+                            (total, item) =>
+                              total + item.quantity,
+                            0,
+                          )}
+                        </span>
+                      </td>
+
+                      {/* Total */}
+                      <td>
+                        <strong className="order-total">
+                          ₹{order.total}
+                        </strong>
+                      </td>
+
+                      {/* Payment */}
+                      <td>
+                        <span
+                          className={`payment-status ${
+                            order.paymentStatus === "Paid"
+                              ? "payment-paid"
+                              : "payment-pending"
+                          }`}
+                        >
+                          {order.paymentStatus}
+                        </span>
+                      </td>
+
+                      {/* Status */}
+                      <td>
+                        <span
+                          className={`order-status status-${order.status
+                            .toLowerCase()
+                            .replaceAll(" ", "-")}`}
+                        >
+                          {order.status}
+                        </span>
+                      </td>
+
+                      {/* View Order */}
+                      <td>
+                        <button
+                          className="view-order-button"
+                          onClick={() =>
+                            navigate(
+                              `/admin/orders/${order._id}`,
+                            )
+                          }
+                        >
+                          View
+                        </button>
+                      </td>
+
+                    </tr>
+                  );
+                })
               )}
 
             </tbody>
