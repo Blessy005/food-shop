@@ -1,54 +1,7 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import "./Orders.css";
-
-
-const orders = [
-  {
-    id: "FF1024",
-    customer: "Arun Kumar",
-    date: "Aug 24, 2026",
-    items: 3,
-    total: 540,
-    payment: "Paid",
-    status: "Preparing",
-  },
-  {
-    id: "FF1025",
-    customer: "Priya",
-    date: "Aug 24, 2026",
-    items: 2,
-    total: 320,
-    payment: "Paid",
-    status: "Pending",
-  },
-  {
-    id: "FF1026",
-    customer: "Rahul",
-    date: "Aug 23, 2026",
-    items: 4,
-    total: 760,
-    payment: "Paid",
-    status: "Delivered",
-  },
-  {
-    id: "FF1027",
-    customer: "Meena",
-    date: "Aug 23, 2026",
-    items: 2,
-    total: 410,
-    payment: "Pending",
-    status: "Confirmed",
-  },
-  {
-    id: "FF1028",
-    customer: "Vikram",
-    date: "Aug 22, 2026",
-    items: 5,
-    total: 920,
-    payment: "Paid",
-    status: "Out for Delivery",
-  },
-];
 
 const statusOptions = [
   "All Status",
@@ -62,6 +15,153 @@ const statusOptions = [
 
 function Orders() {
   const navigate = useNavigate();
+
+  // Store orders fetched from the backend
+  const [orders, setOrders] = useState([]);
+
+  // Loading and error states
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
+  const [paymentFilter, setPaymentFilter] = useState("all");
+
+  // FETCH ORDERS FROM BACKEND
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+
+        const response = await fetch(
+          "http://localhost:5000/api/orders",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch orders");
+        }
+
+        const data = await response.json();
+
+        setOrders(data);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+        setError("Failed to load orders.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  // DATE FILTER HELPER
+
+  const matchesDateFilter = (order) => {
+    if (dateFilter === "all") {
+      return true;
+    }
+
+    const orderDate = new Date(order.createdAt);
+    const today = new Date();
+
+    // Reset time for date comparison
+    today.setHours(0, 0, 0, 0);
+    orderDate.setHours(0, 0, 0, 0);
+
+    const differenceInDays =
+      (today - orderDate) / (1000 * 60 * 60 * 24);
+
+    if (dateFilter === "today") {
+      return differenceInDays === 0;
+    }
+
+    if (dateFilter === "yesterday") {
+      return differenceInDays === 1;
+    }
+
+    if (dateFilter === "week") {
+      return differenceInDays >= 0 && differenceInDays < 7;
+    }
+
+    if (dateFilter === "month") {
+      return (
+        orderDate.getMonth() === today.getMonth() &&
+        orderDate.getFullYear() === today.getFullYear()
+      );
+    }
+
+    return true;
+  };
+
+  // FILTER ORDERS
+
+  const filteredOrders = orders.filter((order) => {
+    const search = searchTerm.toLowerCase();
+
+    const orderNumber = order.orderNumber?.toLowerCase() || "";
+    const customerName =
+      order.customer?.name?.toLowerCase() || "";
+    const customerEmail =
+      order.customer?.email?.toLowerCase() || "";
+
+    const matchesSearch =
+      orderNumber.includes(search) ||
+      customerName.includes(search) ||
+      customerEmail.includes(search);
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      order.status === statusFilter;
+
+    const matchesPayment =
+      paymentFilter === "all" ||
+      order.paymentStatus?.toLowerCase() ===
+        paymentFilter.toLowerCase();
+
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesPayment &&
+      matchesDateFilter(order)
+    );
+  });
+
+  // ORDER STATISTICS
+
+  const totalOrders = orders.length;
+
+  const pendingOrders = orders.filter(
+    (order) => order.status === "Pending"
+  ).length;
+
+  const preparingOrders = orders.filter(
+    (order) => order.status === "Preparing"
+  ).length;
+
+  const deliveredOrders = orders.filter(
+    (order) => order.status === "Delivered"
+  ).length;
+
+  // LOADING STATE
+
+  if (loading) {
+    return <p>Loading orders...</p>;
+  }
+
+  // ERROR STATE
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div className="orders-page">
@@ -79,37 +179,33 @@ function Orders() {
 
         <div className="order-stat-card">
           <div className="order-stat-indicator all"></div>
-
           <div>
             <span>All Orders</span>
-            <h2>1,284</h2>
+            <h2>{totalOrders}</h2>
           </div>
         </div>
 
         <div className="order-stat-card">
           <div className="order-stat-indicator pending"></div>
-
           <div>
             <span>Pending</span>
-            <h2>24</h2>
+            <h2>{pendingOrders}</h2>
           </div>
         </div>
 
         <div className="order-stat-card">
           <div className="order-stat-indicator preparing"></div>
-
           <div>
             <span>Preparing</span>
-            <h2>18</h2>
+            <h2>{preparingOrders}</h2>
           </div>
         </div>
 
         <div className="order-stat-card">
           <div className="order-stat-indicator delivered"></div>
-
           <div>
             <span>Delivered</span>
-            <h2>1,200</h2>
+            <h2>{deliveredOrders}</h2>
           </div>
         </div>
 
@@ -118,18 +214,30 @@ function Orders() {
       {/* Filters */}
       <div className="orders-toolbar">
 
+        {/* Search */}
         <div className="order-search">
           <span>⌕</span>
 
           <input
             type="text"
             placeholder="Search order/customer..."
+            value={searchTerm}
+            onChange={(e) =>
+              setSearchTerm(e.target.value)
+            }
           />
         </div>
 
+        {/* Filters */}
         <div className="order-filters">
 
-          <select defaultValue="all">
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) =>
+              setStatusFilter(e.target.value)
+            }
+          >
             <option value="all">All Status</option>
 
             {statusOptions.slice(1).map((status) => (
@@ -139,7 +247,13 @@ function Orders() {
             ))}
           </select>
 
-          <select defaultValue="all">
+          {/* Date Filter */}
+          <select
+            value={dateFilter}
+            onChange={(e) =>
+              setDateFilter(e.target.value)
+            }
+          >
             <option value="all">All Dates</option>
             <option value="today">Today</option>
             <option value="yesterday">Yesterday</option>
@@ -147,15 +261,20 @@ function Orders() {
             <option value="month">This Month</option>
           </select>
 
-          <select defaultValue="all">
+          {/* Payment Filter */}
+          <select
+            value={paymentFilter}
+            onChange={(e) =>
+              setPaymentFilter(e.target.value)
+            }
+          >
             <option value="all">All Payments</option>
-            <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
-            <option value="failed">Failed</option>
+            <option value="Paid">Paid</option>
+            <option value="Pending">Pending</option>
+            <option value="Failed">Failed</option>
           </select>
 
         </div>
-
       </div>
 
       {/* Orders Table */}
@@ -180,79 +299,124 @@ function Orders() {
 
             <tbody>
 
-              {orders.map((order) => (
-                <tr key={order.id}>
+              {filteredOrders.length > 0 ? (
 
-                  <td>
-                    <strong className="order-id">
-                      #{order.id}
-                    </strong>
+                filteredOrders.map((order) => (
+
+                  <tr key={order._id}>
+
+                    {/* Order ID */}
+                    <td>
+                      <strong className="order-id">
+                        #{order.orderNumber}
+                      </strong>
+                    </td>
+
+                    {/* Customer */}
+                    <td>
+                      <span className="customer-name">
+                        {order.customer?.name ||
+                          "Unknown Customer"}
+                      </span>
+                    </td>
+
+                    {/* Date */}
+                    <td>
+                      <span className="order-date">
+                        {new Date(
+                          order.createdAt
+                        ).toLocaleDateString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </td>
+
+                    {/* Items */}
+                    <td>
+                      <span className="order-items">
+                        {order.items?.reduce(
+                          (total, item) =>
+                            total + item.quantity,
+                          0
+                        )}
+                      </span>
+                    </td>
+
+                    {/* Total */}
+                    <td>
+                      <strong className="order-total">
+                        ₹
+                        {order.total?.toLocaleString(
+                          "en-IN"
+                        )}
+                      </strong>
+                    </td>
+
+                    {/* Payment */}
+                    <td>
+                      <span
+                        className={`payment-status ${
+                          order.paymentStatus === "Paid"
+                            ? "payment-paid"
+                            : "payment-pending"
+                        }`}
+                      >
+                        {order.paymentStatus}
+                      </span>
+                    </td>
+
+                    {/* Status */}
+                    <td>
+                      <span
+                        className={`order-status status-${order.status
+                          ?.toLowerCase()
+                          .replaceAll(" ", "-")}`}
+                      >
+                        {order.status}
+                      </span>
+                    </td>
+
+                    {/* Action */}
+                    <td>
+                      <button
+                        className="view-order-button"
+                        onClick={() =>
+                          navigate(
+                            `/admin/orders/${order._id}`
+                          )
+                        }
+                      >
+                        View
+                      </button>
+                    </td>
+
+                  </tr>
+
+                ))
+
+              ) : (
+
+                <tr>
+                  <td
+                    colSpan="8"
+                    style={{
+                      textAlign: "center",
+                      padding: "30px",
+                    }}
+                  >
+                    No orders found.
                   </td>
-
-                  <td>
-                    <span className="customer-name">
-                      {order.customer}
-                    </span>
-                  </td>
-
-                  <td>
-                    <span className="order-date">
-                      {order.date}
-                    </span>
-                  </td>
-
-                  <td>
-                    <span className="order-items">
-                      {order.items}
-                    </span>
-                  </td>
-
-                  <td>
-                    <strong className="order-total">
-                      ₹{order.total}
-                    </strong>
-                  </td>
-
-                  <td>
-                    <span
-                      className={`payment-status ${
-                        order.payment === "Paid"
-                          ? "payment-paid"
-                          : "payment-pending"
-                      }`}
-                    >
-                      {order.payment}
-                    </span>
-                  </td>
-
-                  <td>
-                    <span
-                      className={`order-status status-${order.status
-                        .toLowerCase()
-                        .replaceAll(" ", "-")}`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-
-                  <td>
-                    <button
-  className="view-order-button"
-  onClick={() => navigate(`/admin/orders/${order.id}`)}
->
-  View
-</button>
-                  </td>
-
                 </tr>
-              ))}
+
+              )}
 
             </tbody>
 
           </table>
 
         </div>
-
       </div>
 
     </div>
