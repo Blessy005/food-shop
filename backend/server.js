@@ -10,6 +10,7 @@ const connectDB = require("./config/db");
 const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const orderRoutes = require("./routes/orderRoutes");
 
 const app = express();
 
@@ -31,6 +32,9 @@ app.use("/api/auth", authRoutes);
 
 // User routes
 app.use("/api/users", userRoutes);
+
+// Order routes
+app.use("/api/orders", orderRoutes);
 
 // Test route
 app.get("/", (req, res) => {
