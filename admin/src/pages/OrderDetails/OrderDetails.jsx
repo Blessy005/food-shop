@@ -1,47 +1,188 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import "./OrderDetails.css";
 
 function OrderDetails() {
-  const order = {
-    id: "FF1024",
-    customer: {
-      name: "Arun Kumar",
-      email: "arun@gmail.com",
-      phone: "9876543210",
-    },
-    date: "August 24, 2026",
-    status: "Preparing",
-    payment: "Paid",
+  const { id } = useParams();
+  const navigate = useNavigate();
 
-    items: [
-      {
-        name: "Chicken Biryani",
-        quantity: 2,
-        price: 180,
-      },
-      {
-        name: "Mango Shake",
-        quantity: 1,
-        price: 120,
-      },
-    ],
+  const [order, setOrder] = useState(null);
+  const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+  const [error, setError] = useState("");
 
-    subtotal: 480,
-    deliveryFee: 40,
-    total: 520,
+  // Fetch single order from MongoDB
+  useEffect(() => {
+    const fetchOrder = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const token = localStorage.getItem("adminToken");
+
+        const response = await fetch(
+          `http://localhost:5000/api/orders/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message || "Failed to fetch order."
+          );
+        }
+
+        setOrder(data);
+        setStatus(data.status);
+      } catch (err) {
+        console.error("Fetch Order Error:", err);
+        setError(
+          err.message || "Unable to load order details."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrder();
+  }, [id]);
+
+  // Update order status
+  const handleUpdateStatus = async () => {
+    try {
+      setUpdating(true);
+
+      const token = localStorage.getItem("adminToken");
+
+      const response = await fetch(
+        `http://localhost:5000/api/orders/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            status,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to update order status."
+        );
+      }
+
+      setOrder(data.order);
+      setStatus(data.order.status);
+
+      alert("Order status updated successfully.");
+    } catch (err) {
+      console.error("Update Order Error:", err);
+      alert(
+        err.message ||
+          "Something went wrong while updating the order."
+      );
+    } finally {
+      setUpdating(false);
+    }
   };
+
+  // Loading
+  if (loading) {
+    return (
+      <div className="order-details-page">
+        <div className="order-details-header">
+          <div>
+            <p className="order-details-back">
+              Orders / Order Details
+            </p>
+
+            <h1>Order Details</h1>
+
+            <p>Loading order information...</p>
+          </div>
+        </div>
+
+        <div className="order-details-card">
+          <p>Loading order...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error
+  if (error || !order) {
+    return (
+      <div className="order-details-page">
+        <div className="order-details-header">
+          <div>
+            <p className="order-details-back">
+              Orders / Order Details
+            </p>
+
+            <h1>Order Details</h1>
+
+            <p>
+              {error || "Order not found."}
+            </p>
+          </div>
+        </div>
+
+        <div className="order-details-card">
+          <p>
+            {error || "Order not found."}
+          </p>
+
+          <button
+            type="button"
+            className="update-status-button"
+            onClick={() => navigate("/admin/orders")}
+          >
+            Back to Orders
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const customer = order.customer || {};
+
+  const formattedDate = order.createdAt
+    ? new Date(order.createdAt).toLocaleDateString(
+        "en-IN",
+        {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        }
+      )
+    : "N/A";
 
   return (
     <div className="order-details-page">
-
       {/* Page Header */}
       <div className="order-details-header">
         <div>
-          <p className="order-details-back">Orders / Order Details</p>
+          <p className="order-details-back">
+            Orders / Order Details
+          </p>
 
-          <h1>Order #{order.id}</h1>
+          <h1>
+            Order #{order.orderNumber}
+          </h1>
 
           <p>
-            Placed on {order.date}
+            Placed on {formattedDate}
           </p>
         </div>
 
@@ -58,71 +199,102 @@ function OrderDetails() {
 
           {/* Customer */}
           <section className="order-details-card">
-
             <div className="order-card-header">
               <h2>Customer</h2>
             </div>
 
             <div className="customer-details">
-
               <div className="customer-avatar">
-                {order.customer.name.charAt(0)}
+                {customer.name
+                  ? customer.name
+                      .charAt(0)
+                      .toUpperCase()
+                  : "?"}
               </div>
 
               <div className="customer-info">
-                <h3>{order.customer.name}</h3>
+                <h3>
+                  {customer.name ||
+                    "Unknown Customer"}
+                </h3>
 
-                <p>{order.customer.email}</p>
+                <p>
+                  {customer.email ||
+                    "No email available"}
+                </p>
 
-                <p>{order.customer.phone}</p>
+                <p>
+                  {customer.phone ||
+                    "No phone available"}
+                </p>
               </div>
-
             </div>
-
           </section>
 
           {/* Items */}
           <section className="order-details-card">
-
             <div className="order-card-header">
               <h2>Items</h2>
 
               <span>
-                {order.items.length} products
+                {order.items?.length || 0} products
               </span>
             </div>
 
             <div className="order-items-list">
-
-              {order.items.map((item, index) => (
+              {order.items?.map((item, index) => (
                 <div
                   className="order-item"
                   key={index}
                 >
-
                   <div className="order-item-image">
-                    🍴
+                    {item.product?.image ? (
+                      <img
+                        src={
+                          item.product.image.startsWith(
+                            "/uploads"
+                          )
+                            ? `http://localhost:5000${item.product.image}`
+                            : item.product.image
+                        }
+                        alt={
+                          item.name ||
+                          item.product.name
+                        }
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: "8px",
+                        }}
+                      />
+                    ) : (
+                      "🍴"
+                    )}
                   </div>
 
                   <div className="order-item-info">
-                    <h3>{item.name}</h3>
+                    <h3>
+                      {item.name ||
+                        item.product?.name ||
+                        "Unknown Product"}
+                    </h3>
 
                     <p>
-                      ₹{item.price} × {item.quantity}
+                      ₹{item.price} ×{" "}
+                      {item.quantity}
                     </p>
                   </div>
 
                   <strong>
-                    ₹{item.price * item.quantity}
+                    ₹
+                    {Number(item.price) *
+                      Number(item.quantity)}
                   </strong>
-
                 </div>
               ))}
-
             </div>
-
           </section>
-
         </div>
 
         {/* Right Section */}
@@ -130,80 +302,108 @@ function OrderDetails() {
 
           {/* Payment Summary */}
           <section className="order-details-card">
-
             <div className="order-card-header">
               <h2>Payment Summary</h2>
             </div>
 
             <div className="payment-summary">
-
               <div>
                 <span>Subtotal</span>
-                <strong>₹{order.subtotal}</strong>
+
+                <strong>
+                  ₹{order.subtotal}
+                </strong>
               </div>
 
               <div>
                 <span>Delivery Fee</span>
-                <strong>₹{order.deliveryFee}</strong>
+
+                <strong>
+                  ₹{order.deliveryFee}
+                </strong>
               </div>
 
               <div className="payment-total">
                 <span>Total</span>
-                <strong>₹{order.total}</strong>
-              </div>
 
+                <strong>
+                  ₹{order.total}
+                </strong>
+              </div>
             </div>
 
             <div className="payment-method">
               <span>Payment Status</span>
 
-              <span className="payment-paid">
-                {order.payment}
+              <span
+                className={
+                  order.paymentStatus === "Paid"
+                    ? "payment-paid"
+                    : "payment-paid"
+                }
+              >
+                {order.paymentStatus}
               </span>
             </div>
-
           </section>
 
           {/* Order Status */}
           <section className="order-details-card">
-
             <div className="order-card-header">
               <h2>Order Status</h2>
             </div>
 
             <div className="status-form">
-
               <label htmlFor="order-status">
                 Current Status
               </label>
 
               <select
                 id="order-status"
-                defaultValue={order.status}
+                value={status}
+                onChange={(e) =>
+                  setStatus(e.target.value)
+                }
               >
-                <option>Pending</option>
-                <option>Confirmed</option>
-                <option>Preparing</option>
-                <option>Out for Delivery</option>
-                <option>Delivered</option>
-                <option>Cancelled</option>
+                <option value="Pending">
+                  Pending
+                </option>
+
+                <option value="Confirmed">
+                  Confirmed
+                </option>
+
+                <option value="Preparing">
+                  Preparing
+                </option>
+
+                <option value="Out for Delivery">
+                  Out for Delivery
+                </option>
+
+                <option value="Delivered">
+                  Delivered
+                </option>
+
+                <option value="Cancelled">
+                  Cancelled
+                </option>
               </select>
 
               <button
                 type="button"
                 className="update-status-button"
+                onClick={handleUpdateStatus}
+                disabled={updating}
               >
-                Update Status
+                {updating
+                  ? "Updating..."
+                  : "Update Status"}
               </button>
-
             </div>
-
           </section>
-
         </div>
-
       </div>
-
     </div>
   );
 }
