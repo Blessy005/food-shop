@@ -26,8 +26,11 @@ function HeroSection() {
 
         {/* Right Content */}
         <div className="hero-image">
-          <div className="hero-placeholder">Food Image</div>
-        </div>
+  <img
+    src="/images/foods/hero-food.jpg"
+    alt="Delicious food from Flavor Feast"
+  />
+</div>
       </div>
     </section>
   );

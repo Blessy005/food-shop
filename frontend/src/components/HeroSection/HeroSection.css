@@ -100,7 +100,9 @@
 .hero-image img {
   max-width: 500px;
   width: 100%;
-  object-fit: contain;
+  height: 500px;
+  object-fit: cover;
+  border-radius: 28px;
 }
 
 .hero-placeholder {
