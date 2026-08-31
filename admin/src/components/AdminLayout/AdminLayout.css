@@ -4,20 +4,25 @@
 
 .admin-layout {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   background-color: var(--background);
+  overflow-x: hidden;
 }
 
 .admin-main {
   flex: 1;
   min-width: 0;
+  width: 0;
   margin-left: var(--sidebar-width);
   padding-top: var(--topbar-height);
 }
 
 .admin-content {
   min-height: calc(100vh - var(--topbar-height));
+  width: 100%;
   padding: 30px;
+  box-sizing: border-box;
 }
 
 /* =========================================
