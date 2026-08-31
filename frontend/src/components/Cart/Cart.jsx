@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 function Cart({ cart, increaseQuantity, decreaseQuantity, removeFromCart }) {
   const navigate = useNavigate();
+
   const subtotal = cart.reduce(
     (total, item) => total + Number(item.price) * item.quantity,
     0,
@@ -27,12 +28,25 @@ function Cart({ cart, increaseQuantity, decreaseQuantity, removeFromCart }) {
             <div className="cart-items">
               {cart.map((item) => (
                 <div className="cart-item" key={item.id}>
+                  {/* Food Image */}
+                  <div className="cart-item-image">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      onError={(e) => {
+                        e.currentTarget.style.visibility = "hidden";
+                      }}
+                    />
+                  </div>
+
+                  {/* Food Details */}
                   <div className="cart-item-info">
                     <h3>{item.name}</h3>
                     <p>{item.category}</p>
                     <span>₹{item.price}</span>
                   </div>
 
+                  {/* Quantity Controls */}
                   <div className="cart-controls">
                     <button onClick={() => decreaseQuantity(item.id)}>−</button>
 
