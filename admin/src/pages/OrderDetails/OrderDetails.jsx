@@ -8,6 +8,7 @@ function OrderDetails() {
 
   const [order, setOrder] = useState(null);
   const [status, setStatus] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState("");
@@ -40,8 +41,10 @@ function OrderDetails() {
 
         setOrder(data);
         setStatus(data.status);
+        setPaymentStatus(data.paymentStatus);
       } catch (err) {
         console.error("Fetch Order Error:", err);
+
         setError(
           err.message || "Unable to load order details."
         );
@@ -88,9 +91,61 @@ function OrderDetails() {
       alert("Order status updated successfully.");
     } catch (err) {
       console.error("Update Order Error:", err);
+
       alert(
         err.message ||
           "Something went wrong while updating the order."
+      );
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  // Update payment status
+  const handleUpdatePaymentStatus = async () => {
+    try {
+      setUpdating(true);
+
+      const token = localStorage.getItem("adminToken");
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/orders/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            paymentStatus,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to update payment status."
+        );
+      }
+
+      setOrder(data.order);
+      setPaymentStatus(data.order.paymentStatus);
+
+      alert(
+        "Payment status updated successfully."
+      );
+    } catch (err) {
+      console.error(
+        "Update Payment Status Error:",
+        err
+      );
+
+      alert(
+        err.message ||
+          "Something went wrong while updating payment status."
       );
     } finally {
       setUpdating(false);
@@ -158,18 +213,18 @@ function OrderDetails() {
   const customer = order.customer || {};
 
   const formattedDate = order.createdAt
-    ? new Date(order.createdAt).toLocaleDateString(
-        "en-IN",
-        {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        }
-      )
+    ? new Date(
+        order.createdAt
+      ).toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
     : "N/A";
 
   return (
     <div className="order-details-page">
+
       {/* Page Header */}
       <div className="order-details-header">
         <div>
@@ -332,19 +387,43 @@ function OrderDetails() {
               </div>
             </div>
 
+            {/* Payment Status */}
             <div className="payment-method">
               <span>Payment Status</span>
 
-              <span
-                className={
-                  order.paymentStatus === "Paid"
-                    ? "payment-paid"
-                    : "payment-paid"
+              <select
+                className="payment-status-select"
+                value={paymentStatus}
+                onChange={(e) =>
+                  setPaymentStatus(e.target.value)
                 }
               >
-                {order.paymentStatus}
-              </span>
+                <option value="Pending">
+                  Pending
+                </option>
+
+                <option value="Paid">
+                  Paid
+                </option>
+
+                <option value="Failed">
+                  Failed
+                </option>
+              </select>
             </div>
+
+            <button
+              type="button"
+              className="update-payment-button"
+              onClick={
+                handleUpdatePaymentStatus
+              }
+              disabled={updating}
+            >
+              {updating
+                ? "Updating..."
+                : "Update Payment Status"}
+            </button>
           </section>
 
           {/* Order Status */}
