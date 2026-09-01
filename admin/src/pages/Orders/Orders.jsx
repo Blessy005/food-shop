@@ -30,7 +30,6 @@ function Orders() {
         setLoading(true);
         setError("");
 
-        // Get the logged-in admin token
         const token = localStorage.getItem("adminToken");
 
         const response = await fetch(
@@ -39,19 +38,23 @@ function Orders() {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          },
+          }
         );
 
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || "Failed to fetch orders.");
+          throw new Error(
+            data.message || "Failed to fetch orders."
+          );
         }
 
         setOrders(data);
       } catch (err) {
         console.error("Fetch Orders Error:", err);
-        setError("Unable to load orders. Please try again.");
+        setError(
+          "Unable to load orders. Please try again."
+        );
       } finally {
         setLoading(false);
       }
@@ -60,12 +63,11 @@ function Orders() {
     fetchOrders();
   }, []);
 
-  // Filter orders based on search and selected filters
+  // Filter orders
   const filteredOrders = orders.filter((order) => {
     const customerName = order.customer?.name || "";
     const customerEmail = order.customer?.email || "";
 
-    // Search by order number, customer name, or email
     const matchesSearch =
       !searchTerm ||
       order.orderNumber
@@ -78,38 +80,37 @@ function Orders() {
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
 
-    // Filter by order status
     const matchesStatus =
       statusFilter === "All Status" ||
       order.status === statusFilter;
 
-    // Filter by payment status
     const matchesPayment =
       paymentFilter === "all" ||
       order.paymentStatus?.toLowerCase() === paymentFilter;
 
-    // Filter by date
     const orderDate = new Date(order.createdAt);
     const today = new Date();
 
     const startOfToday = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate(),
+      today.getDate()
     );
 
     const startOfYesterday = new Date(startOfToday);
-    startOfYesterday.setDate(startOfYesterday.getDate() - 1);
+    startOfYesterday.setDate(
+      startOfYesterday.getDate() - 1
+    );
 
     const startOfWeek = new Date(startOfToday);
     startOfWeek.setDate(
-      startOfWeek.getDate() - startOfWeek.getDay(),
+      startOfWeek.getDate() - startOfWeek.getDay()
     );
 
     const startOfMonth = new Date(
       today.getFullYear(),
       today.getMonth(),
-      1,
+      1
     );
 
     let matchesDate = true;
@@ -140,30 +141,28 @@ function Orders() {
     );
   });
 
-  // Calculate dashboard statistics from real orders
+  // Statistics
   const allOrdersCount = orders.length;
 
   const pendingCount = orders.filter(
-    (order) => order.status === "Pending",
+    (order) => order.status === "Pending"
   ).length;
 
   const preparingCount = orders.filter(
-    (order) => order.status === "Preparing",
+    (order) => order.status === "Preparing"
   ).length;
 
   const deliveredCount = orders.filter(
-    (order) => order.status === "Delivered",
+    (order) => order.status === "Delivered"
   ).length;
 
-  // Loading state
+  // Loading
   if (loading) {
     return (
       <div className="orders-page">
         <div className="orders-header">
-          <div>
-            <h1>Orders</h1>
-            <p>Track and manage customer orders.</p>
-          </div>
+          <h1>Orders</h1>
+          <p>Track and manage customer orders.</p>
         </div>
 
         <div className="orders-table-card">
@@ -175,19 +174,19 @@ function Orders() {
     );
   }
 
-  // Error state
+  // Error
   if (error) {
     return (
       <div className="orders-page">
         <div className="orders-header">
-          <div>
-            <h1>Orders</h1>
-            <p>Track and manage customer orders.</p>
-          </div>
+          <h1>Orders</h1>
+          <p>Track and manage customer orders.</p>
         </div>
 
         <div className="orders-table-card">
-          <p style={{ padding: "24px" }}>{error}</p>
+          <p style={{ padding: "24px" }}>
+            {error}
+          </p>
         </div>
       </div>
     );
@@ -198,10 +197,8 @@ function Orders() {
 
       {/* Page Header */}
       <div className="orders-header">
-        <div>
-          <h1>Orders</h1>
-          <p>Track and manage customer orders.</p>
-        </div>
+        <h1>Orders</h1>
+        <p>Track and manage customer orders.</p>
       </div>
 
       {/* Statistics */}
@@ -255,16 +252,19 @@ function Orders() {
             type="text"
             placeholder="Search order/customer..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) =>
+              setSearchTerm(e.target.value)
+            }
           />
         </div>
 
         <div className="order-filters">
 
-          {/* Status Filter */}
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) =>
+              setStatusFilter(e.target.value)
+            }
           >
             {statusOptions.map((status) => (
               <option key={status} value={status}>
@@ -273,29 +273,41 @@ function Orders() {
             ))}
           </select>
 
-          {/* Date Filter */}
           <select
             value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
+            onChange={(e) =>
+              setDateFilter(e.target.value)
+            }
           >
             <option value="all">All Dates</option>
             <option value="today">Today</option>
-            <option value="yesterday">Yesterday</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
+            <option value="yesterday">
+              Yesterday
+            </option>
+            <option value="week">
+              This Week
+            </option>
+            <option value="month">
+              This Month
+            </option>
           </select>
 
-          {/* Payment Filter */}
           <select
             value={paymentFilter}
             onChange={(e) =>
               setPaymentFilter(e.target.value)
             }
           >
-            <option value="all">All Payments</option>
+            <option value="all">
+              All Payments
+            </option>
             <option value="paid">Paid</option>
-            <option value="pending">Pending</option>
-            <option value="failed">Failed</option>
+            <option value="pending">
+              Pending
+            </option>
+            <option value="failed">
+              Failed
+            </option>
           </select>
 
         </div>
@@ -303,9 +315,22 @@ function Orders() {
 
       {/* Orders Table */}
       <div className="orders-table-card">
+
         <div className="orders-table-wrapper">
 
           <table className="orders-table">
+
+            {/* Explicit column widths */}
+            <colgroup>
+              <col className="col-order-id" />
+              <col className="col-customer" />
+              <col className="col-date" />
+              <col className="col-items" />
+              <col className="col-total" />
+              <col className="col-payment" />
+              <col className="col-status" />
+              <col className="col-action" />
+            </colgroup>
 
             <thead>
               <tr>
@@ -337,14 +362,20 @@ function Orders() {
               ) : (
                 filteredOrders.map((order) => {
 
-                  // Format the MongoDB date
                   const formattedDate = new Date(
-                    order.createdAt,
+                    order.createdAt
                   ).toLocaleDateString("en-IN", {
                     day: "2-digit",
                     month: "short",
                     year: "numeric",
                   });
+
+                  const itemCount =
+                    order.items?.reduce(
+                      (total, item) =>
+                        total + item.quantity,
+                      0
+                    ) || 0;
 
                   return (
                     <tr key={order._id}>
@@ -374,11 +405,7 @@ function Orders() {
                       {/* Items */}
                       <td>
                         <span className="order-items">
-                          {order.items?.reduce(
-                            (total, item) =>
-                              total + item.quantity,
-                            0,
-                          )}
+                          {itemCount}
                         </span>
                       </td>
 
@@ -406,20 +433,21 @@ function Orders() {
                       <td>
                         <span
                           className={`order-status status-${order.status
-                            .toLowerCase()
+                            ?.toLowerCase()
                             .replaceAll(" ", "-")}`}
                         >
                           {order.status}
                         </span>
                       </td>
 
-                      {/* View Order */}
+                      {/* Action */}
                       <td>
                         <button
+                          type="button"
                           className="view-order-button"
                           onClick={() =>
                             navigate(
-                              `/admin/orders/${order._id}`,
+                              `/admin/orders/${order._id}`
                             )
                           }
                         >
