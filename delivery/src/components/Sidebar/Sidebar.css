@@ -1,0 +1,164 @@
+/* =========================================
+   Flavor Feast Delivery - Sidebar
+   ========================================= */
+
+.delivery-sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  height: 100vh;
+
+  position: sticky;
+  top: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+
+  z-index: 100;
+}
+
+/* ---------- Logo ---------- */
+
+.sidebar-logo {
+  padding: 1.5rem 1.5rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-logo h2 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.sidebar-logo span {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-light);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* ---------- Navigation ---------- */
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1.5rem 1rem;
+}
+
+.sidebar-heading {
+  padding: 0 0.75rem;
+  margin-bottom: 0.75rem;
+
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.sidebar-heading-spaced {
+  margin-top: 2rem;
+}
+
+/* ---------- Navigation Link ---------- */
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 5px;
+
+  border-radius: 8px;
+
+  color: var(--text-light);
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  transition: var(--transition);
+}
+
+.sidebar-link:hover {
+  background: rgba(230, 57, 70, 0.06);
+  color: var(--primary);
+}
+
+.sidebar-link.active {
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.sidebar-link.active:hover {
+  background: var(--primary-dark);
+  color: #ffffff;
+}
+
+/* ---------- Icons ---------- */
+
+.sidebar-icon {
+  width: 20px;
+  min-width: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1rem;
+}
+
+/* ---------- Bottom ---------- */
+
+.sidebar-bottom {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-logout {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 12px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: var(--text-light);
+
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  text-align: left;
+
+  transition: var(--transition);
+}
+
+.sidebar-logout:hover {
+  background: rgba(230, 57, 70, 0.08);
+  color: var(--danger);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 768px) {
+  .delivery-sidebar {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .sidebar-logo {
+    padding: 1.25rem 1rem;
+  }
+
+  .sidebar-nav {
+    padding: 1.25rem 0.75rem;
+  }
+}
