@@ -16,7 +16,6 @@
 
 .customers-header h1 {
   margin: 0;
-
   color: var(--text);
   font-size: 26px;
   font-weight: 600;
@@ -24,7 +23,6 @@
 
 .customers-header p {
   margin: 6px 0 0;
-
   color: var(--secondary-text);
   font-size: 13px;
 }
@@ -36,62 +34,44 @@
 .customer-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-
   gap: 18px;
-
   margin-bottom: 22px;
 }
 
 .customer-stat-card {
   display: flex;
   align-items: center;
-
   gap: 14px;
-
   min-height: 85px;
-
   padding: 18px;
-
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
-
   box-shadow: var(--card-shadow);
 }
 
 .customer-stat-icon {
   width: 44px;
   height: 44px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   border-radius: 10px;
-
   font-size: 18px;
   font-weight: 600;
 }
-
-/* Total */
 
 .customer-stat-icon.total {
   background-color: rgba(230, 57, 70, 0.1);
   color: var(--primary);
 }
 
-/* New */
-
 .customer-stat-icon.new {
   background-color: rgba(255, 209, 102, 0.25);
   color: #B77900;
-
   font-size: 22px;
 }
-
-/* Active */
 
 .customer-stat-icon.active {
   background-color: rgba(46, 155, 98, 0.1);
@@ -100,20 +80,15 @@
 
 .customer-stat-card span {
   display: block;
-
   margin-bottom: 5px;
-
   color: var(--secondary-text);
-
   font-size: 12px;
   font-weight: 500;
 }
 
 .customer-stat-card h2 {
   margin: 0;
-
   color: var(--text);
-
   font-size: 23px;
   font-weight: 600;
 }
@@ -129,12 +104,10 @@
 .customer-search {
   width: 100%;
   max-width: 500px;
-
   box-sizing: border-box;
 
   display: flex;
   align-items: center;
-
   gap: 9px;
 
   padding: 10px 13px;
@@ -146,19 +119,16 @@
 
 .customer-search span {
   color: var(--secondary-text);
-
   font-size: 18px;
 }
 
 .customer-search input {
   width: 100%;
-
   border: none;
   outline: none;
-
   background: transparent;
-  color: var(--text);
 
+  color: var(--text);
   font-family: inherit;
   font-size: 12px;
 }
@@ -181,50 +151,119 @@
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
-
   box-shadow: var(--card-shadow);
 }
 
 .customers-table-wrapper {
   width: 100%;
-
   overflow-x: auto;
 }
 
 /* =========================================
-   Table
+   TABLE
    ========================================= */
 
 .customers-table {
   width: 100%;
-
   min-width: 850px;
 
   border-collapse: collapse;
+  border-spacing: 0;
+
+  table-layout: fixed;
+}
+
+/* =========================================
+   EXACT COLUMN WIDTHS
+   ========================================= */
+
+/* Customer */
+.customers-table th:nth-child(1),
+.customers-table td:nth-child(1) {
+  width: 23%;
+}
+
+/* Email */
+.customers-table th:nth-child(2),
+.customers-table td:nth-child(2) {
+  width: 22%;
+}
+
+/* Orders */
+.customers-table th:nth-child(3),
+.customers-table td:nth-child(3) {
+  width: 12%;
+}
+
+/* Total Spent */
+.customers-table th:nth-child(4),
+.customers-table td:nth-child(4) {
+  width: 13%;
+}
+
+/* Joined */
+.customers-table th:nth-child(5),
+.customers-table td:nth-child(5) {
+  width: 12%;
+}
+
+/* Status */
+.customers-table th:nth-child(6),
+.customers-table td:nth-child(6) {
+  width: 10%;
+}
+
+/* Action */
+.customers-table th:nth-child(7),
+.customers-table td:nth-child(7) {
+  width: 8%;
+}
+
+/* =========================================
+   TABLE HEADER
+   ========================================= */
+
+.customers-table thead {
+  width: 100%;
+}
+
+.customers-table thead tr {
+  width: 100%;
 }
 
 .customers-table th {
-  padding: 14px 18px;
+  box-sizing: border-box;
+
+  height: 48px;
+  padding: 0 18px;
 
   background-color: #FFFCF5;
   border-bottom: 1px solid var(--border);
 
   color: var(--secondary-text);
-
   font-size: 11px;
   font-weight: 600;
 
   text-align: left;
+  vertical-align: middle;
+
   white-space: nowrap;
 }
 
+/* =========================================
+   TABLE BODY
+   ========================================= */
+
 .customers-table td {
-  padding: 14px 18px;
+  box-sizing: border-box;
+
+  height: 64px;
+  padding: 0 18px;
 
   border-bottom: 1px solid var(--border);
 
   font-size: 12px;
-
+  text-align: left;
   vertical-align: middle;
 }
 
@@ -245,10 +284,13 @@
    ========================================= */
 
 .customer-table-info {
+  width: 100%;
+
   display: flex;
   align-items: center;
 
   gap: 10px;
+  min-width: 0;
 }
 
 .customer-table-avatar {
@@ -271,6 +313,8 @@
 }
 
 .customer-table-info > div:last-child {
+  min-width: 0;
+
   display: flex;
   flex-direction: column;
 
@@ -282,12 +326,20 @@
 
   font-size: 12px;
   font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .customer-table-info span {
   color: var(--secondary-text);
 
   font-size: 9px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* =========================================
@@ -298,8 +350,15 @@
 .customer-orders,
 .customer-joined {
   color: var(--secondary-text);
-
   font-size: 11px;
+}
+
+.customer-email {
+  display: block;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .customer-spent {
