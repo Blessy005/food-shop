@@ -1,0 +1,169 @@
+/* =========================================
+   Flavor Feast Delivery - Login
+   ========================================= */
+
+.delivery-login-page {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2rem;
+
+  background: var(--background);
+}
+
+/* ---------- Card ---------- */
+
+.delivery-login-card {
+  width: 100%;
+  max-width: 440px;
+
+  padding: 2.5rem;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+
+  box-shadow: var(--shadow);
+}
+
+/* ---------- Brand ---------- */
+
+.delivery-login-brand {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.delivery-login-brand h1 {
+  margin: 0;
+
+  color: var(--primary);
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.delivery-login-brand span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: var(--text-light);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* ---------- Header ---------- */
+
+.delivery-login-header {
+  margin-bottom: 1.75rem;
+}
+
+.delivery-login-header h2 {
+  margin: 0 0 6px;
+
+  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.delivery-login-header p {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* ---------- Form ---------- */
+
+.delivery-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font-size: 0.9rem;
+
+  outline: none;
+
+  transition: var(--transition);
+}
+
+.form-group input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-group input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+}
+
+/* ---------- Login Button ---------- */
+
+.delivery-login-btn {
+  width: 100%;
+
+  margin-top: 0.5rem;
+  padding: 13px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: var(--primary);
+  color: #ffffff;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  transition: var(--transition);
+}
+
+.delivery-login-btn:hover {
+  background: var(--primary-dark);
+}
+
+/* ---------- Footer ---------- */
+
+.delivery-login-footer {
+  margin-top: 1.75rem;
+
+  text-align: center;
+
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 480px) {
+  .delivery-login-page {
+    padding: 1rem;
+  }
+
+  .delivery-login-card {
+    padding: 2rem 1.5rem;
+  }
+}
