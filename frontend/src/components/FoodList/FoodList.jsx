@@ -24,7 +24,7 @@ function FoodList({
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/products"
+          `${import.meta.env.VITE_API_URL}/products`
         );
 
         if (!response.ok) {
@@ -44,7 +44,7 @@ function FoodList({
           // Handle uploaded images
           image: product.image
             ? product.image.startsWith("/uploads")
-              ? `http://localhost:5000${product.image}`
+              ? `${import.meta.env.VITE_SERVER_URL}${product.image}`
               : product.image
             : "",
         }));
