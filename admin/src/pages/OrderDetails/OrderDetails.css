@@ -14,13 +14,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   margin-bottom: 24px;
 }
 
 .order-details-header h1 {
   margin: 4px 0 0;
-
   color: var(--text);
   font-size: 26px;
   font-weight: 600;
@@ -28,14 +26,12 @@
 
 .order-details-header > div > p:last-child {
   margin: 6px 0 0;
-
   color: var(--secondary-text);
   font-size: 12px;
 }
 
 .order-details-back {
   margin: 0;
-
   color: var(--secondary-text);
   font-size: 11px;
 }
@@ -46,12 +42,9 @@
 
 .order-details-status {
   padding: 7px 12px;
-
   border-radius: 20px;
-
   background-color: rgba(232, 155, 60, 0.12);
   color: #B56F16;
-
   font-size: 11px;
   font-weight: 600;
 }
@@ -63,9 +56,7 @@
 .order-details-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.9fr);
-
   gap: 20px;
-
   align-items: start;
 }
 
@@ -73,7 +64,6 @@
 .order-details-sidebar {
   display: flex;
   flex-direction: column;
-
   gap: 20px;
 }
 
@@ -83,11 +73,9 @@
 
 .order-details-card {
   padding: 22px;
-
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
-
   box-shadow: var(--card-shadow);
 }
 
@@ -99,17 +87,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding-bottom: 16px;
-
   border-bottom: 1px solid var(--border);
 }
 
 .order-card-header h2 {
   margin: 0;
-
   color: var(--text);
-
   font-size: 15px;
   font-weight: 600;
 }
@@ -126,45 +110,34 @@
 .customer-details {
   display: flex;
   align-items: center;
-
   gap: 14px;
-
   padding-top: 18px;
 }
 
 .customer-avatar {
   width: 48px;
   height: 48px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   border-radius: 50%;
-
   background-color: rgba(255, 209, 102, 0.35);
   color: var(--text);
-
   font-size: 18px;
   font-weight: 600;
 }
 
 .customer-info h3 {
   margin: 0 0 5px;
-
   color: var(--text);
-
   font-size: 14px;
   font-weight: 600;
 }
 
 .customer-info p {
   margin: 3px 0;
-
   color: var(--secondary-text);
-
   font-size: 11px;
 }
 
@@ -179,11 +152,8 @@
 .order-item {
   display: flex;
   align-items: center;
-
   gap: 14px;
-
   padding: 15px 0;
-
   border-bottom: 1px solid var(--border);
 }
 
@@ -195,17 +165,12 @@
 .order-item-image {
   width: 48px;
   height: 48px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   flex-shrink: 0;
-
   border-radius: 8px;
-
   background-color: var(--background);
-
   font-size: 20px;
 }
 
@@ -215,24 +180,19 @@
 
 .order-item-info h3 {
   margin: 0 0 5px;
-
   color: var(--text);
-
   font-size: 13px;
   font-weight: 600;
 }
 
 .order-item-info p {
   margin: 0;
-
   color: var(--secondary-text);
-
   font-size: 11px;
 }
 
 .order-item > strong {
   color: var(--text);
-
   font-size: 13px;
   font-weight: 600;
 }
@@ -249,19 +209,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 10px 0;
 }
 
 .payment-summary span {
   color: var(--secondary-text);
-
   font-size: 12px;
 }
 
 .payment-summary strong {
   color: var(--text);
-
   font-size: 12px;
   font-weight: 500;
 }
@@ -269,14 +226,12 @@
 .payment-summary .payment-total {
   margin-top: 8px;
   padding-top: 15px;
-
   border-top: 1px solid var(--border);
 }
 
 .payment-summary .payment-total span,
 .payment-summary .payment-total strong {
   color: var(--text);
-
   font-size: 14px;
   font-weight: 600;
 }
@@ -289,29 +244,60 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   margin-top: 12px;
   padding-top: 15px;
-
   border-top: 1px solid var(--border);
 }
 
 .payment-method > span:first-child {
   color: var(--secondary-text);
-
   font-size: 11px;
 }
 
-.payment-paid {
-  padding: 5px 9px;
-
-  border-radius: 20px;
-
-  background-color: rgba(46, 155, 98, 0.1);
-  color: var(--success);
-
+.payment-status-select {
+  min-width: 110px;
+  padding: 6px 9px;
+  border: 1px solid var(--border);
+  border-radius: var(--input-radius);
+  background-color: var(--white);
+  color: var(--text);
+  font-family: inherit;
   font-size: 10px;
   font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.payment-status-select:focus {
+  border-color: var(--primary);
+}
+
+/* =========================================
+   Update Payment Status Button
+   ========================================= */
+
+.update-payment-button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: var(--button-radius);
+  background-color: var(--primary);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.update-payment-button:hover {
+  background-color: var(--danger);
+}
+
+.update-payment-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* =========================================
@@ -321,15 +307,12 @@
 .status-form {
   display: flex;
   flex-direction: column;
-
   gap: 8px;
-
   padding-top: 16px;
 }
 
 .status-form label {
   color: var(--text);
-
   font-size: 11px;
   font-weight: 600;
 }
@@ -337,20 +320,14 @@
 .status-form select {
   width: 100%;
   box-sizing: border-box;
-
   height: 40px;
-
   padding: 0 10px;
-
   border: 1px solid var(--border);
   border-radius: var(--input-radius);
-
   background-color: var(--white);
   color: var(--text);
-
   font-family: inherit;
   font-size: 11px;
-
   outline: none;
   cursor: pointer;
 }
@@ -365,28 +342,26 @@
 
 .update-status-button {
   width: 100%;
-
   margin-top: 5px;
-
   padding: 10px 15px;
-
   border: none;
   border-radius: var(--button-radius);
-
   background-color: var(--primary);
   color: var(--white);
-
   font-family: inherit;
   font-size: 11px;
   font-weight: 600;
-
   cursor: pointer;
-
   transition: background-color 0.2s ease;
 }
 
 .update-status-button:hover {
   background-color: var(--danger);
+}
+
+.update-status-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* =========================================
@@ -403,7 +378,6 @@
   .order-details-header {
     align-items: flex-start;
     flex-direction: column;
-
     gap: 12px;
   }
 
