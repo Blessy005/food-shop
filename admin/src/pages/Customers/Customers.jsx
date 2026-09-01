@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import "./Customers.css";
 
 function Customers() {
@@ -77,11 +76,8 @@ function Customers() {
     const joinedDate = new Date(customer.createdAt);
     const currentDate = new Date();
 
-    const difference =
-      currentDate - joinedDate;
-
-    const days =
-      difference / (1000 * 60 * 60 * 24);
+    const difference = currentDate - joinedDate;
+    const days = difference / (1000 * 60 * 60 * 24);
 
     return days <= 30;
   }).length;
@@ -100,7 +96,6 @@ function Customers() {
     <div className="customers-page">
 
       {/* Page Header */}
-
       <div className="customers-header">
         <div>
           <h1>Customers</h1>
@@ -112,81 +107,76 @@ function Customers() {
       </div>
 
       {/* Statistics */}
-
       <div className="customer-stats">
 
         <div className="customer-stat-card">
-
           <div className="customer-stat-icon total">
             👥
           </div>
 
           <div>
             <span>Total Customers</span>
-
             <h2>{totalCustomers}</h2>
           </div>
-
         </div>
 
         <div className="customer-stat-card">
-
           <div className="customer-stat-icon new">
             +
           </div>
 
           <div>
             <span>New Customers</span>
-
             <h2>{newCustomers}</h2>
           </div>
-
         </div>
 
         <div className="customer-stat-card">
-
           <div className="customer-stat-icon active">
             ✓
           </div>
 
           <div>
             <span>Active Customers</span>
-
             <h2>{activeCustomers}</h2>
           </div>
-
         </div>
 
       </div>
 
       {/* Search */}
-
       <div className="customers-toolbar">
 
         <div className="customer-search">
-
           <span>⌕</span>
 
           <input
             type="text"
             placeholder="Search by name or email..."
             value={searchTerm}
-            onChange={(e) =>
-              setSearchTerm(e.target.value)
-            }
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
-
         </div>
 
       </div>
 
       {/* Customer Table */}
-
       <div className="customers-table-card">
 
         <div className="customers-table-wrapper">
 
           <table className="customers-table">
+
+            {/* Fixed column structure */}
+            <colgroup>
+              <col className="col-customer" />
+              <col className="col-email" />
+              <col className="col-orders" />
+              <col className="col-spent" />
+              <col className="col-joined" />
+              <col className="col-status" />
+              <col className="col-action" />
+            </colgroup>
 
             <thead>
               <tr>
@@ -209,17 +199,16 @@ function Customers() {
                   <tr key={customer._id}>
 
                     {/* Customer */}
-
                     <td>
-
                       <div className="customer-table-info">
 
                         <div className="customer-table-avatar">
-                          {customer.name?.charAt(0).toUpperCase()}
+                          {customer.name
+                            ?.charAt(0)
+                            .toUpperCase()}
                         </div>
 
                         <div>
-
                           <strong>
                             {customer.name}
                           </strong>
@@ -227,49 +216,35 @@ function Customers() {
                           <span>
                             {customer._id}
                           </span>
-
                         </div>
 
                       </div>
-
                     </td>
 
                     {/* Email */}
-
                     <td>
-
                       <span className="customer-email">
                         {customer.email}
                       </span>
-
                     </td>
 
                     {/* Orders */}
-
                     <td>
-
                       <span className="customer-orders">
                         0 orders
                       </span>
-
                     </td>
 
                     {/* Total Spent */}
-
                     <td>
-
                       <strong className="customer-spent">
                         ₹0
                       </strong>
-
                     </td>
 
                     {/* Joined */}
-
                     <td>
-
                       <span className="customer-joined">
-
                         {customer.createdAt
                           ? new Date(
                               customer.createdAt
@@ -282,26 +257,20 @@ function Customers() {
                               }
                             )
                           : "N/A"}
-
                       </span>
-
                     </td>
 
                     {/* Status */}
-
                     <td>
-
                       <span className="customer-status customer-active">
                         Active
                       </span>
-
                     </td>
 
                     {/* Action */}
-
                     <td>
-
                       <button
+                        type="button"
                         className="view-customer-button"
                         onClick={() =>
                           navigate(
@@ -311,7 +280,6 @@ function Customers() {
                       >
                         View
                       </button>
-
                     </td>
 
                   </tr>
@@ -321,7 +289,6 @@ function Customers() {
               ) : (
 
                 <tr>
-
                   <td
                     colSpan="7"
                     style={{
@@ -331,7 +298,6 @@ function Customers() {
                   >
                     No customers found.
                   </td>
-
                 </tr>
 
               )}
