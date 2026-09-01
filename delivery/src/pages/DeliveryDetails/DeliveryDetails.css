@@ -1,0 +1,391 @@
+/* =========================================
+   Flavor Feast Delivery - Delivery Details
+   ========================================= */
+
+.delivery-details-page {
+  width: 100%;
+}
+
+.delivery-details-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---------- Back Link ---------- */
+
+.delivery-back-link {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.delivery-back-link:hover {
+  color: var(--primary);
+}
+
+/* ---------- Header ---------- */
+
+.details-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.details-label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.details-header h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.details-header p {
+  margin-top: 5px;
+  color: var(--text-light);
+  font-size: 0.85rem;
+}
+
+/* ---------- Status Badge ---------- */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 13px;
+  border-radius: 50px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-out-for-delivery {
+  background: rgba(230, 57, 70, 0.1);
+  color: var(--primary);
+}
+
+/* ---------- Main Grid ---------- */
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ---------- Cards ---------- */
+
+.details-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.details-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.details-card-header h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.details-card-header p {
+  margin-top: 4px;
+  color: var(--text-light);
+  font-size: 0.75rem;
+}
+
+/* ---------- Order Information ---------- */
+
+.order-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  padding: 1.5rem;
+}
+
+.order-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.order-info-item span {
+  color: var(--text-light);
+  font-size: 0.72rem;
+}
+
+.order-info-item strong {
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+/* ---------- Details Section ---------- */
+
+.details-section {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.details-section h3 {
+  margin: 0 0 1rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+/* ---------- Order Items ---------- */
+
+.order-items {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-item strong {
+  color: var(--text);
+  font-size: 0.8rem;
+}
+
+.order-item span {
+  color: var(--text-light);
+  font-size: 0.7rem;
+}
+
+/* ---------- Customer Information ---------- */
+
+.customer-info {
+  padding: 1.5rem;
+}
+
+.customer-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.customer-avatar {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.customer-profile > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.customer-profile strong {
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.customer-profile span {
+  color: var(--text-light);
+  font-size: 0.7rem;
+}
+
+.customer-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.customer-detail:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.customer-detail span {
+  color: var(--text-light);
+  font-size: 0.7rem;
+}
+
+.customer-detail strong {
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* ---------- Delivery Status ---------- */
+
+.delivery-status-card {
+  margin-bottom: 1.5rem;
+}
+
+.delivery-status-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+
+.current-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 5px rgba(230, 57, 70, 0.1);
+}
+
+.current-status > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.current-status span:not(.status-indicator) {
+  color: var(--text-light);
+  font-size: 0.7rem;
+}
+
+.current-status strong {
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+/* ---------- Status Actions ---------- */
+
+.status-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-action-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.status-action-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.status-action-btn.primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.status-action-btn.primary:hover {
+  background: var(--primary-dark);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .details-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .details-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .delivery-status-content {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .status-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .status-action-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 450px) {
+  .order-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-card-header,
+  .order-info-grid,
+  .customer-info,
+  .details-section,
+  .delivery-status-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
