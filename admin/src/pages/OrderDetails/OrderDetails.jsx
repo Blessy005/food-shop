@@ -22,7 +22,7 @@ function OrderDetails() {
         const token = localStorage.getItem("adminToken");
 
         const response = await fetch(
-          `http://localhost:5000/api/orders/${id}`,
+          `${import.meta.env.VITE_API_URL}/orders/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ function OrderDetails() {
       const token = localStorage.getItem("adminToken");
 
       const response = await fetch(
-        `http://localhost:5000/api/orders/${id}`,
+        `${import.meta.env.VITE_API_URL}/orders/${id}`,
         {
           method: "PUT",
           headers: {
@@ -254,7 +254,7 @@ function OrderDetails() {
                           item.product.image.startsWith(
                             "/uploads"
                           )
-                            ? `http://localhost:5000${item.product.image}`
+                            ? `${import.meta.env.VITE_SERVER_URL}${item.product.image}`
                             : item.product.image
                         }
                         alt={
