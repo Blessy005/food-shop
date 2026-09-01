@@ -1,14 +1,24 @@
 import "./CategorySection.css";
+
 import categoryData from "../../data/categoryData";
 
 function CategorySection({
   selectedCategory,
   setSelectedCategory,
 }) {
+
+  // Scroll to full menu
+  const exploreFullMenu = () => {
+    document.getElementById("food-list")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  };
+
   return (
     <section className="categories" id="categories">
       <div className="container">
 
+        {/* Section Title */}
         <div className="section-title">
           <h2>Browse by Category</h2>
 
@@ -17,6 +27,7 @@ function CategorySection({
           </p>
         </div>
 
+        {/* Categories */}
         <div className="category-grid">
 
           {/* All Categories */}
@@ -45,6 +56,17 @@ function CategorySection({
           ))}
 
         </div>
+
+        {/* Explore Full Menu */}
+        <div className="explore-menu-wrapper">
+          <button
+            className="explore-menu-btn"
+            onClick={exploreFullMenu}
+          >
+            Explore Full Menu
+          </button>
+        </div>
+
       </div>
     </section>
   );
