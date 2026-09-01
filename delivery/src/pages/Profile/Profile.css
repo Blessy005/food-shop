@@ -1,0 +1,282 @@
+/* =========================================
+   Flavor Feast Delivery - Profile
+   ========================================= */
+
+.profile-page {
+  width: 100%;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ---------- Page Header ---------- */
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.profile-header h1 {
+  margin: 0;
+  color: var(--text);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.profile-header p {
+  margin-top: 5px;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+/* ---------- Edit Button ---------- */
+
+.profile-edit-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.profile-edit-btn:hover {
+  background: var(--primary-dark);
+}
+
+/* ---------- Profile Card ---------- */
+
+.profile-card {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* ---------- Profile Overview ---------- */
+
+.profile-overview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile-avatar-large {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.profile-overview h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.profile-overview p {
+  margin-top: 4px;
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+/* ---------- Profile Form ---------- */
+
+.profile-form {
+  padding: 1.5rem;
+}
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.profile-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.profile-form-group label {
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.profile-form-group input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  background: var(--background);
+  color: var(--text);
+  font-size: 0.85rem;
+  transition: var(--transition);
+}
+
+.profile-form-group input:focus {
+  border-color: var(--primary);
+}
+
+.profile-form-group input:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* ---------- Form Actions ---------- */
+
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.profile-cancel-btn,
+.profile-save-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.profile-cancel-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.profile-cancel-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.profile-save-btn {
+  border: none;
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.profile-save-btn:hover {
+  background: var(--primary-dark);
+}
+
+/* ---------- Availability Card ---------- */
+
+.availability-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+
+.availability-card-header h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.availability-card-header p {
+  margin-top: 4px;
+  color: var(--text-light);
+  font-size: 0.75rem;
+}
+
+.availability-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 50px;
+  background: rgba(42, 157, 143, 0.1);
+  color: var(--success);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.availability-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.availability-info {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-light);
+  font-size: 0.8rem;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 700px) {
+  .profile-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .availability-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-form {
+    padding: 1.25rem;
+  }
+
+  .profile-overview {
+    padding: 1.25rem;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .profile-cancel-btn,
+  .profile-save-btn {
+    width: 100%;
+  }
+}
