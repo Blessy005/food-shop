@@ -4,16 +4,36 @@ import { useNavigate } from "react-router-dom";
 function Header({ cartCount, user, onLogout }) {
   const navigate = useNavigate();
 
-  const navLinks = ["Home", "Menu", "Categories", "About", "Contact"];
+  const navLinks = [
+    { name: "Home", id: "home" },
+    { name: "Menu", id: "menu" },
+    { name: "Categories", id: "categories" },
+    { name: "About", id: "about" },
+    { name: "Contact", id: "contact" },
+  ];
 
+  // Go to favorites page
   const goToFavorites = () => {
-    navigate("/");
+    navigate("/favorites");
+  };
 
-    setTimeout(() => {
-      document.getElementById("favorites")?.scrollIntoView({
-        behavior: "smooth",
-      });
-    }, 100);
+  // Scroll to homepage section
+  const scrollToSection = (id) => {
+    if (window.location.pathname !== "/") {
+      navigate("/");
+
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }, 100);
+
+      return;
+    }
+
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -29,9 +49,15 @@ function Header({ cartCount, user, onLogout }) {
         <nav className="navbar">
           <ul className="nav-links">
             {navLinks.map((link) => (
-              <li key={link}>
-                <a href={`#${link.toLowerCase()}`}>
-                  {link}
+              <li key={link.name}>
+                <a
+                  href={`#${link.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection(link.id);
+                  }}
+                >
+                  {link.name}
                 </a>
               </li>
             ))}
