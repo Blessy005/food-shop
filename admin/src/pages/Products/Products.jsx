@@ -37,7 +37,7 @@ function Products() {
   useEffect(() => {
     setLoading(true);
 
-    fetch("http://localhost:5000/api/products")
+    fetch(`${import.meta.env.VITE_API_URL}/products`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch products");
@@ -193,7 +193,7 @@ function Products() {
                 filteredProducts.map((product) => {
                   const imageUrl = product.image
                     ? product.image.startsWith("/uploads")
-                      ? `http://localhost:5000${product.image}`
+                      ? `${import.meta.env.VITE_SERVER_URL}${product.image}`
                       : product.image
                     : "";
 
@@ -283,7 +283,7 @@ function Products() {
                                   localStorage.getItem("adminToken");
 
                                 const response = await fetch(
-                                  `http://localhost:5000/api/products/${product._id}`,
+                                  `${import.meta.env.VITE_API_URL}/products/${product._id}`,
                                   {
                                     method: "DELETE",
                                     headers: {
