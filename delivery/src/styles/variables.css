@@ -1,0 +1,43 @@
+:root {
+  /* Brand */
+  --primary: #e63946;
+  --primary-dark: #c92f3b;
+  --secondary: #ffd166;
+
+  /* Backgrounds */
+  --background: #fff8e7;
+  --surface: #ffffff;
+  --surface-light: #fffdf7;
+
+  /* Text */
+  --text: #333333;
+  --text-light: #777777;
+  --text-muted: #999999;
+
+  /* Borders */
+  --border: #e5e5e5;
+
+  /* Status */
+  --success: #2a9d8f;
+  --warning: #f4a261;
+  --danger: #e63946;
+  --info: #457b9d;
+
+  /* Layout */
+  --sidebar-width: 250px;
+  --topbar-height: 72px;
+  --radius: 12px;
+
+  /* Effects */
+  --shadow:
+    0 4px 15px rgba(0, 0, 0, 0.08);
+
+  --transition:
+    all 0.2s ease;
+
+  /* Typography */
+  --font:
+    "Poppins",
+    Arial,
+    sans-serif;
+}
