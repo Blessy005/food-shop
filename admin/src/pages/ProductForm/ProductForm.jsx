@@ -38,7 +38,7 @@ function ProductForm() {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/products/${id}`
+          `${import.meta.env.VITE_API_URL}/products/${id}`
         );
 
         if (!response.ok) {
@@ -59,7 +59,7 @@ function ProductForm() {
         // Show existing image
         if (product.image) {
           const imageUrl = product.image.startsWith("/uploads")
-            ? `http://localhost:5000${product.image}`
+            ? `${import.meta.env.VITE_SERVER_URL}${product.image}`
             : product.image;
 
           setImagePreview(imageUrl);
@@ -146,8 +146,8 @@ function ProductForm() {
       // Add = POST
       // Edit = PUT
       const url = isEditMode
-        ? `http://localhost:5000/api/products/${id}`
-        : "http://localhost:5000/api/products";
+        ? `${import.meta.env.VITE_API_URL}/products/${id}`
+        : `${import.meta.env.VITE_API_URL}/products`;
 
       const method = isEditMode ? "PUT" : "POST";
 
