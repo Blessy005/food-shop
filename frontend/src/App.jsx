@@ -1,39 +1,27 @@
 import { useState } from "react";
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 
 import Header from "./components/Header/Header";
-
 import HeroSection from "./components/HeroSection/HeroSection";
-
-import CategorySection from "./components/CategorySection/CategorySection";
-
-import AboutSection from "./components/AboutSection/AboutSection";
-
-import FoodList from "./components/FoodList/FoodList";
-
 import MenuSection from "./components/MenuSection/MenuSection";
-
+import CategorySection from "./components/CategorySection/CategorySection";
+import SearchBar from "./components/SearchBar/SearchBar";
+import FoodList from "./components/FoodList/FoodList";
+import AboutSection from "./components/AboutSection/AboutSection";
+import ContactSection from "./components/ContactSection/ContactSection";
 import Favorites from "./components/Favorites/Favorites";
 
 import Cart from "./components/Cart/Cart";
-
-import SearchBar from "./components/SearchBar/SearchBar";
-
 import Checkout from "./components/Checkout/Checkout";
-
 import OrderPlaced from "./components/OrderPlaced/OrderPlaced";
 
-import ContactSection from "./components/ContactSection/ContactSection";
-
 import Register from "./components/Register/Register";
-
 import Login from "./components/Login/Login";
 
 function App() {
-  // Customer Authentication
+  // Customer authentication
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("customerUser");
 
@@ -51,11 +39,10 @@ function App() {
     }
   });
 
-  // Customer Logout
+  // Customer logout
   const handleLogout = () => {
     localStorage.removeItem("customerToken");
     localStorage.removeItem("customerUser");
-
     setUser(null);
   };
 
@@ -65,16 +52,16 @@ function App() {
   // Favorites
   const [favorites, setFavorites] = useState([]);
 
-  // Selected Category
+  // Category and search
   const [selectedCategory, setSelectedCategory] = useState("All");
-
-  // Search
   const [searchTerm, setSearchTerm] = useState("");
 
   // Add item to cart
   const addToCart = (item) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
+      const existingItem = prevCart.find(
+        (cartItem) => cartItem.id === item.id
+      );
 
       if (existingItem) {
         return prevCart.map((cartItem) =>
@@ -83,7 +70,7 @@ function App() {
                 ...cartItem,
                 quantity: cartItem.quantity + 1,
               }
-            : cartItem,
+            : cartItem
         );
       }
 
@@ -106,8 +93,8 @@ function App() {
               ...item,
               quantity: item.quantity + 1,
             }
-          : item,
-      ),
+          : item
+      )
     );
   };
 
@@ -121,15 +108,17 @@ function App() {
                 ...item,
                 quantity: item.quantity - 1,
               }
-            : item,
+            : item
         )
-        .filter((item) => item.quantity > 0),
+        .filter((item) => item.quantity > 0)
     );
   };
 
-  // Remove item
+  // Remove item from cart
   const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.id !== id)
+    );
   };
 
   // Clear cart after placing order
@@ -137,60 +126,45 @@ function App() {
     setCart([]);
   };
 
-  // Add / Remove Favorites
+  // Add or remove favorites
   const toggleFavorite = (item) => {
     setFavorites((prevFavorites) => {
       const alreadyFavorite = prevFavorites.some(
-        (favorite) => favorite.id === item.id,
+        (favorite) => favorite.id === item.id
       );
 
       if (alreadyFavorite) {
-        return prevFavorites.filter((favorite) => favorite.id !== item.id);
+        return prevFavorites.filter(
+          (favorite) => favorite.id !== item.id
+        );
       }
 
       return [...prevFavorites, item];
     });
   };
 
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   return (
     <BrowserRouter>
       <div className="App">
-        <Header cartCount={cartCount} user={user} onLogout={handleLogout} />
+        <Header
+          cartCount={cartCount}
+          user={user}
+          onLogout={handleLogout}
+        />
 
         <Routes>
-          {/* Landing Page */}
+          {/* Homepage */}
           <Route
             path="/"
             element={
               <>
+                {/* Home */}
                 <HeroSection />
-
-                <AboutSection />
-
-                {/* Browse by Category */}
-                <CategorySection
-                  selectedCategory={selectedCategory}
-                  setSelectedCategory={setSelectedCategory}
-                />
-
-                <SearchBar
-                  searchTerm={searchTerm}
-                  setSearchTerm={setSearchTerm}
-                />
-
-                {/* Food List */}
-                <FoodList
-                  selectedCategory={selectedCategory}
-                  searchTerm={searchTerm}
-                  addToCart={addToCart}
-                  increaseQuantity={increaseQuantity}
-                  decreaseQuantity={decreaseQuantity}
-                  cart={cart}
-                  toggleFavorite={toggleFavorite}
-                  favorites={favorites}
-                />
 
                 {/* Popular Menu */}
                 <MenuSection
@@ -202,30 +176,57 @@ function App() {
                   favorites={favorites}
                 />
 
-                {/* Favorites */}
-                <Favorites
-                  favorites={favorites}
-                  addToCart={addToCart}
-                  toggleFavorite={toggleFavorite}
+                {/* Categories */}
+                <CategorySection
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
                 />
 
+                {/* Explore Full Menu */}
+                <SearchBar
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                />
+
+                <FoodList
+                  selectedCategory={selectedCategory}
+                  searchTerm={searchTerm}
+                  addToCart={addToCart}
+                  increaseQuantity={increaseQuantity}
+                  decreaseQuantity={decreaseQuantity}
+                  cart={cart}
+                  toggleFavorite={toggleFavorite}
+                  favorites={favorites}
+                />
+
+                {/* About */}
+                <AboutSection />
+
+                {/* Contact */}
                 <ContactSection />
               </>
             }
           />
 
           {/* Customer Register */}
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
 
           {/* Customer Login */}
           <Route
             path="/login"
             element={
-              <Login onLogin={(loggedInUser) => setUser(loggedInUser)} />
+              <Login
+                onLogin={(loggedInUser) =>
+                  setUser(loggedInUser)
+                }
+              />
             }
           />
 
-          {/* Cart Page */}
+          {/* Cart */}
           <Route
             path="/cart"
             element={
@@ -238,14 +239,34 @@ function App() {
             }
           />
 
-          {/* Checkout Page */}
+          {/* Favorites */}
           <Route
-            path="/checkout"
-            element={<Checkout cart={cart} clearCart={clearCart} />}
+            path="/favorites"
+            element={
+              <Favorites
+                favorites={favorites}
+                addToCart={addToCart}
+                toggleFavorite={toggleFavorite}
+              />
+            }
           />
 
-          {/* Order Placed Page */}
-          <Route path="/order-placed" element={<OrderPlaced />} />
+          {/* Checkout */}
+          <Route
+            path="/checkout"
+            element={
+              <Checkout
+                cart={cart}
+                clearCart={clearCart}
+              />
+            }
+          />
+
+          {/* Order confirmation */}
+          <Route
+            path="/order-placed"
+            element={<OrderPlaced />}
+          />
         </Routes>
       </div>
     </BrowserRouter>
