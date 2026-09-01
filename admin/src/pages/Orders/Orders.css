@@ -16,7 +16,6 @@
 
 .orders-header h1 {
   margin: 0;
-
   color: var(--text);
   font-size: 26px;
   font-weight: 600;
@@ -24,50 +23,39 @@
 
 .orders-header p {
   margin: 6px 0 0;
-
   color: var(--secondary-text);
   font-size: 13px;
 }
 
 /* =========================================
-   Order Statistics
+   Statistics
    ========================================= */
 
 .orders-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 18px;
-
   margin-bottom: 22px;
 }
 
 .order-stat-card {
   min-height: 85px;
-
   display: flex;
   align-items: center;
-
   gap: 14px;
-
   padding: 18px;
-
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
-
   box-shadow: var(--card-shadow);
 }
 
 .order-stat-indicator {
   width: 8px;
   height: 42px;
-
   flex-shrink: 0;
-
   border-radius: 10px;
 }
-
-/* Different indicators */
 
 .order-stat-indicator.all {
   background-color: var(--primary);
@@ -78,7 +66,7 @@
 }
 
 .order-stat-indicator.preparing {
-  background-color: #E89B3C;
+  background-color: #e89b3c;
 }
 
 .order-stat-indicator.delivered {
@@ -87,9 +75,7 @@
 
 .order-stat-card span {
   display: block;
-
   margin-bottom: 5px;
-
   color: var(--secondary-text);
   font-size: 12px;
   font-weight: 500;
@@ -97,7 +83,6 @@
 
 .order-stat-card h2 {
   margin: 0;
-
   color: var(--text);
   font-size: 23px;
   font-weight: 600;
@@ -111,23 +96,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 15px;
-
   margin-bottom: 18px;
 }
 
 .order-search {
   flex: 1;
   max-width: 420px;
-
   display: flex;
   align-items: center;
-
   gap: 9px;
-
   padding: 10px 13px;
-
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--input-radius);
@@ -140,13 +119,10 @@
 
 .order-search input {
   width: 100%;
-
   border: none;
   outline: none;
-
   background: transparent;
   color: var(--text);
-
   font-family: inherit;
   font-size: 12px;
 }
@@ -166,18 +142,13 @@
 
 .order-filters select {
   min-width: 125px;
-
   padding: 10px 12px;
-
   border: 1px solid var(--border);
   border-radius: var(--input-radius);
-
   background-color: var(--white);
   color: var(--text);
-
   font-family: inherit;
   font-size: 12px;
-
   outline: none;
   cursor: pointer;
 }
@@ -187,16 +158,15 @@
 }
 
 /* =========================================
-   Orders Table Card
+   Table Card
    ========================================= */
 
 .orders-table-card {
+  width: 100%;
   overflow: hidden;
-
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: var(--card-radius);
-
   box-shadow: var(--card-shadow);
 }
 
@@ -211,35 +181,82 @@
 
 .orders-table {
   width: 100%;
-
   min-width: 900px;
-
+  table-layout: fixed;
   border-collapse: collapse;
 }
 
-.orders-table th {
-  padding: 14px 18px;
+/* =========================================
+   Fixed Column Widths
+   ========================================= */
 
-  background-color: #FFFCF5;
-  border-bottom: 1px solid var(--border);
-
-  color: var(--secondary-text);
-
-  font-size: 11px;
-  font-weight: 600;
-
-  text-align: left;
-  white-space: nowrap;
+.orders-table .col-order-id {
+  width: 15%;
 }
 
-.orders-table td {
-  padding: 14px 18px;
+.orders-table .col-customer {
+  width: 15%;
+}
 
+.orders-table .col-date {
+  width: 14%;
+}
+
+.orders-table .col-items {
+  width: 8%;
+}
+
+.orders-table .col-total {
+  width: 11%;
+}
+
+.orders-table .col-payment {
+  width: 12%;
+}
+
+.orders-table .col-status {
+  width: 15%;
+}
+
+.orders-table .col-action {
+  width: 10%;
+}
+
+/* =========================================
+   Table Header
+   ========================================= */
+
+.orders-table thead {
+  width: 100%;
+}
+
+.orders-table th {
+  height: 48px;
+  padding: 0 18px;
+  background-color: #fffcf5;
   border-bottom: 1px solid var(--border);
-
-  font-size: 12px;
-
+  color: var(--secondary-text);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: left;
   vertical-align: middle;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   Table Body
+   ========================================= */
+
+.orders-table td {
+  height: 58px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+  text-align: left;
+  vertical-align: middle;
+  box-sizing: border-box;
 }
 
 .orders-table tbody tr:last-child td {
@@ -251,7 +268,39 @@
 }
 
 .orders-table tbody tr:hover {
-  background-color: #FFFCF7;
+  background-color: #fffcf7;
+}
+
+/* =========================================
+   Make Header & Body Use Exact Same Padding
+   ========================================= */
+
+.orders-table th:first-child,
+.orders-table td:first-child {
+  padding-left: 18px;
+}
+
+.orders-table th:last-child,
+.orders-table td:last-child {
+  padding-right: 18px;
+}
+
+/* =========================================
+   Prevent Content From Changing Columns
+   ========================================= */
+
+.orders-table th,
+.orders-table td {
+  overflow: hidden;
+}
+
+.orders-table td > span,
+.orders-table td > strong {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* =========================================
@@ -261,6 +310,7 @@
 .order-id {
   color: var(--primary);
   font-size: 12px;
+  font-weight: 600;
 }
 
 .customer-name {
@@ -285,13 +335,12 @@
 .payment-status {
   display: inline-flex;
   align-items: center;
-
+  justify-content: center;
   padding: 5px 9px;
-
   border-radius: 20px;
-
   font-size: 10px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .payment-paid {
@@ -301,7 +350,7 @@
 
 .payment-pending {
   background-color: rgba(255, 209, 102, 0.2);
-  color: #B77900;
+  color: #b77900;
 }
 
 /* =========================================
@@ -311,51 +360,38 @@
 .order-status {
   display: inline-flex;
   align-items: center;
-
+  justify-content: center;
   padding: 5px 9px;
-
   border-radius: 20px;
-
   font-size: 10px;
   font-weight: 600;
+  white-space: nowrap;
 }
-
-/* Pending */
 
 .status-pending {
   background-color: rgba(255, 209, 102, 0.25);
-  color: #B77900;
+  color: #b77900;
 }
-
-/* Confirmed */
 
 .status-confirmed {
   background-color: rgba(80, 120, 200, 0.1);
-  color: #4F6FAE;
+  color: #4f6fae;
 }
-
-/* Preparing */
 
 .status-preparing {
   background-color: rgba(232, 155, 60, 0.12);
-  color: #B56F16;
+  color: #b56f16;
 }
-
-/* Out for Delivery */
 
 .status-out-for-delivery {
   background-color: rgba(230, 57, 70, 0.1);
   color: var(--primary);
 }
 
-/* Delivered */
-
 .status-delivered {
   background-color: rgba(46, 155, 98, 0.1);
   color: var(--success);
 }
-
-/* Cancelled */
 
 .status-cancelled {
   background-color: rgba(214, 40, 40, 0.1);
@@ -368,19 +404,14 @@
 
 .view-order-button {
   padding: 7px 12px;
-
   border: 1px solid var(--border);
   border-radius: var(--button-radius);
-
   background-color: var(--white);
   color: var(--primary);
-
   font-family: inherit;
   font-size: 11px;
   font-weight: 600;
-
   cursor: pointer;
-
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease;
