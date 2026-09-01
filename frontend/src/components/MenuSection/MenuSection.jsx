@@ -10,11 +10,16 @@ function MenuSection({
   toggleFavorite,
   favorites,
 }) {
-  // Select 12 popular foods
-  const popularFoods = menuData.slice(0, 12);
+  
+  // Select popular foods for the homepage
+const popularFoodIds = [25, 11, 1, 54, 31, 51, 56, 64];
+
+const popularFoods = menuData.filter((item) =>
+  popularFoodIds.includes(item.id)
+);
 
   return (
-    <section className="menu" id="popular-menu">
+    <section className="menu" id="menu">
       <div className="container">
 
         <div className="section-title">
