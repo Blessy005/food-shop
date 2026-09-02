@@ -1,7 +1,6 @@
 const User = require("../models/User");
 
 // GET ALL USERS
-
 const getUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
@@ -16,9 +15,7 @@ const getUsers = async (req, res) => {
   }
 };
 
-
 // GET SINGLE USER
-
 const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
@@ -40,7 +37,6 @@ const getUser = async (req, res) => {
 };
 
 // UPDATE USER
-
 const updateUser = async (req, res) => {
   try {
     const updateData = {
@@ -50,14 +46,10 @@ const updateUser = async (req, res) => {
     // Password should not be updated here
     delete updateData.password;
 
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    ).select("-password");
+    const user = await User.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
 
     if (!user) {
       return res.status(404).json({
@@ -78,8 +70,56 @@ const updateUser = async (req, res) => {
   }
 };
 
-// DELETE USER
+// UPDATE DELIVERY AVAILABILITY
+const updateDeliveryAvailability = async (req, res) => {
+  try {
+    const { isAvailable } = req.body;
 
+    if (typeof isAvailable !== "boolean") {
+      return res.status(400).json({
+        message: "isAvailable must be true or false",
+      });
+    }
+
+    const user = await User.findOneAndUpdate(
+      {
+        _id: req.user.id,
+        role: "delivery",
+      },
+      {
+        isAvailable,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Delivery partner not found",
+      });
+    }
+
+    // Send real-time availability update to Admin
+    const io = req.app.get("io");
+
+    io.emit("deliveryAvailabilityUpdated", user);
+
+    res.json({
+      message: "Availability updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Update Delivery Availability Error:", error);
+
+    res.status(500).json({
+      message: "Failed to update availability",
+    });
+  }
+};
+
+// DELETE USER
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -108,5 +148,6 @@ module.exports = {
   getUsers,
   getUser,
   updateUser,
+  updateDeliveryAvailability,
   deleteUser,
 };
