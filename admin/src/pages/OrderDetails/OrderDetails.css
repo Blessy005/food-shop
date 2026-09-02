@@ -365,6 +365,37 @@
 }
 
 /* =========================================
+   Delivery Details
+   ========================================= */
+
+.delivery-details-info {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 18px;
+}
+
+.delivery-detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.delivery-detail-row span {
+  color: var(--secondary-text);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.delivery-detail-row strong {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* =========================================
    Responsive
    ========================================= */
 
