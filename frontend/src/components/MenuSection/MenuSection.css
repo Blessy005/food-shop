@@ -3,27 +3,39 @@
   background: var(--background);
 }
 
-.menu .section-title {
+/* ============================= */
+/* Menu Header */
+/* ============================= */
+
+.menu-header {
   text-align: center;
   margin-bottom: 3rem;
 }
 
-.menu .section-title h2 {
+.menu-header h2 {
   font-size: 2.5rem;
   color: var(--text);
   margin-bottom: 0.8rem;
 }
 
-.menu .section-title p {
+.menu-header p {
   font-size: 1rem;
   color: var(--text-light);
 }
+
+/* ============================= */
+/* Menu Grid */
+/* ============================= */
 
 .menu-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
+
+/* ============================= */
+/* Menu Card */
+/* ============================= */
 
 .menu-card {
   background: var(--surface);
@@ -38,18 +50,24 @@
   box-shadow: var(--shadow);
 }
 
+/* ============================= */
+/* Food Image */
+/* ============================= */
+
 .food-image {
   height: 220px;
   background: #f3f3f3;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: var(--text-light);
   font-size: 1rem;
   font-weight: 600;
 }
+
+/* ============================= */
+/* Food Details */
+/* ============================= */
 
 .food-details {
   padding: 1.5rem;
@@ -65,6 +83,10 @@
   color: var(--text-light);
   margin-bottom: 1.5rem;
 }
+
+/* ============================= */
+/* Food Footer */
+/* ============================= */
 
 .food-footer {
   display: flex;
@@ -92,6 +114,10 @@
   background: var(--primary-dark);
 }
 
+/* ============================= */
+/* Responsive */
+/* ============================= */
+
 @media (max-width: 992px) {
   .menu-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -103,7 +129,7 @@
     grid-template-columns: 1fr;
   }
 
-  .menu .section-title h2 {
+  .menu-header h2 {
     font-size: 2rem;
   }
 }
