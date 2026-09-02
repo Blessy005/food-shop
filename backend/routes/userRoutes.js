@@ -6,15 +6,30 @@ const {
   getUsers,
   getUser,
   updateUser,
+  updateDeliveryAvailability,
   deleteUser,
 } = require("../controllers/userController");
 
 const {
   verifyToken,
   verifyAdmin,
+  verifyDelivery,
 } = require("../middleware/authMiddleware");
 
+// =========================================
+// DELIVERY AVAILABILITY
+// =========================================
+
+router.patch(
+  "/delivery/availability",
+  verifyToken,
+  verifyDelivery,
+  updateDeliveryAvailability
+);
+
+// =========================================
 // ADMIN-ONLY USER ROUTES
+// =========================================
 
 // Get all users
 router.get(
