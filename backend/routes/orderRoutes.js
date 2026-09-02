@@ -8,33 +8,53 @@ const {
   getOrder,
   updateOrder,
   deleteOrder,
+  getDeliveryOrders,
+  getDeliveryOrder,
+  updateDeliveryStatus,
+  updateDeliveryPaymentStatus,
 } = require("../controllers/orderController");
 
 const {
   verifyToken,
   verifyAdmin,
+  verifyDelivery,
 } = require("../middleware/authMiddleware");
 
-// CUSTOMER ROUTES
+// CUSTOMER
+router.post("/", verifyToken, createOrder);
 
-// Create a new order
-router.post(
-  "/",
-  verifyToken,
-  createOrder
-);
-
-// ADMIN-ONLY ROUTES
-
-// Get all orders
+// DELIVERY
 router.get(
-  "/",
+  "/delivery",
   verifyToken,
-  verifyAdmin,
-  getOrders
+  verifyDelivery,
+  getDeliveryOrders
 );
 
-// Get one order
+router.get(
+  "/delivery/:id",
+  verifyToken,
+  verifyDelivery,
+  getDeliveryOrder
+);
+
+router.patch(
+  "/delivery/:id/status",
+  verifyToken,
+  verifyDelivery,
+  updateDeliveryStatus
+);
+
+router.patch(
+  "/delivery/:id/payment",
+  verifyToken,
+  verifyDelivery,
+  updateDeliveryPaymentStatus
+);
+
+// ADMIN
+router.get("/", verifyToken, verifyAdmin, getOrders);
+
 router.get(
   "/:id",
   verifyToken,
@@ -42,7 +62,6 @@ router.get(
   getOrder
 );
 
-// Update order
 router.put(
   "/:id",
   verifyToken,
@@ -50,7 +69,6 @@ router.put(
   updateOrder
 );
 
-// Delete order
 router.delete(
   "/:id",
   verifyToken,
