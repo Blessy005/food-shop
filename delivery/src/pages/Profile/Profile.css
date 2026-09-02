@@ -233,16 +233,52 @@
   background: var(--success);
 }
 
+/* ---------- Availability Info ---------- */
+
 .availability-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--border);
   color: var(--text-light);
   font-size: 0.8rem;
 }
 
+.availability-info > span {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.availability-toggle-btn {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.availability-toggle-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.availability-toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 700px) {
+
   .profile-header {
     align-items: flex-start;
     flex-direction: column;
@@ -260,9 +296,19 @@
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .availability-info {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .availability-toggle-btn {
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
+
   .profile-form {
     padding: 1.25rem;
   }
