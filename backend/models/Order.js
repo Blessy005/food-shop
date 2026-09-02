@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+// ORDER ITEM SCHEMA
+
 const orderItemSchema = new mongoose.Schema(
   {
     product: {
@@ -29,6 +31,41 @@ const orderItemSchema = new mongoose.Schema(
   }
 );
 
+// DELIVERY DETAILS SCHEMA
+
+const deliveryDetailsSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    specialInstructions: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+  },
+  {
+    _id: false,
+  }
+);
+
+// ORDER SCHEMA
+
 const orderSchema = new mongoose.Schema(
   {
     orderNumber: {
@@ -37,11 +74,30 @@ const orderSchema = new mongoose.Schema(
       unique: true,
     },
 
+    // CUSTOMER WHO PLACED THE ORDER
+
     customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+
+    // DELIVERY INFORMATION FOR THIS ORDER
+
+    deliveryDetails: {
+      type: deliveryDetailsSchema,
+      required: true,
+    },
+
+    // DELIVERY PARTNER ASSIGNED BY ADMIN
+
+    deliveryPartner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
+    // ORDER ITEMS
 
     items: {
       type: [orderItemSchema],
