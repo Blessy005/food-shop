@@ -43,7 +43,18 @@ const verifyAdmin = (req, res, next) => {
   next();
 };
 
+const verifyDelivery = (req, res, next) => {
+  if (req.user.role !== "delivery") {
+    return res.status(403).json({
+      message: "Delivery partner access required",
+    });
+  }
+
+  next();
+};
+
 module.exports = {
   verifyToken,
   verifyAdmin,
+  verifyDelivery,
 };
