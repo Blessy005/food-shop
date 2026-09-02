@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
-const dns = require("dns");
+// const dns = require("dns");
 
 const User = require("./models/User");
 
 dotenv.config();
 
 // Use Google DNS for MongoDB Atlas SRV connection
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+// dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const createAdmin = async () => {
   try {
