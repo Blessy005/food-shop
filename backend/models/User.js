@@ -23,8 +23,13 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["customer", "admin"],
+      enum: ["customer", "admin", "delivery"],
       default: "customer",
+    },
+
+    isAvailable: {
+      type: Boolean,
+      default: true,
     },
   },
   {
