@@ -19,6 +19,7 @@ import OrderPlaced from "./components/OrderPlaced/OrderPlaced";
 
 import Register from "./components/Register/Register";
 import Login from "./components/Login/Login";
+import Orders from "./components/Orders/Orders";
 
 function App() {
   // Customer authentication
@@ -59,9 +60,7 @@ function App() {
   // Add item to cart
   const addToCart = (item) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find(
-        (cartItem) => cartItem.id === item.id
-      );
+      const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
 
       if (existingItem) {
         return prevCart.map((cartItem) =>
@@ -70,7 +69,7 @@ function App() {
                 ...cartItem,
                 quantity: cartItem.quantity + 1,
               }
-            : cartItem
+            : cartItem,
         );
       }
 
@@ -93,8 +92,8 @@ function App() {
               ...item,
               quantity: item.quantity + 1,
             }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
@@ -108,17 +107,15 @@ function App() {
                 ...item,
                 quantity: item.quantity - 1,
               }
-            : item
+            : item,
         )
-        .filter((item) => item.quantity > 0)
+        .filter((item) => item.quantity > 0),
     );
   };
 
   // Remove item from cart
   const removeFromCart = (id) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.id !== id)
-    );
+    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
   // Clear cart after placing order
@@ -130,32 +127,23 @@ function App() {
   const toggleFavorite = (item) => {
     setFavorites((prevFavorites) => {
       const alreadyFavorite = prevFavorites.some(
-        (favorite) => favorite.id === item.id
+        (favorite) => favorite.id === item.id,
       );
 
       if (alreadyFavorite) {
-        return prevFavorites.filter(
-          (favorite) => favorite.id !== item.id
-        );
+        return prevFavorites.filter((favorite) => favorite.id !== item.id);
       }
 
       return [...prevFavorites, item];
     });
   };
 
-  const cartCount = cart.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <BrowserRouter>
       <div className="App">
-        <Header
-          cartCount={cartCount}
-          user={user}
-          onLogout={handleLogout}
-        />
+        <Header cartCount={cartCount} user={user} onLogout={handleLogout} />
 
         <Routes>
           {/* Homepage */}
@@ -209,20 +197,13 @@ function App() {
           />
 
           {/* Customer Register */}
-          <Route
-            path="/register"
-            element={<Register />}
-          />
+          <Route path="/register" element={<Register />} />
 
           {/* Customer Login */}
           <Route
             path="/login"
             element={
-              <Login
-                onLogin={(loggedInUser) =>
-                  setUser(loggedInUser)
-                }
-              />
+              <Login onLogin={(loggedInUser) => setUser(loggedInUser)} />
             }
           />
 
@@ -254,19 +235,14 @@ function App() {
           {/* Checkout */}
           <Route
             path="/checkout"
-            element={
-              <Checkout
-                cart={cart}
-                clearCart={clearCart}
-              />
-            }
+            element={<Checkout cart={cart} clearCart={clearCart} />}
           />
 
           {/* Order confirmation */}
-          <Route
-            path="/order-placed"
-            element={<OrderPlaced />}
-          />
+          <Route path="/order-placed" element={<OrderPlaced />} />
+
+          {/* Customer Orders */}
+          <Route path="/orders" element={<Orders />} />
         </Routes>
       </div>
     </BrowserRouter>
