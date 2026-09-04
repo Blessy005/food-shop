@@ -1,8 +1,10 @@
 const Order = require("../models/Order");
 const User = require("../models/User");
 
+// ========================================
 // CREATE ORDER
 // Customers can create an order for themselves
+// ========================================
 
 const createOrder = async (req, res) => {
   try {
@@ -19,7 +21,6 @@ const createOrder = async (req, res) => {
     } = req.body;
 
     // Validate required order data
-
     if (!items || items.length === 0) {
       return res.status(400).json({
         message: "Order must contain at least one item",
@@ -33,7 +34,6 @@ const createOrder = async (req, res) => {
     }
 
     // Validate delivery details
-
     if (!name || !phone || !address) {
       return res.status(400).json({
         message: "Name, phone and address are required",
@@ -41,35 +41,28 @@ const createOrder = async (req, res) => {
     }
 
     // Generate a simple order number
-
     const orderNumber = `FF${Date.now().toString().slice(-6)}`;
 
     // Create order using the authenticated customer's ID
-
     const order = await Order.create({
       orderNumber,
       customer: req.user.id,
-
       deliveryDetails: {
         name,
         phone,
         address,
         specialInstructions: specialInstructions || "",
       },
-
       deliveryPartner: null,
-
       items,
       subtotal,
       deliveryFee: deliveryFee || 0,
       total,
-
       paymentStatus: paymentStatus || "Pending",
       status: "Pending",
     });
 
     // Return the newly created order
-
     const populatedOrder = await Order.findById(order._id)
       .populate("customer", "name email role")
       .populate("deliveryPartner", "name email role")
@@ -89,8 +82,10 @@ const createOrder = async (req, res) => {
   }
 };
 
+// ========================================
 // GET ALL ORDERS
 // Admin can view all customer orders
+// ========================================
 
 const getOrders = async (req, res) => {
   try {
@@ -111,8 +106,10 @@ const getOrders = async (req, res) => {
   }
 };
 
+// ========================================
 // GET CUSTOMER ORDERS
 // Customer can only view their own orders
+// ========================================
 
 const getCustomerOrders = async (req, res) => {
   try {
@@ -135,8 +132,10 @@ const getCustomerOrders = async (req, res) => {
   }
 };
 
+// ========================================
 // GET SINGLE ORDER
 // Admin can view one order by its MongoDB ID
+// ========================================
 
 const getOrder = async (req, res) => {
   try {
@@ -162,8 +161,17 @@ const getOrder = async (req, res) => {
   }
 };
 
+// ========================================
 // UPDATE ORDER
-// Admin can update order details and status
+// Admin can:
+// - Update Confirmed / Preparing / Cancelled
+// - Assign or remove delivery partner
+//
+// Admin CANNOT:
+// - Set Out for Delivery
+// - Set Delivered
+// - Change payment status
+// ========================================
 
 const updateOrder = async (req, res) => {
   try {
@@ -176,6 +184,25 @@ const updateOrder = async (req, res) => {
 
     // Prevent changing the order number
     delete updateData.orderNumber;
+
+    // Prevent admin from changing delivery-controlled statuses
+    if (
+      updateData.status === "Out for Delivery" ||
+      updateData.status === "Delivered"
+    ) {
+      return res.status(403).json({
+        message:
+          "Out for Delivery and Delivered statuses can only be updated by the delivery partner",
+      });
+    }
+
+    // Prevent admin from changing payment status
+    if (updateData.paymentStatus !== undefined) {
+      return res.status(403).json({
+        message:
+          "Payment status can only be updated by the delivery partner",
+      });
+    }
 
     // Prevent assigning an unavailable delivery partner
     if (updateData.deliveryPartner) {
@@ -215,6 +242,17 @@ const updateOrder = async (req, res) => {
       });
     }
 
+    // ========================================
+    // REAL-TIME ADMIN STATUS UPDATE
+    // ========================================
+
+    const io = req.app.get("io");
+
+    // Only emit when Admin changed the order status
+    if (req.body.status !== undefined) {
+      io.emit("orderStatusUpdated", order);
+    }
+
     res.json({
       message: "Order updated successfully",
       order,
@@ -229,8 +267,10 @@ const updateOrder = async (req, res) => {
   }
 };
 
+// ========================================
 // DELETE ORDER
 // Admin can delete an order
+// ========================================
 
 const deleteOrder = async (req, res) => {
   try {
@@ -255,8 +295,10 @@ const deleteOrder = async (req, res) => {
   }
 };
 
+// ========================================
 // GET DELIVERY PARTNER ORDERS
 // Delivery partner can only see orders assigned to themselves
+// ========================================
 
 const getDeliveryOrders = async (req, res) => {
   try {
@@ -279,8 +321,10 @@ const getDeliveryOrders = async (req, res) => {
   }
 };
 
+// ========================================
 // GET SINGLE DELIVERY ORDER
 // Delivery partner can only view an order assigned to themselves
+// ========================================
 
 const getDeliveryOrder = async (req, res) => {
   try {
@@ -309,8 +353,11 @@ const getDeliveryOrder = async (req, res) => {
   }
 };
 
+// ========================================
 // UPDATE DELIVERY STATUS
-// Delivery partner can only update the status of their assigned order
+// Delivery partner can only update the status
+// of their assigned order
+// ========================================
 
 const updateDeliveryStatus = async (req, res) => {
   try {
@@ -351,7 +398,6 @@ const updateDeliveryStatus = async (req, res) => {
     }
 
     // Send real-time status update to connected clients
-
     const io = req.app.get("io");
 
     io.emit("orderStatusUpdated", order);
@@ -370,8 +416,11 @@ const updateDeliveryStatus = async (req, res) => {
   }
 };
 
+// ========================================
 // UPDATE DELIVERY PAYMENT STATUS
-// Delivery partner can only update payment status of their assigned order
+// Delivery partner can only update payment status
+// of their assigned order
+// ========================================
 
 const updateDeliveryPaymentStatus = async (req, res) => {
   try {
@@ -413,7 +462,6 @@ const updateDeliveryPaymentStatus = async (req, res) => {
     }
 
     // Send real-time payment update to connected clients
-
     const io = req.app.get("io");
 
     io.emit("orderPaymentStatusUpdated", order);
@@ -435,7 +483,9 @@ const updateDeliveryPaymentStatus = async (req, res) => {
   }
 };
 
+// ========================================
 // EXPORT CONTROLLERS
+// ========================================
 
 module.exports = {
   createOrder,
