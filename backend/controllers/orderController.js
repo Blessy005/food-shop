@@ -111,6 +111,30 @@ const getOrders = async (req, res) => {
   }
 };
 
+// GET CUSTOMER ORDERS
+// Customer can only view their own orders
+
+const getCustomerOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({
+      customer: req.user.id,
+    })
+      .populate("customer", "name email role")
+      .populate("deliveryPartner", "name email role")
+      .populate("items.product", "name category image")
+      .sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (error) {
+    console.error("Get Customer Orders Error:", error);
+
+    res.status(500).json({
+      message: "Failed to fetch customer orders",
+      error: error.message,
+    });
+  }
+};
+
 // GET SINGLE ORDER
 // Admin can view one order by its MongoDB ID
 
@@ -416,6 +440,7 @@ const updateDeliveryPaymentStatus = async (req, res) => {
 module.exports = {
   createOrder,
   getOrders,
+  getCustomerOrders,
   getOrder,
   updateOrder,
   deleteOrder,
