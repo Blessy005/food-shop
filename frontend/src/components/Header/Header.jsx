@@ -41,7 +41,10 @@ function Header({ cartCount, user, onLogout }) {
       <div className="container header-container">
 
         {/* Logo */}
-        <div className="logo">
+        <div
+          className="logo"
+          onClick={() => navigate("/")}
+        >
           <h2>Flavor Feast</h2>
         </div>
 
@@ -74,6 +77,15 @@ function Header({ cartCount, user, onLogout }) {
                 Hi, {user.name}
               </span>
 
+              {/* My Orders */}
+              <button
+                className="orders-header-btn"
+                onClick={() => navigate("/orders")}
+              >
+                My Orders
+              </button>
+
+              {/* Logout */}
               <button
                 className="logout-btn"
                 onClick={onLogout}
@@ -82,6 +94,7 @@ function Header({ cartCount, user, onLogout }) {
               </button>
             </div>
           ) : (
+            /* Login */
             <button
               className="login-header-btn"
               onClick={() => navigate("/login")}
@@ -94,6 +107,7 @@ function Header({ cartCount, user, onLogout }) {
           <button
             className="favorite-header-btn"
             onClick={goToFavorites}
+            aria-label="Favorites"
           >
             ♥
           </button>
@@ -102,6 +116,7 @@ function Header({ cartCount, user, onLogout }) {
           <button
             className="cart-btn"
             onClick={() => navigate("/cart")}
+            aria-label="Cart"
           >
             🛒 <span>{cartCount}</span>
           </button>
