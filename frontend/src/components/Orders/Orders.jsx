@@ -108,24 +108,44 @@ function Orders() {
     switch (status) {
       case "Pending":
         return "status-pending";
-
       case "Confirmed":
         return "status-confirmed";
-
       case "Preparing":
         return "status-preparing";
-
       case "Out for Delivery":
         return "status-out-for-delivery";
-
       case "Delivered":
         return "status-delivered";
-
       case "Cancelled":
         return "status-cancelled";
-
       default:
         return "";
+    }
+  };
+
+  // Progress tracker
+  const progressSteps = [
+    "Order Placed",
+    "Confirmed",
+    "Preparing",
+    "Out for Delivery",
+    "Delivered",
+  ];
+
+  const getCurrentStep = (status) => {
+    switch (status) {
+      case "Pending":
+        return 0;
+      case "Confirmed":
+        return 1;
+      case "Preparing":
+        return 2;
+      case "Out for Delivery":
+        return 3;
+      case "Delivered":
+        return 4;
+      default:
+        return -1;
     }
   };
 
@@ -204,116 +224,177 @@ function Orders() {
         ) : (
           <div className="orders-list">
 
-            {orders.map((order) => (
-              <div
-                className="order-card"
-                key={order._id}
-              >
+            {orders.map((order) => {
+              const currentStep = getCurrentStep(order.status);
 
-                {/* ORDER HEADER */}
-                <div className="order-card-header">
+              return (
+                <div
+                  className="order-card"
+                  key={order._id}
+                >
 
-                  <div>
-                    <span className="order-label">
-                      Order
+                  {/* ORDER HEADER */}
+                  <div className="order-card-header">
+
+                    <div>
+                      <span className="order-label">
+                        Order
+                      </span>
+
+                      <h2>
+                        #{order.orderNumber}
+                      </h2>
+
+                      <p>
+                        {formatDate(order.createdAt)} •{" "}
+                        {formatTime(order.createdAt)}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`order-status ${getStatusClass(
+                        order.status
+                      )}`}
+                    >
+                      {order.status}
                     </span>
 
-                    <h2>
-                      #{order.orderNumber}
-                    </h2>
-
-                    <p>
-                      {formatDate(order.createdAt)} •{" "}
-                      {formatTime(order.createdAt)}
-                    </p>
                   </div>
 
-                  <span
-                    className={`order-status ${getStatusClass(
-                      order.status
-                    )}`}
-                  >
-                    {order.status}
-                  </span>
+                  {/* ORDER PROGRESS */}
+                  {order.status !== "Cancelled" && (
+                    <div className="order-progress">
 
-                </div>
+                      {progressSteps.map(
+                        (step, index) => {
+                          const isCompleted =
+                            index < currentStep;
 
-                {/* ORDER ITEMS */}
-                <div className="order-items">
+                          const isCurrent =
+                            index === currentStep;
 
-                  {order.items.map((item, index) => {
-                    const imageUrl = getImageUrl(
-                      item.product?.image
-                    );
+                          return (
+                            <div
+                              className={`progress-step ${
+                                isCompleted
+                                  ? "completed"
+                                  : ""
+                              } ${
+                                isCurrent
+                                  ? "current"
+                                  : ""
+                              }`}
+                              key={step}
+                            >
 
-                    return (
-                      <div
-                        className="order-item"
-                        key={`${order._id}-${index}`}
-                      >
+                              <div className="progress-indicator">
+                                {isCompleted
+                                  ? "✓"
+                                  : index + 1}
+                              </div>
 
-                        <div className="order-item-image">
-                          {imageUrl ? (
-                            <img
-                              src={imageUrl}
-                              alt={
-                                item.product?.name ||
-                                "Food Item"
-                              }
-                            />
-                          ) : (
-                            <span>🍴</span>
-                          )}
-                        </div>
+                              <span>
+                                {step}
+                              </span>
 
-                        <div className="order-item-info">
-                          <h3>
-                            {item.product?.name ||
-                              "Food Item"}
-                          </h3>
+                              {index <
+                                progressSteps.length - 1 && (
+                                <div
+                                  className={`progress-line ${
+                                    index < currentStep
+                                      ? "completed"
+                                      : ""
+                                  }`}
+                                />
+                              )}
 
-                          <p>
-                            Qty: {item.quantity}
-                          </p>
-                        </div>
+                            </div>
+                          );
+                        }
+                      )}
 
-                        <div className="order-item-price">
-                          ₹
-                          {(
-                            item.price *
-                            item.quantity
-                          ).toFixed(2)}
-                        </div>
+                    </div>
+                  )}
 
-                      </div>
-                    );
-                  })}
+                  {/* ORDER ITEMS */}
+                  <div className="order-items">
 
-                </div>
+                    {order.items.map(
+                      (item, index) => {
+                        const imageUrl = getImageUrl(
+                          item.product?.image
+                        );
 
-                {/* ORDER FOOTER */}
-                <div className="order-card-footer">
+                        return (
+                          <div
+                            className="order-item"
+                            key={`${order._id}-${index}`}
+                          >
 
-                  <div className="payment-info">
-                    <span>Payment</span>
+                            <div className="order-item-image">
+                              {imageUrl ? (
+                                <img
+                                  src={imageUrl}
+                                  alt={
+                                    item.product?.name ||
+                                    "Food Item"
+                                  }
+                                />
+                              ) : (
+                                <span>🍴</span>
+                              )}
+                            </div>
 
-                    <strong>
-                      {order.paymentStatus}
-                    </strong>
+                            <div className="order-item-info">
+                              <h3>
+                                {item.product?.name ||
+                                  "Food Item"}
+                              </h3>
+
+                              <p>
+                                Qty: {item.quantity}
+                              </p>
+                            </div>
+
+                            <div className="order-item-price">
+                              ₹
+                              {(
+                                item.price *
+                                item.quantity
+                              ).toFixed(2)}
+                            </div>
+
+                          </div>
+                        );
+                      }
+                    )}
+
                   </div>
 
-                  <div className="order-total">
-                    <span>Total</span>
+                  {/* ORDER FOOTER */}
+                  <div className="order-card-footer">
 
-                    <strong>
-                      ₹{order.total.toFixed(2)}
-                    </strong>
+                    <div className="payment-info">
+                      <span>Payment</span>
+
+                      <strong>
+                        {order.paymentStatus}
+                      </strong>
+                    </div>
+
+                    <div className="order-total">
+                      <span>Total</span>
+
+                      <strong>
+                        ₹{order.total.toFixed(2)}
+                      </strong>
+                    </div>
+
                   </div>
 
                 </div>
-
-              </div>
-            ))}
+              );
+            })}
 
           </div>
         )}
