@@ -124,6 +124,102 @@
 }
 
 /* =========================
+   ORDER PROGRESS
+========================= */
+
+.order-progress {
+  display: flex;
+  align-items: flex-start;
+  padding: 25px 30px 22px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.progress-step {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.progress-indicator {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+  border: 2px solid var(--border);
+  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 600;
+  position: relative;
+  z-index: 2;
+}
+
+.progress-step span {
+  margin-top: 8px;
+  color: var(--text-light);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.progress-step.completed .progress-indicator,
+.progress-step.current .progress-indicator {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.progress-step.current .progress-indicator {
+  box-shadow: 0 0 0 5px rgba(230, 57, 70, 0.12);
+}
+
+.progress-step.completed span,
+.progress-step.current span {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.progress-line {
+  position: absolute;
+  top: 15px;
+  left: calc(50% + 16px);
+  width: calc(100% - 32px);
+  height: 2px;
+  background: var(--border);
+  z-index: 1;
+}
+
+.progress-line.completed {
+  background: var(--primary);
+}
+
+
+/* =========================
+   RESPONSIVE PROGRESS
+========================= */
+
+@media (max-width: 600px) {
+  .order-progress {
+    padding: 20px 10px;
+    overflow-x: auto;
+  }
+
+  .progress-step {
+    min-width: 85px;
+  }
+
+  .progress-step span {
+    font-size: 10px;
+  }
+}
+
+/* =========================
    ORDER ITEMS
 ========================= */
 
