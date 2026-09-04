@@ -12,7 +12,7 @@
   max-width: 1200px;
   height: 80px;
   margin: 0 auto;
-
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,7 +20,13 @@
 
 /* ---------- Logo ---------- */
 
+.logo {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .logo h2 {
+  margin: 0;
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--primary);
@@ -33,6 +39,9 @@
   display: flex;
   align-items: center;
   gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .nav-links a {
@@ -40,6 +49,7 @@
   font-size: 1rem;
   font-weight: 500;
   color: var(--text);
+  text-decoration: none;
   transition: var(--transition);
 }
 
@@ -52,10 +62,8 @@
   position: absolute;
   left: 0;
   bottom: -6px;
-
   width: 0;
   height: 2px;
-
   background: var(--primary);
   transition: var(--transition);
 }
@@ -69,24 +77,72 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 10px;
 }
+
+/* ---------- User Account ---------- */
+
+.user-account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* ---------- Login / Logout ---------- */
+
+.login-header-btn,
+.logout-btn,
+.orders-header-btn {
+  border: none;
+  cursor: pointer;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.login-header-btn,
+.logout-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.login-header-btn:hover,
+.logout-btn:hover {
+  background: var(--primary-dark);
+}
+
+.orders-header-btn {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.orders-header-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* ---------- Favorites ---------- */
 
 .favorite-header-btn {
   width: 42px;
   height: 42px;
-
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 50%;
-
   background: transparent;
   color: var(--primary);
-
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   cursor: pointer;
-
   transition: var(--transition);
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,22 +150,22 @@
 
 .favorite-header-btn:hover {
   border-color: var(--primary);
-  transform: scale(1.08);
+  transform: scale(1.05);
 }
+
+/* ---------- Cart ---------- */
 
 .cart-btn {
   background: transparent;
-  border: 2px solid var(--border);
-  padding: 10px 16px;
+  border: 1px solid var(--border);
+  padding: 10px 14px;
   border-radius: 50px;
-
   display: flex;
   align-items: center;
-  gap: 8px;
-
+  gap: 7px;
   font-size: 1rem;
   color: var(--text);
-
+  cursor: pointer;
   transition: var(--transition);
 }
 
@@ -118,16 +174,17 @@
   color: var(--primary);
 }
 
+/* ---------- Order Now ---------- */
+
 .order-btn {
+  border: none;
   background: var(--primary);
   color: white;
-
-  padding: 12px 24px;
+  padding: 11px 20px;
   border-radius: 50px;
-
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
-
+  cursor: pointer;
   transition: var(--transition);
 }
 
@@ -135,38 +192,23 @@
   background: var(--primary-dark);
 }
 
-.user-account {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-}
-
-.logout-btn,
-.login-header-btn {
-  border: none;
-  cursor: pointer;
-  padding: 9px 15px;
-  border-radius: 8px;
-  font-weight: 600;
-  background: #e63946;
-  color: white;
-}
-
-.logout-btn:hover,
-.login-header-btn:hover {
-  opacity: 0.9;
-}
-
 /* ---------- Responsive ---------- */
 
-@media (max-width: 768px) {
+@media (max-width: 1050px) {
+  .nav-links {
+    gap: 1.2rem;
+  }
 
+  .user-name {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 7px;
+  }
+}
+
+@media (max-width: 768px) {
   .navbar {
     display: none;
   }
@@ -177,9 +219,49 @@
 
   .header-container {
     height: 70px;
+    padding: 0 15px;
   }
 
   .logo h2 {
     font-size: 1.5rem;
+  }
+
+  .user-account {
+    gap: 5px;
+  }
+
+  .orders-header-btn {
+    display: none;
+  }
+
+  .favorite-header-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .cart-btn {
+    padding: 9px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-actions {
+    gap: 5px;
+  }
+
+  .login-header-btn,
+  .logout-btn {
+    padding: 8px 11px;
+    font-size: 12px;
+  }
+
+  .favorite-header-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+
+  .cart-btn {
+    padding: 8px 10px;
   }
 }
