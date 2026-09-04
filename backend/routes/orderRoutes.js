@@ -5,6 +5,7 @@ const router = express.Router();
 const {
   createOrder,
   getOrders,
+  getCustomerOrders,
   getOrder,
   updateOrder,
   deleteOrder,
@@ -21,9 +22,13 @@ const {
 } = require("../middleware/authMiddleware");
 
 // CUSTOMER
+
+router.get("/my-orders", verifyToken, getCustomerOrders);
+
 router.post("/", verifyToken, createOrder);
 
 // DELIVERY
+
 router.get(
   "/delivery",
   verifyToken,
@@ -53,6 +58,7 @@ router.patch(
 );
 
 // ADMIN
+
 router.get("/", verifyToken, verifyAdmin, getOrders);
 
 router.get(
