@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const User = require("../models/User");
+const Product = require("../models/Product");
 
 // ========================================
 // CREATE ORDER
@@ -40,40 +41,205 @@ const createOrder = async (req, res) => {
       });
     }
 
-    // Generate a simple order number
-    const orderNumber = `FF${Date.now().toString().slice(-6)}`;
+    // ========================================
+    // VALIDATE PRODUCTS AND STOCK
+    // ========================================
 
-    // Create order using the authenticated customer's ID
-    const order = await Order.create({
-      orderNumber,
-      customer: req.user.id,
-      deliveryDetails: {
-        name,
-        phone,
-        address,
-        specialInstructions: specialInstructions || "",
-      },
-      deliveryPartner: null,
-      items,
-      subtotal,
-      deliveryFee: deliveryFee || 0,
-      total,
-      paymentStatus: paymentStatus || "Pending",
-      status: "Pending",
+    const productIds = items.map((item) => item.product);
+
+    const products = await Product.find({
+      _id: { $in: productIds },
     });
 
-    // Return the newly created order
-    const populatedOrder = await Order.findById(order._id)
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image");
+    // Make sure all products exist
+    if (products.length !== productIds.length) {
+      return res.status(400).json({
+        message: "One or more products are no longer available",
+      });
+    }
 
+    // Check availability and stock
+    for (const item of items) {
+      const product = products.find(
+        (product) =>
+          product._id.toString() === item.product.toString()
+      );
+
+      if (!product) {
+        return res.status(400).json({
+          message: "Product not found",
+        });
+      }
+
+      if (!product.isAvailable) {
+        return res.status(400).json({
+          message: `${product.name} is currently unavailable`,
+        });
+      }
+
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Only ${product.stock} ${product.name} available`,
+        });
+      }
+    }
+
+    // ========================================
+    // DECREASE PRODUCT STOCK
+    // ========================================
+
+    const updatedProducts = [];
+
+    try {
+      for (const item of items) {
+        const updatedProduct = await Product.findOneAndUpdate(
+          {
+            _id: item.product,
+            isAvailable: true,
+            stock: { $gte: item.quantity },
+          },
+          {
+            $inc: {
+              stock: -item.quantity,
+            },
+          },
+          {
+            new: true,
+          }
+        );
+
+        // Another order may have taken the stock
+        // between our initial check and this update.
+        if (!updatedProduct) {
+          throw new Error(
+            "Stock changed while placing the order. Please try again."
+          );
+        }
+
+        updatedProducts.push({
+          product: updatedProduct,
+          quantity: item.quantity,
+        });
+      }
+    } catch (stockError) {
+      // ========================================
+      // ROLLBACK STOCK IF ANY UPDATE FAILS
+      // ========================================
+
+      for (const updated of updatedProducts) {
+        await Product.findByIdAndUpdate(
+          updated.product._id,
+          {
+            $inc: {
+              stock: updated.quantity,
+            },
+          }
+        );
+      }
+
+      return res.status(400).json({
+        message: stockError.message,
+      });
+    }
+
+    // ========================================
+    // GENERATE ORDER NUMBER
+    // ========================================
+
+    const orderNumber = `FF${Date.now()
+      .toString()
+      .slice(-6)}`;
+
+    // ========================================
+    // CREATE ORDER
+    // ========================================
+
+    let order;
+
+    try {
+      order = await Order.create({
+        orderNumber,
+        customer: req.user.id,
+        deliveryDetails: {
+          name,
+          phone,
+          address,
+          specialInstructions:
+            specialInstructions || "",
+        },
+        deliveryPartner: null,
+        items,
+        subtotal,
+        deliveryFee: deliveryFee || 0,
+        total,
+        paymentStatus:
+          paymentStatus || "Pending",
+        status: "Pending",
+      });
+    } catch (orderError) {
+      // ========================================
+      // ROLLBACK STOCK IF ORDER CREATION FAILS
+      // ========================================
+
+      for (const updated of updatedProducts) {
+        await Product.findByIdAndUpdate(
+          updated.product._id,
+          {
+            $inc: {
+              stock: updated.quantity,
+            },
+          }
+        );
+      }
+
+      throw orderError;
+    }
+
+    // ========================================
+    // REAL-TIME PRODUCT STOCK UPDATE
+    // ========================================
+
+    const io = req.app.get("io");
+
+    if (io) {
+      for (const updated of updatedProducts) {
+        io.emit(
+          "productUpdated",
+          updated.product
+        );
+      }
+    }
+
+    // ========================================
+    // POPULATE ORDER
+    // ========================================
+
+    const populatedOrder = await Order.findById(
+      order._id
+    )
+      .populate(
+        "customer",
+        "name email role"
+      )
+      .populate(
+        "deliveryPartner",
+        "name email role"
+      )
+      .populate(
+        "items.product",
+        "name category image"
+      );
+
+    // Return the newly created order
     res.status(201).json({
       message: "Order created successfully",
       order: populatedOrder,
     });
   } catch (error) {
-    console.error("Create Order Error:", error);
+    console.error(
+      "Create Order Error:",
+      error
+    );
 
     res.status(500).json({
       message: "Failed to create order",
@@ -90,14 +256,26 @@ const createOrder = async (req, res) => {
 const getOrders = async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image")
+      .populate(
+        "customer",
+        "name email role"
+      )
+      .populate(
+        "deliveryPartner",
+        "name email role"
+      )
+      .populate(
+        "items.product",
+        "name category image"
+      )
       .sort({ createdAt: -1 });
 
     res.json(orders);
   } catch (error) {
-    console.error("Get Orders Error:", error);
+    console.error(
+      "Get Orders Error:",
+      error
+    );
 
     res.status(500).json({
       message: "Failed to fetch orders",
@@ -116,14 +294,26 @@ const getCustomerOrders = async (req, res) => {
     const orders = await Order.find({
       customer: req.user.id,
     })
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image")
+      .populate(
+        "customer",
+        "name email role"
+      )
+      .populate(
+        "deliveryPartner",
+        "name email role"
+      )
+      .populate(
+        "items.product",
+        "name category image"
+      )
       .sort({ createdAt: -1 });
 
     res.json(orders);
   } catch (error) {
-    console.error("Get Customer Orders Error:", error);
+    console.error(
+      "Get Customer Orders Error:",
+      error
+    );
 
     res.status(500).json({
       message: "Failed to fetch customer orders",
@@ -139,10 +329,21 @@ const getCustomerOrders = async (req, res) => {
 
 const getOrder = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id)
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image");
+    const order = await Order.findById(
+      req.params.id
+    )
+      .populate(
+        "customer",
+        "name email role"
+      )
+      .populate(
+        "deliveryPartner",
+        "name email role"
+      )
+      .populate(
+        "items.product",
+        "name category image"
+      );
 
     if (!order) {
       return res.status(404).json({
@@ -152,7 +353,10 @@ const getOrder = async (req, res) => {
 
     res.json(order);
   } catch (error) {
-    console.error("Get Order Error:", error);
+    console.error(
+      "Get Order Error:",
+      error
+    );
 
     res.status(500).json({
       message: "Failed to fetch order",
@@ -179,7 +383,7 @@ const updateOrder = async (req, res) => {
       ...req.body,
     };
 
-    // Prevent changing the customer through this endpoint
+    // Prevent changing the customer
     delete updateData.customer;
 
     // Prevent changing the order number
@@ -197,7 +401,9 @@ const updateOrder = async (req, res) => {
     }
 
     // Prevent admin from changing payment status
-    if (updateData.paymentStatus !== undefined) {
+    if (
+      updateData.paymentStatus !== undefined
+    ) {
       return res.status(403).json({
         message:
           "Payment status can only be updated by the delivery partner",
@@ -206,35 +412,48 @@ const updateOrder = async (req, res) => {
 
     // Prevent assigning an unavailable delivery partner
     if (updateData.deliveryPartner) {
-      const deliveryPartner = await User.findOne({
-        _id: updateData.deliveryPartner,
-        role: "delivery",
-      });
+      const deliveryPartner =
+        await User.findOne({
+          _id: updateData.deliveryPartner,
+          role: "delivery",
+        });
 
       if (!deliveryPartner) {
         return res.status(404).json({
-          message: "Delivery partner not found",
+          message:
+            "Delivery partner not found",
         });
       }
 
       if (!deliveryPartner.isAvailable) {
         return res.status(400).json({
-          message: "Delivery partner is currently unavailable",
+          message:
+            "Delivery partner is currently unavailable",
         });
       }
     }
 
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    )
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image");
+    const order =
+      await Order.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+        .populate(
+          "customer",
+          "name email role"
+        )
+        .populate(
+          "deliveryPartner",
+          "name email role"
+        )
+        .populate(
+          "items.product",
+          "name category image"
+        );
 
     if (!order) {
       return res.status(404).json({
@@ -250,7 +469,10 @@ const updateOrder = async (req, res) => {
 
     // Only emit when Admin changed the order status
     if (req.body.status !== undefined) {
-      io.emit("orderStatusUpdated", order);
+      io.emit(
+        "orderStatusUpdated",
+        order
+      );
     }
 
     res.json({
@@ -258,7 +480,10 @@ const updateOrder = async (req, res) => {
       order,
     });
   } catch (error) {
-    console.error("Update Order Error:", error);
+    console.error(
+      "Update Order Error:",
+      error
+    );
 
     res.status(500).json({
       message: "Failed to update order",
@@ -274,7 +499,10 @@ const updateOrder = async (req, res) => {
 
 const deleteOrder = async (req, res) => {
   try {
-    const order = await Order.findByIdAndDelete(req.params.id);
+    const order =
+      await Order.findByIdAndDelete(
+        req.params.id
+      );
 
     if (!order) {
       return res.status(404).json({
@@ -286,7 +514,10 @@ const deleteOrder = async (req, res) => {
       message: "Order deleted successfully",
     });
   } catch (error) {
-    console.error("Delete Order Error:", error);
+    console.error(
+      "Delete Order Error:",
+      error
+    );
 
     res.status(500).json({
       message: "Failed to delete order",
@@ -297,7 +528,8 @@ const deleteOrder = async (req, res) => {
 
 // ========================================
 // GET DELIVERY PARTNER ORDERS
-// Delivery partner can only see orders assigned to themselves
+// Delivery partner can only see orders assigned
+// to themselves
 // ========================================
 
 const getDeliveryOrders = async (req, res) => {
@@ -305,17 +537,30 @@ const getDeliveryOrders = async (req, res) => {
     const orders = await Order.find({
       deliveryPartner: req.user.id,
     })
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image")
+      .populate(
+        "customer",
+        "name email role"
+      )
+      .populate(
+        "deliveryPartner",
+        "name email role"
+      )
+      .populate(
+        "items.product",
+        "name category image"
+      )
       .sort({ createdAt: -1 });
 
     res.json(orders);
   } catch (error) {
-    console.error("Get Delivery Orders Error:", error);
+    console.error(
+      "Get Delivery Orders Error:",
+      error
+    );
 
     res.status(500).json({
-      message: "Failed to fetch delivery orders",
+      message:
+        "Failed to fetch delivery orders",
       error: error.message,
     });
   }
@@ -323,7 +568,8 @@ const getDeliveryOrders = async (req, res) => {
 
 // ========================================
 // GET SINGLE DELIVERY ORDER
-// Delivery partner can only view an order assigned to themselves
+// Delivery partner can only view an order
+// assigned to themselves
 // ========================================
 
 const getDeliveryOrder = async (req, res) => {
@@ -332,22 +578,36 @@ const getDeliveryOrder = async (req, res) => {
       _id: req.params.id,
       deliveryPartner: req.user.id,
     })
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image");
+      .populate(
+        "customer",
+        "name email role"
+      )
+      .populate(
+        "deliveryPartner",
+        "name email role"
+      )
+      .populate(
+        "items.product",
+        "name category image"
+      );
 
     if (!order) {
       return res.status(404).json({
-        message: "Order not found or not assigned to you",
+        message:
+          "Order not found or not assigned to you",
       });
     }
 
     res.json(order);
   } catch (error) {
-    console.error("Get Delivery Order Error:", error);
+    console.error(
+      "Get Delivery Order Error:",
+      error
+    );
 
     res.status(500).json({
-      message: "Failed to fetch delivery order",
+      message:
+        "Failed to fetch delivery order",
       error: error.message,
     });
   }
@@ -359,7 +619,10 @@ const getDeliveryOrder = async (req, res) => {
 // of their assigned order
 // ========================================
 
-const updateDeliveryStatus = async (req, res) => {
+const updateDeliveryStatus = async (
+  req,
+  res
+) => {
   try {
     const { status } = req.body;
 
@@ -374,43 +637,62 @@ const updateDeliveryStatus = async (req, res) => {
       });
     }
 
-    const order = await Order.findOneAndUpdate(
-      {
-        _id: req.params.id,
-        deliveryPartner: req.user.id,
-      },
-      {
-        status,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    )
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image");
+    const order =
+      await Order.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          deliveryPartner: req.user.id,
+        },
+        {
+          status,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+        .populate(
+          "customer",
+          "name email role"
+        )
+        .populate(
+          "deliveryPartner",
+          "name email role"
+        )
+        .populate(
+          "items.product",
+          "name category image"
+        );
 
     if (!order) {
       return res.status(404).json({
-        message: "Order not found or not assigned to you",
+        message:
+          "Order not found or not assigned to you",
       });
     }
 
     // Send real-time status update to connected clients
     const io = req.app.get("io");
 
-    io.emit("orderStatusUpdated", order);
+    io.emit(
+      "orderStatusUpdated",
+      order
+    );
 
     res.json({
-      message: "Delivery status updated successfully",
+      message:
+        "Delivery status updated successfully",
       order,
     });
   } catch (error) {
-    console.error("Update Delivery Status Error:", error);
+    console.error(
+      "Update Delivery Status Error:",
+      error
+    );
 
     res.status(500).json({
-      message: "Failed to update delivery status",
+      message:
+        "Failed to update delivery status",
       error: error.message,
     });
   }
@@ -422,7 +704,10 @@ const updateDeliveryStatus = async (req, res) => {
 // of their assigned order
 // ========================================
 
-const updateDeliveryPaymentStatus = async (req, res) => {
+const updateDeliveryPaymentStatus = async (
+  req,
+  res
+) => {
   try {
     const { paymentStatus } = req.body;
 
@@ -432,42 +717,62 @@ const updateDeliveryPaymentStatus = async (req, res) => {
       "Failed",
     ];
 
-    if (!allowedPaymentStatuses.includes(paymentStatus)) {
+    if (
+      !allowedPaymentStatuses.includes(
+        paymentStatus
+      )
+    ) {
       return res.status(400).json({
-        message: "Invalid payment status",
+        message:
+          "Invalid payment status",
       });
     }
 
-    const order = await Order.findOneAndUpdate(
-      {
-        _id: req.params.id,
-        deliveryPartner: req.user.id,
-      },
-      {
-        paymentStatus,
-      },
-      {
-        new: true,
-        runValidators: true,
-      }
-    )
-      .populate("customer", "name email role")
-      .populate("deliveryPartner", "name email role")
-      .populate("items.product", "name category image");
+    const order =
+      await Order.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          deliveryPartner: req.user.id,
+        },
+        {
+          paymentStatus,
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+        .populate(
+          "customer",
+          "name email role"
+        )
+        .populate(
+          "deliveryPartner",
+          "name email role"
+        )
+        .populate(
+          "items.product",
+          "name category image"
+        );
 
     if (!order) {
       return res.status(404).json({
-        message: "Order not found or not assigned to you",
+        message:
+          "Order not found or not assigned to you",
       });
     }
 
     // Send real-time payment update to connected clients
     const io = req.app.get("io");
 
-    io.emit("orderPaymentStatusUpdated", order);
+    io.emit(
+      "orderPaymentStatusUpdated",
+      order
+    );
 
     res.json({
-      message: "Payment status updated successfully",
+      message:
+        "Payment status updated successfully",
       order,
     });
   } catch (error) {
@@ -477,7 +782,8 @@ const updateDeliveryPaymentStatus = async (req, res) => {
     );
 
     res.status(500).json({
-      message: "Failed to update payment status",
+      message:
+        "Failed to update payment status",
       error: error.message,
     });
   }
