@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+
 import "./FoodList.css";
+
 import FoodCard from "../FoodCard/FoodCard";
 
 function FoodList({
@@ -49,17 +52,11 @@ function FoodList({
             : "",
         }));
 
-        console.log(
-          "FORMATTED PRODUCTS:",
-          formattedProducts
-        );
+        console.log("FORMATTED PRODUCTS:", formattedProducts);
 
         setProducts(formattedProducts);
       } catch (err) {
-        console.error(
-          "Error fetching products:",
-          err
-        );
+        console.error("Error fetching products:", err);
 
         setError(
           "Unable to load products. Please try again."
@@ -72,10 +69,61 @@ function FoodList({
     fetchProducts();
   }, []);
 
+  // Listen for real-time product updates
+  useEffect(() => {
+    const socket = io(import.meta.env.VITE_SERVER_URL);
+
+    socket.on("connect", () => {
+      console.log(
+        "Connected to product updates:",
+        socket.id
+      );
+    });
+
+    socket.on("productUpdated", (updatedProduct) => {
+      console.log(
+        "PRODUCT UPDATED:",
+        updatedProduct
+      );
+
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product.id === updatedProduct._id
+            ? {
+                ...updatedProduct,
+                id: updatedProduct._id,
+                image: updatedProduct.image
+                  ? updatedProduct.image.startsWith(
+                      "/uploads"
+                    )
+                    ? `${import.meta.env.VITE_SERVER_URL}${updatedProduct.image}`
+                    : updatedProduct.image
+                  : "",
+              }
+            : product
+        )
+      );
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error(
+        "Product Socket Error:",
+        err
+      );
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   // Loading
   if (loading) {
     return (
-      <section className="food-list" id="food-list">
+      <section
+        className="food-list"
+        id="food-list"
+      >
         <div className="container">
           <div className="section-title">
             <h2>All Foods</h2>
@@ -89,7 +137,10 @@ function FoodList({
   // Error
   if (error) {
     return (
-      <section className="food-list" id="food-list">
+      <section
+        className="food-list"
+        id="food-list"
+      >
         <div className="container">
           <div className="section-title">
             <h2>All Foods</h2>
@@ -165,7 +216,6 @@ function FoodList({
           </p>
         ) : (
           <div className="food-list-grid">
-
             {filteredFoods.map((item) => {
               const isFavorite = favorites.some(
                 (favorite) =>
@@ -200,10 +250,8 @@ function FoodList({
                 />
               );
             })}
-
           </div>
         )}
-
       </div>
     </section>
   );
