@@ -31,15 +31,55 @@ function Register() {
     setError("");
     setSuccess("");
 
-    // Check passwords
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+    // Clean up name and email
+    const name = formData.name.trim();
+    const email = formData.email.trim().toLowerCase();
+    const password = formData.password;
+    const confirmPassword = formData.confirmPassword;
+
+    // Name validation
+    if (!name) {
+      setError("Name is required.");
       return;
     }
 
-    // Basic password check
-    if (formData.password.length < 6) {
+    if (name.length < 2) {
+      setError("Name must be at least 2 characters.");
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+      setError("Email is required.");
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    // Password validation
+    if (!password) {
+      setError("Password is required.");
+      return;
+    }
+
+    if (password.length < 6) {
       setError("Password must be at least 6 characters.");
+      return;
+    }
+
+    // Confirm password validation
+    if (!confirmPassword) {
+      setError("Please confirm your password.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
       return;
     }
 
@@ -54,11 +94,11 @@ function Register() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
+            name,
+            email,
+            password,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -92,7 +132,6 @@ function Register() {
   return (
     <div className="register-page">
       <div className="register-card">
-
         <div className="register-header">
           <div className="register-icon">🍴</div>
 
@@ -104,12 +143,9 @@ function Register() {
         </div>
 
         <form onSubmit={handleSubmit}>
-
           {/* Name */}
           <div className="register-field">
-            <label htmlFor="name">
-              Name
-            </label>
+            <label htmlFor="name">Name</label>
 
             <input
               id="name"
@@ -124,9 +160,7 @@ function Register() {
 
           {/* Email */}
           <div className="register-field">
-            <label htmlFor="email">
-              Email
-            </label>
+            <label htmlFor="email">Email</label>
 
             <input
               id="email"
@@ -141,9 +175,7 @@ function Register() {
 
           {/* Password */}
           <div className="register-field">
-            <label htmlFor="password">
-              Password
-            </label>
+            <label htmlFor="password">Password</label>
 
             <input
               id="password"
@@ -158,9 +190,7 @@ function Register() {
 
           {/* Confirm Password */}
           <div className="register-field">
-            <label htmlFor="confirmPassword">
-              Confirm Password
-            </label>
+            <label htmlFor="confirmPassword">Confirm Password</label>
 
             <input
               id="confirmPassword"
@@ -208,7 +238,6 @@ function Register() {
             Login
           </button>
         </div>
-
       </div>
     </div>
   );
