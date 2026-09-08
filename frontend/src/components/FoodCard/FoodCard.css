@@ -14,11 +14,9 @@
 .food-image {
   height: 220px;
   background: #f3f3f3;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: var(--text-light);
   font-size: 1rem;
   font-weight: 600;
@@ -73,6 +71,19 @@
 .food-footer button:hover {
   background: var(--primary-dark);
 }
+
+.food-footer button:disabled {
+  background: #bdbdbd;
+  color: #ffffff;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.food-footer button:disabled:hover {
+  background: #bdbdbd;
+  transform: none;
+}
+
 .food-header {
   display: flex;
   align-items: center;
@@ -113,20 +124,15 @@
 .quantity-controls button {
   width: 36px;
   height: 36px;
-
   border: none;
   border-radius: 50%;
-
   background: var(--primary);
   color: #ffffff;
-
   font-size: 1.2rem;
   font-weight: 700;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
   transition: var(--transition);
 }
@@ -136,12 +142,36 @@
   transform: scale(1.05);
 }
 
+.quantity-controls button:disabled {
+  background: #bdbdbd;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.quantity-controls button:disabled:hover {
+  background: #bdbdbd;
+  transform: none;
+}
+
 .quantity-controls span {
   min-width: 20px;
-
   text-align: center;
-
   color: var(--text);
   font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Stock / Availability */
+
+.stock-status {
+  color: var(--text-light) !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1rem !important;
+}
+
+.stock-status.out-of-stock,
+.stock-status.unavailable {
+  color: #d32f2f !important;
   font-weight: 700;
 }
