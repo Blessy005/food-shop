@@ -8,14 +8,16 @@
   z-index: 1000;
 }
 
+/* ---------- Header Container ---------- */
+
 .header-container {
-  max-width: 1200px;
+  max-width: 1400px;
   height: 80px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 30px;
+
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
 /* ---------- Logo ---------- */
@@ -23,6 +25,7 @@
 .logo {
   cursor: pointer;
   flex-shrink: 0;
+  margin-right: 55px;
 }
 
 .logo h2 {
@@ -35,21 +38,31 @@
 
 /* ---------- Navigation ---------- */
 
+.navbar {
+  flex: 1;
+}
+
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 2.2rem;
+
   margin: 0;
   padding: 0;
+
   list-style: none;
 }
 
 .nav-links a {
   position: relative;
+
   font-size: 1rem;
   font-weight: 500;
   color: var(--text);
+
   text-decoration: none;
+  white-space: nowrap;
+
   transition: var(--transition);
 }
 
@@ -59,12 +72,16 @@
 
 .nav-links a::after {
   content: "";
+
   position: absolute;
   left: 0;
   bottom: -6px;
+
   width: 0;
   height: 2px;
+
   background: var(--primary);
+
   transition: var(--transition);
 }
 
@@ -77,7 +94,11 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
+
+  margin-left: 45px;
+
+  flex-shrink: 0;
 }
 
 /* ---------- User Account ---------- */
@@ -85,44 +106,87 @@
 .user-account {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .user-name {
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
+
   white-space: nowrap;
+
+  margin-right: 4px;
 }
 
-/* ---------- Login / Logout ---------- */
+/* ---------- Login / Register / Profile / Orders / Logout ---------- */
 
 .login-header-btn,
-.logout-btn,
-.orders-header-btn {
+.register-header-btn,
+.profile-header-btn,
+.orders-header-btn,
+.logout-btn {
   border: none;
   cursor: pointer;
+
   padding: 9px 14px;
+
   border-radius: 8px;
+
+  font-family: inherit;
   font-size: 13px;
   font-weight: 600;
+
+  white-space: nowrap;
+
   transition: var(--transition);
 }
 
-.login-header-btn,
-.logout-btn {
+/* Login */
+
+.login-header-btn {
   background: var(--primary);
   color: white;
 }
 
-.login-header-btn:hover,
-.logout-btn:hover {
+.login-header-btn:hover {
   background: var(--primary-dark);
 }
+
+/* Register */
+
+.register-header-btn {
+  background: transparent;
+  color: var(--text);
+
+  border: 1px solid var(--border);
+}
+
+.register-header-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Profile */
+
+.profile-header-btn {
+  background: transparent;
+  color: var(--text);
+
+  border: 1px solid var(--border);
+}
+
+.profile-header-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* My Orders */
 
 .orders-header-btn {
   background: transparent;
   color: var(--text);
+
   border: 1px solid var(--border);
 }
 
@@ -131,21 +195,40 @@
   color: var(--primary);
 }
 
+/* Logout */
+
+.logout-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.logout-btn:hover {
+  background: var(--primary-dark);
+}
+
 /* ---------- Favorites ---------- */
 
 .favorite-header-btn {
   width: 42px;
   height: 42px;
+
   border: 1px solid var(--border);
   border-radius: 50%;
+
   background: transparent;
   color: var(--primary);
+
   font-size: 1.3rem;
+
   cursor: pointer;
-  transition: var(--transition);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  transition: var(--transition);
+
+  flex-shrink: 0;
 }
 
 .favorite-header-btn:hover {
@@ -157,16 +240,26 @@
 
 .cart-btn {
   background: transparent;
+
   border: 1px solid var(--border);
   padding: 10px 14px;
+
   border-radius: 50px;
+
   display: flex;
   align-items: center;
+
   gap: 7px;
+
+  font-family: inherit;
   font-size: 1rem;
   color: var(--text);
+
   cursor: pointer;
+
   transition: var(--transition);
+
+  white-space: nowrap;
 }
 
 .cart-btn:hover {
@@ -178,45 +271,115 @@
 
 .order-btn {
   border: none;
+
   background: var(--primary);
   color: white;
+
   padding: 11px 20px;
+
   border-radius: 50px;
+
+  font-family: inherit;
   font-size: 0.9rem;
   font-weight: 600;
+
   cursor: pointer;
+
   transition: var(--transition);
+
+  white-space: nowrap;
 }
 
 .order-btn:hover {
   background: var(--primary-dark);
 }
 
-/* ---------- Responsive ---------- */
+/* ---------- Medium Desktop ---------- */
 
-@media (max-width: 1050px) {
+@media (max-width: 1250px) {
+  .header-container {
+    padding: 0 20px;
+  }
+
+  .logo {
+    margin-right: 35px;
+  }
+
   .nav-links {
-    gap: 1.2rem;
+    gap: 1.5rem;
+  }
+
+  .header-actions {
+    margin-left: 25px;
+    gap: 10px;
+  }
+
+  .user-account {
+    gap: 7px;
+  }
+}
+
+/* ---------- Smaller Desktop ---------- */
+
+@media (max-width: 1100px) {
+  .logo {
+    margin-right: 25px;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .nav-links a {
+    font-size: 0.9rem;
+  }
+
+  .header-actions {
+    margin-left: 20px;
+    gap: 8px;
   }
 
   .user-name {
     display: none;
   }
 
-  .header-actions {
-    gap: 7px;
+  .login-header-btn,
+  .register-header-btn,
+  .profile-header-btn,
+  .orders-header-btn,
+  .logout-btn {
+    padding: 8px 11px;
+    font-size: 12px;
   }
 }
 
-@media (max-width: 768px) {
+/* ---------- Tablet ---------- */
+
+@media (max-width: 900px) {
   .navbar {
     display: none;
   }
 
-  .order-btn {
-    display: none;
+  .header-container {
+    justify-content: space-between;
   }
 
+  .header-actions {
+    margin-left: auto;
+  }
+
+  .logo {
+    margin-right: 0;
+  }
+
+  .user-name {
+    display: inline;
+  }
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 768px) {
   .header-container {
     height: 70px;
     padding: 0 15px;
@@ -226,12 +389,17 @@
     font-size: 1.5rem;
   }
 
-  .user-account {
-    gap: 5px;
+  .order-btn {
+    display: none;
   }
 
-  .orders-header-btn {
+  .orders-header-btn,
+  .profile-header-btn {
     display: none;
+  }
+
+  .user-account {
+    gap: 5px;
   }
 
   .favorite-header-btn {
@@ -244,14 +412,21 @@
   }
 }
 
+/* ---------- Small Mobile ---------- */
+
 @media (max-width: 480px) {
   .header-actions {
     gap: 5px;
   }
 
+  .user-name {
+    display: none;
+  }
+
   .login-header-btn,
+  .register-header-btn,
   .logout-btn {
-    padding: 8px 11px;
+    padding: 8px 10px;
     font-size: 12px;
   }
 
