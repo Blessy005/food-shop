@@ -1,25 +1,40 @@
 import { useState } from "react";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 
 import Header from "./components/Header/Header";
+
 import HeroSection from "./components/HeroSection/HeroSection";
+
 import MenuSection from "./components/MenuSection/MenuSection";
+
 import CategorySection from "./components/CategorySection/CategorySection";
+
 import SearchBar from "./components/SearchBar/SearchBar";
+
 import FoodList from "./components/FoodList/FoodList";
+
 import AboutSection from "./components/AboutSection/AboutSection";
+
 import ContactSection from "./components/ContactSection/ContactSection";
+
 import Favorites from "./components/Favorites/Favorites";
 
 import Cart from "./components/Cart/Cart";
+
 import Checkout from "./components/Checkout/Checkout";
+
 import OrderPlaced from "./components/OrderPlaced/OrderPlaced";
 
 import Register from "./components/Register/Register";
+
 import Login from "./components/Login/Login";
+
 import Orders from "./components/Orders/Orders";
+
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   // Customer authentication
@@ -34,8 +49,10 @@ function App() {
       return JSON.parse(storedUser);
     } catch (error) {
       console.error("Failed to load customer user:", error);
+
       localStorage.removeItem("customerUser");
       localStorage.removeItem("customerToken");
+
       return null;
     }
   });
@@ -44,6 +61,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("customerToken");
     localStorage.removeItem("customerUser");
+
     setUser(null);
   };
 
@@ -60,7 +78,9 @@ function App() {
   // Add item to cart
   const addToCart = (item) => {
     setCart((prevCart) => {
-      const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
+      const existingItem = prevCart.find(
+        (cartItem) => cartItem.id === item.id,
+      );
 
       if (existingItem) {
         return prevCart.map((cartItem) =>
@@ -131,19 +151,28 @@ function App() {
       );
 
       if (alreadyFavorite) {
-        return prevFavorites.filter((favorite) => favorite.id !== item.id);
+        return prevFavorites.filter(
+          (favorite) => favorite.id !== item.id,
+        );
       }
 
       return [...prevFavorites, item];
     });
   };
 
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = cart.reduce(
+    (total, item) => total + item.quantity,
+    0,
+  );
 
   return (
     <BrowserRouter>
       <div className="App">
-        <Header cartCount={cartCount} user={user} onLogout={handleLogout} />
+        <Header
+          cartCount={cartCount}
+          user={user}
+          onLogout={handleLogout}
+        />
 
         <Routes>
           {/* Homepage */}
@@ -203,7 +232,9 @@ function App() {
           <Route
             path="/login"
             element={
-              <Login onLogin={(loggedInUser) => setUser(loggedInUser)} />
+              <Login
+                onLogin={(loggedInUser) => setUser(loggedInUser)}
+              />
             }
           />
 
@@ -232,17 +263,31 @@ function App() {
             }
           />
 
-          {/* Checkout */}
-          <Route
-            path="/checkout"
-            element={<Checkout cart={cart} clearCart={clearCart} />}
-          />
+          {/* Protected Customer Routes */}
+          <Route element={<ProtectedRoute />}>
+            {/* Checkout */}
+            <Route
+              path="/checkout"
+              element={
+                <Checkout
+                  cart={cart}
+                  clearCart={clearCart}
+                />
+              }
+            />
 
-          {/* Order confirmation */}
-          <Route path="/order-placed" element={<OrderPlaced />} />
+            {/* Order confirmation */}
+            <Route
+              path="/order-placed"
+              element={<OrderPlaced />}
+            />
 
-          {/* Customer Orders */}
-          <Route path="/orders" element={<Orders />} />
+            {/* Customer Orders */}
+            <Route
+              path="/orders"
+              element={<Orders />}
+            />
+          </Route>
         </Routes>
       </div>
     </BrowserRouter>
