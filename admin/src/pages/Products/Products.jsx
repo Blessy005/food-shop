@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 
 import "./Products.css";
 
@@ -28,12 +29,12 @@ function Products() {
 
   // Filters
   const [selectedCategory, setSelectedCategory] = useState("all");
-
   const [selectedStatus, setSelectedStatus] = useState("all");
 
   // Sort
   const [sortOption, setSortOption] = useState("newest");
 
+  // Fetch products
   useEffect(() => {
     setLoading(true);
 
@@ -55,6 +56,35 @@ function Products() {
       });
   }, [location]);
 
+  // REALTIME PRODUCT UPDATES
+  useEffect(() => {
+    const socket = io(import.meta.env.VITE_SERVER_URL);
+
+    socket.on("connect", () => {
+      console.log("Connected to product updates:", socket.id);
+    });
+
+    socket.on("productUpdated", (updatedProduct) => {
+      console.log("PRODUCT UPDATED:", updatedProduct);
+
+      setProducts((prevProducts) =>
+        prevProducts.map((product) =>
+          product._id === updatedProduct._id
+            ? updatedProduct
+            : product,
+        ),
+      );
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("Product Socket Error:", err);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   // FILTER + SORT PRODUCTS
 
   const filteredProducts = products
@@ -66,13 +96,16 @@ function Products() {
 
       // Category filter
       const matchesCategory =
-        selectedCategory === "all" || product.category === selectedCategory;
+        selectedCategory === "all" ||
+        product.category === selectedCategory;
 
       // Status filter
       const matchesStatus =
         selectedStatus === "all" ||
-        (selectedStatus === "active" && product.isAvailable === true) ||
-        (selectedStatus === "inactive" && product.isAvailable === false);
+        (selectedStatus === "active" &&
+          product.isAvailable === true) ||
+        (selectedStatus === "inactive" &&
+          product.isAvailable === false);
 
       return matchesSearch && matchesCategory && matchesStatus;
     })
@@ -156,7 +189,7 @@ function Products() {
             <option value="inactive">Inactive</option>
           </select>
 
-          {/* Sort - we'll implement next */}
+          {/* Sort */}
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
@@ -203,7 +236,10 @@ function Products() {
                       <td>
                         <div className="product-image">
                           {imageUrl ? (
-                            <img src={imageUrl} alt={product.name} />
+                            <img
+                              src={imageUrl}
+                              alt={product.name}
+                            />
                           ) : (
                             <span>No Image</span>
                           )}
@@ -212,7 +248,9 @@ function Products() {
 
                       {/* Product */}
                       <td>
-                        <div className="product-name">{product.name}</div>
+                        <div className="product-name">
+                          {product.name}
+                        </div>
                       </td>
 
                       {/* Category */}
@@ -251,7 +289,9 @@ function Products() {
                               : "status-inactive"
                           }`}
                         >
-                          {product.isAvailable ? "Active" : "Inactive"}
+                          {product.isAvailable
+                            ? "Active"
+                            : "Inactive"}
                         </span>
                       </td>
 
@@ -262,7 +302,9 @@ function Products() {
                           <button
                             className="product-edit-button"
                             onClick={() =>
-                              navigate(`/admin/products/${product._id}/edit`)
+                              navigate(
+                                `/admin/products/${product._id}/edit`,
+                              )
                             }
                           >
                             Edit
@@ -280,7 +322,9 @@ function Products() {
 
                               try {
                                 const token =
-                                  localStorage.getItem("adminToken");
+                                  localStorage.getItem(
+                                    "adminToken",
+                                  );
 
                                 const response = await fetch(
                                   `${import.meta.env.VITE_API_URL}/products/${product._id}`,
@@ -293,20 +337,30 @@ function Products() {
                                 );
 
                                 if (!response.ok) {
-                                  throw new Error("Failed to delete product");
+                                  throw new Error(
+                                    "Failed to delete product",
+                                  );
                                 }
 
                                 setProducts((prevProducts) =>
                                   prevProducts.filter(
-                                    (item) => item._id !== product._id,
+                                    (item) =>
+                                      item._id !== product._id,
                                   ),
                                 );
 
-                                alert("Product deleted successfully!");
+                                alert(
+                                  "Product deleted successfully!",
+                                );
                               } catch (error) {
-                                console.error("Delete Product Error:", error);
+                                console.error(
+                                  "Delete Product Error:",
+                                  error,
+                                );
 
-                                alert("Failed to delete product.");
+                                alert(
+                                  "Failed to delete product.",
+                                );
                               }
                             }}
                           >
