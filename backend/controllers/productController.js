@@ -1,8 +1,10 @@
 const Product = require("../models/Product");
+
 const fs = require("fs");
 const path = require("path");
 
 // CREATE
+
 exports.createProduct = async (req, res) => {
   try {
     const productData = {
@@ -27,6 +29,7 @@ exports.createProduct = async (req, res) => {
 };
 
 // READ ALL
+
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.find();
@@ -43,6 +46,7 @@ exports.getProducts = async (req, res) => {
 };
 
 // GET SINGLE PRODUCT
+
 exports.getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -65,6 +69,7 @@ exports.getProduct = async (req, res) => {
 };
 
 // UPDATE
+
 exports.updateProduct = async (req, res) => {
   try {
     const updateData = {
@@ -89,6 +94,13 @@ exports.updateProduct = async (req, res) => {
       });
     }
 
+    // Notify connected customers about the product update
+    const io = req.app.get("io");
+
+    if (io) {
+      io.emit("productUpdated", product);
+    }
+
     res.json(product);
   } catch (err) {
     console.error("Update Product Error:", err);
@@ -101,6 +113,7 @@ exports.updateProduct = async (req, res) => {
 };
 
 // DELETE
+
 exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -114,10 +127,17 @@ exports.deleteProduct = async (req, res) => {
     // Delete uploaded image from backend/uploads
     if (product.image && product.image.startsWith("/uploads/")) {
       const imageName = path.basename(product.image);
-      const imagePath = path.join(__dirname, "..", "uploads", imageName);
+
+      const imagePath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        imageName
+      );
 
       if (fs.existsSync(imagePath)) {
         fs.unlinkSync(imagePath);
+
         console.log("Image deleted:", imageName);
       }
     }
