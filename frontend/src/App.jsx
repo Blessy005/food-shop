@@ -36,6 +36,8 @@ import Orders from "./components/Orders/Orders";
 
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
+import Profile from "./components/Profile/Profile";
+
 function App() {
   // Customer authentication
   const [user, setUser] = useState(() => {
@@ -77,12 +79,22 @@ function App() {
 
   // Add item to cart
   const addToCart = (item) => {
+    // Don't add unavailable or out-of-stock products
+    if (!item.isAvailable || item.stock <= 0) {
+      return;
+    }
+
     setCart((prevCart) => {
       const existingItem = prevCart.find(
         (cartItem) => cartItem.id === item.id,
       );
 
       if (existingItem) {
+        // Don't allow quantity to exceed available stock
+        if (existingItem.quantity >= item.stock) {
+          return prevCart;
+        }
+
         return prevCart.map((cartItem) =>
           cartItem.id === item.id
             ? {
@@ -106,14 +118,21 @@ function App() {
   // Increase quantity
   const increaseQuantity = (id) => {
     setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item,
-      ),
+      prevCart.map((item) => {
+        if (item.id !== id) {
+          return item;
+        }
+
+        // Don't allow quantity to exceed available stock
+        if (item.quantity >= item.stock) {
+          return item;
+        }
+
+        return {
+          ...item,
+          quantity: item.quantity + 1,
+        };
+      }),
     );
   };
 
@@ -135,7 +154,9 @@ function App() {
 
   // Remove item from cart
   const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.id !== id),
+    );
   };
 
   // Clear cart after placing order
@@ -226,7 +247,10 @@ function App() {
           />
 
           {/* Customer Register */}
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
 
           {/* Customer Login */}
           <Route
@@ -286,6 +310,12 @@ function App() {
             <Route
               path="/orders"
               element={<Orders />}
+            />
+
+            {/* Customer Profile */}
+            <Route
+              path="/profile"
+              element={<Profile />}
             />
           </Route>
         </Routes>
