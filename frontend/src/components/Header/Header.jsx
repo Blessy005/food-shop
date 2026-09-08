@@ -1,4 +1,5 @@
 import "./Header.css";
+
 import { useNavigate } from "react-router-dom";
 
 function Header({ cartCount, user, onLogout }) {
@@ -39,7 +40,6 @@ function Header({ cartCount, user, onLogout }) {
   return (
     <header className="header">
       <div className="container header-container">
-
         {/* Logo */}
         <div
           className="logo"
@@ -69,13 +69,21 @@ function Header({ cartCount, user, onLogout }) {
 
         {/* Right Side */}
         <div className="header-actions">
-
           {/* Customer Account */}
           {user ? (
             <div className="user-account">
+              {/* Customer Name */}
               <span className="user-name">
                 Hi, {user.name}
               </span>
+
+              {/* Profile */}
+              <button
+                className="profile-header-btn"
+                onClick={() => navigate("/profile")}
+              >
+                Profile
+              </button>
 
               {/* My Orders */}
               <button
@@ -94,13 +102,23 @@ function Header({ cartCount, user, onLogout }) {
               </button>
             </div>
           ) : (
-            /* Login */
-            <button
-              className="login-header-btn"
-              onClick={() => navigate("/login")}
-            >
-              Login
-            </button>
+            <>
+              {/* Login */}
+              <button
+                className="login-header-btn"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
+
+              {/* Register */}
+              <button
+                className="register-header-btn"
+                onClick={() => navigate("/register")}
+              >
+                Register
+              </button>
+            </>
           )}
 
           {/* Favorites */}
@@ -128,7 +146,6 @@ function Header({ cartCount, user, onLogout }) {
           >
             Order Now
           </button>
-
         </div>
       </div>
     </header>
