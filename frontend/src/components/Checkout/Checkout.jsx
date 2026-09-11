@@ -1,11 +1,24 @@
 import "./Checkout.css";
-import { useNavigate } from "react-router-dom";
+
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { useState } from "react";
 
 function Checkout({ cart, clearCart }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Delivery details
+  // ========================================
+  // COUPON DATA FROM CART
+  // ========================================
+
+  const couponCode = location.state?.couponCode || null;
+  const discount = Number(location.state?.discount) || 0;
+
+  // ========================================
+  // DELIVERY DETAILS
+  // ========================================
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -16,16 +29,24 @@ function Checkout({ cart, clearCart }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Calculate order amounts
+  // ========================================
+  // CALCULATE ORDER AMOUNTS
+  // ========================================
+
   const subtotal = cart.reduce(
-    (total, item) => total + Number(item.price) * item.quantity,
+    (total, item) =>
+      total + Number(item.price) * item.quantity,
     0,
   );
 
   const deliveryFee = cart.length > 0 ? 50 : 0;
-  const total = subtotal + deliveryFee;
 
-  // Handle form changes
+  const total = subtotal - discount + deliveryFee;
+
+  // ========================================
+  // HANDLE FORM CHANGES
+  // ========================================
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -35,7 +56,10 @@ function Checkout({ cart, clearCart }) {
     }));
   };
 
-  // Create order through backend
+  // ========================================
+  // CREATE ORDER THROUGH BACKEND
+  // ========================================
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -72,45 +96,63 @@ function Checkout({ cart, clearCart }) {
         `${import.meta.env.VITE_API_URL}/orders`,
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+
           body: JSON.stringify({
             items: orderItems,
-            subtotal,
-            deliveryFee,
-            total,
+
+            // Send coupon code.
+            // Backend will validate and calculate
+            // the actual discount again.
+            couponCode,
+
             paymentStatus: "Pending",
 
             // Delivery details
             name: formData.name,
             phone: formData.phone,
             address: formData.address,
-            specialInstructions: formData.specialInstructions,
+            specialInstructions:
+              formData.specialInstructions,
           }),
         },
       );
 
       const data = await response.json();
 
-      // Handle API errors
+      // ========================================
+      // HANDLE API ERRORS
+      // ========================================
+
       if (!response.ok) {
         throw new Error(
           data.message || "Failed to place order.",
         );
       }
 
-      // Save latest order
+      // ========================================
+      // SAVE LATEST ORDER
+      // ========================================
+
       localStorage.setItem(
         "lastOrder",
         JSON.stringify(data.order),
       );
 
-      // Clear cart after successful order
+      // ========================================
+      // CLEAR CART
+      // ========================================
+
       clearCart();
 
-      // Navigate to confirmation
+      // ========================================
+      // NAVIGATE TO CONFIRMATION
+      // ========================================
+
       navigate("/order-placed");
     } catch (error) {
       console.error("Place Order Error:", error);
@@ -127,7 +169,6 @@ function Checkout({ cart, clearCart }) {
   return (
     <section className="checkout">
       <div className="container">
-
         <div className="section-title">
           <h2>Checkout</h2>
           <p>Enter your details to place your order.</p>
@@ -136,11 +177,15 @@ function Checkout({ cart, clearCart }) {
         <form onSubmit={handleSubmit}>
           <div className="checkout-content">
 
-            {/* Customer Details */}
+            {/* ========================================
+                CUSTOMER DETAILS
+            ======================================== */}
+
             <div className="checkout-form">
               <h3>Delivery Details</h3>
 
               {/* Name */}
+
               <div className="form-group">
                 <label htmlFor="name">
                   Name
@@ -158,6 +203,7 @@ function Checkout({ cart, clearCart }) {
               </div>
 
               {/* Phone */}
+
               <div className="form-group">
                 <label htmlFor="phone">
                   Phone Number
@@ -175,6 +221,7 @@ function Checkout({ cart, clearCart }) {
               </div>
 
               {/* Address */}
+
               <div className="form-group">
                 <label htmlFor="address">
                   Address
@@ -192,6 +239,7 @@ function Checkout({ cart, clearCart }) {
               </div>
 
               {/* Special Instructions */}
+
               <div className="form-group">
                 <label htmlFor="specialInstructions">
                   Special Instructions
@@ -208,7 +256,10 @@ function Checkout({ cart, clearCart }) {
               </div>
             </div>
 
-            {/* Order Summary */}
+            {/* ========================================
+                ORDER SUMMARY
+            ======================================== */}
+
             <div className="checkout-summary">
               <h3>Order Summary</h3>
 
@@ -217,6 +268,7 @@ function Checkout({ cart, clearCart }) {
               ) : (
                 <>
                   {/* Cart Items */}
+
                   {cart.map((item) => (
                     <div
                       className="checkout-item"
@@ -227,30 +279,53 @@ function Checkout({ cart, clearCart }) {
                       </span>
 
                       <span>
-                        ₹{Number(item.price) * item.quantity}
+                        ₹
+                        {Number(item.price) *
+                          item.quantity}
                       </span>
                     </div>
                   ))}
 
                   {/* Subtotal */}
+
                   <div className="summary-line">
                     <span>Subtotal</span>
                     <span>₹{subtotal}</span>
                   </div>
 
+                  {/* Coupon Discount */}
+
+                  {discount > 0 && (
+                    <div className="summary-line">
+                      <span>
+                        Discount
+                        {couponCode
+                          ? ` (${couponCode})`
+                          : ""}
+                      </span>
+
+                      <span>
+                        -₹{discount}
+                      </span>
+                    </div>
+                  )}
+
                   {/* Delivery Fee */}
+
                   <div className="summary-line">
                     <span>Delivery Fee</span>
                     <span>₹{deliveryFee}</span>
                   </div>
 
                   {/* Total */}
+
                   <div className="summary-total">
                     <strong>Total</strong>
                     <strong>₹{total}</strong>
                   </div>
 
                   {/* Error */}
+
                   {error && (
                     <p className="checkout-error">
                       {error}
@@ -258,6 +333,7 @@ function Checkout({ cart, clearCart }) {
                   )}
 
                   {/* Place Order */}
+
                   <button
                     type="submit"
                     className="place-order-btn"
@@ -270,7 +346,6 @@ function Checkout({ cart, clearCart }) {
                 </>
               )}
             </div>
-
           </div>
         </form>
       </div>
