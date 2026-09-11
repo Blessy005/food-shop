@@ -326,6 +326,7 @@ function Orders() {
               <col className="col-customer" />
               <col className="col-date" />
               <col className="col-items" />
+              <col className="col-coupon" />
               <col className="col-total" />
               <col className="col-payment" />
               <col className="col-status" />
@@ -338,6 +339,7 @@ function Orders() {
                 <th>Customer</th>
                 <th>Date</th>
                 <th>Items</th>
+                <th>Coupon</th>
                 <th>Total</th>
                 <th>Payment</th>
                 <th>Status</th>
@@ -350,7 +352,7 @@ function Orders() {
               {filteredOrders.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="8"
+                    colSpan="9"
                     style={{
                       textAlign: "center",
                       padding: "30px",
@@ -407,6 +409,27 @@ function Orders() {
                         <span className="order-items">
                           {itemCount}
                         </span>
+                      </td>
+
+                      {/* Coupon */}
+                      <td>
+                        {order.couponCode ? (
+                          <div className="order-coupon">
+                            <strong>
+                              {order.couponCode}
+                            </strong>
+
+                            {Number(order.discount) > 0 && (
+                              <span>
+                                -₹{order.discount}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="no-coupon">
+                            —
+                          </span>
+                        )}
                       </td>
 
                       {/* Total */}
