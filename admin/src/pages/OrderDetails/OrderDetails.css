@@ -44,7 +44,7 @@
   padding: 7px 12px;
   border-radius: 20px;
   background-color: rgba(232, 155, 60, 0.12);
-  color: #B56F16;
+  color: #b56f16;
   font-size: 11px;
   font-weight: 600;
 }
@@ -223,6 +223,30 @@
   font-weight: 500;
 }
 
+/* =========================================
+   Coupon Code
+   ========================================= */
+
+.order-coupon-code {
+  color: var(--primary) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px;
+}
+
+/* =========================================
+   Coupon Discount
+   ========================================= */
+
+.order-discount {
+  color: var(--success) !important;
+  font-weight: 600 !important;
+}
+
+/* =========================================
+   Payment Total
+   ========================================= */
+
 .payment-summary .payment-total {
   margin-top: 8px;
   padding-top: 15px;
@@ -395,9 +419,9 @@
   line-height: 1.5;
 }
 
-/* =========================
-   PAYMENT STATUS BADGE
-========================= */
+/* =========================================
+   Payment Status Badge
+   ========================================= */
 
 .payment-status-badge {
   display: inline-flex;
