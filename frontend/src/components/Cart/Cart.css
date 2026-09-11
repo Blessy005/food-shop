@@ -16,6 +16,8 @@
   padding: 40px;
 }
 
+/* ---------- Cart Items ---------- */
+
 .cart-items {
   display: flex;
   flex-direction: column;
@@ -80,7 +82,7 @@
   font-weight: 700;
 }
 
-/* Quantity controls */
+/* ---------- Quantity Controls ---------- */
 
 .cart-controls {
   display: flex;
@@ -115,7 +117,7 @@
   color: var(--text);
 }
 
-/* Remove button */
+/* ---------- Remove Button ---------- */
 
 .remove-btn {
   margin-left: 10px;
@@ -132,7 +134,122 @@
   color: white;
 }
 
-/* Cart summary */
+/* ---------- Coupon Section ---------- */
+
+.coupon-section {
+  max-width: 900px;
+  margin: 25px auto 0;
+  padding: 20px 25px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.coupon-title {
+  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.coupon-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.coupon-input-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.coupon-input-row input:focus {
+  border-color: var(--primary);
+}
+
+.coupon-input-row input::placeholder {
+  color: var(--text-light);
+}
+
+.coupon-input-row button {
+  padding: 11px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.coupon-input-row button:hover {
+  opacity: 0.9;
+}
+
+.coupon-input-row button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- Applied Coupon ---------- */
+
+.coupon-applied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+}
+
+.coupon-applied span {
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.coupon-applied button {
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.coupon-applied button:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Coupon Messages ---------- */
+
+.coupon-success {
+  margin-top: 10px;
+  color: #2e9b62;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.coupon-error {
+  margin-top: 10px;
+  color: #d62828;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ---------- Cart Summary ---------- */
 
 .cart-summary {
   max-width: 900px;
@@ -160,7 +277,7 @@
   color: var(--primary);
 }
 
-/* Checkout button */
+/* ---------- Checkout Button ---------- */
 
 .checkout-btn {
   width: 100%;
@@ -181,17 +298,21 @@
   opacity: 0.9;
 }
 
-/* Mobile */
+/* ---------- Mobile ---------- */
 
 @media (max-width: 768px) {
   .cart {
     padding: 60px 5%;
   }
 
-.cart-item-image {
-  width: 65px;
-  height: 65px;
-}
+  .cart-item {
+    flex-wrap: wrap;
+  }
+
+  .cart-item-image {
+    width: 65px;
+    height: 65px;
+  }
 
   .cart-controls {
     width: 100%;
@@ -200,5 +321,17 @@
 
   .remove-btn {
     margin-left: 0;
+  }
+
+  .coupon-section {
+    padding: 18px;
+  }
+
+  .coupon-input-row {
+    flex-direction: column;
+  }
+
+  .coupon-input-row button {
+    width: 100%;
   }
 }
