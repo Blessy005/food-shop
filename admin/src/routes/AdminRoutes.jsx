@@ -21,6 +21,9 @@ import OrderDetails from "../pages/OrderDetails/OrderDetails";
 import Customers from "../pages/Customers/Customers";
 import CustomerDetails from "../pages/CustomerDetails/CustomerDetails";
 
+// Coupons
+import Coupons from "../pages/Coupons/Coupons";
+
 // Settings
 import Settings from "../pages/Settings/Settings";
 
@@ -29,30 +32,73 @@ function AdminRoutes() {
     <Routes>
 
       {/* Admin Login */}
-      <Route path="/admin/login" element={<Login />} />
+      <Route
+        path="/admin/login"
+        element={<Login />}
+      />
 
       {/* Protected Admin Panel */}
-      <Route path="/admin" element={<AdminProtectedRoute />}>
+      <Route
+        path="/admin"
+        element={<AdminProtectedRoute />}
+      >
         <Route element={<AdminLayout />}>
 
           {/* Dashboard */}
-          <Route index element={<Dashboard />} />
+          <Route
+            index
+            element={<Dashboard />}
+          />
 
           {/* Products */}
-          <Route path="products" element={<Products />} />
-          <Route path="products/add" element={<ProductForm />} />
-          <Route path="products/:id/edit" element={<ProductForm />} />
+          <Route
+            path="products"
+            element={<Products />}
+          />
+
+          <Route
+            path="products/add"
+            element={<ProductForm />}
+          />
+
+          <Route
+            path="products/:id/edit"
+            element={<ProductForm />}
+          />
 
           {/* Orders */}
-          <Route path="orders" element={<Orders />} />
-          <Route path="orders/:id" element={<OrderDetails />} />
+          <Route
+            path="orders"
+            element={<Orders />}
+          />
+
+          <Route
+            path="orders/:id"
+            element={<OrderDetails />}
+          />
 
           {/* Customers */}
-          <Route path="customers" element={<Customers />} />
-          <Route path="customers/:id" element={<CustomerDetails />} />
+          <Route
+            path="customers"
+            element={<Customers />}
+          />
+
+          <Route
+            path="customers/:id"
+            element={<CustomerDetails />}
+          />
+
+          {/* Coupons */}
+          <Route
+            path="coupons"
+            element={<Coupons />}
+          />
 
           {/* Settings */}
-          <Route path="settings" element={<Settings />} />
+          <Route
+            path="settings"
+            element={<Settings />}
+          />
 
         </Route>
       </Route>
