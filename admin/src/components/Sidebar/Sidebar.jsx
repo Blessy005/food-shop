@@ -8,7 +8,6 @@ function Sidebar() {
 
       {/* Brand */}
       <div className="sidebar-brand">
-
         <div className="brand-icon">
           🍴
         </div>
@@ -17,7 +16,6 @@ function Sidebar() {
           <h2>Flavor Feast</h2>
           <span>Admin Panel</span>
         </div>
-
       </div>
 
       {/* Navigation */}
@@ -25,7 +23,6 @@ function Sidebar() {
 
         {/* Main */}
         <div className="nav-section">
-
           <p className="nav-section-title">
             MAIN
           </p>
@@ -40,16 +37,15 @@ function Sidebar() {
             <span className="nav-icon">⌂</span>
             <span>Dashboard</span>
           </NavLink>
-
         </div>
 
         {/* Management */}
         <div className="nav-section">
-
           <p className="nav-section-title">
             MANAGEMENT
           </p>
 
+          {/* Products */}
           <NavLink
             to="/admin/products"
             className={({ isActive }) =>
@@ -60,6 +56,7 @@ function Sidebar() {
             <span>Products</span>
           </NavLink>
 
+          {/* Orders */}
           <NavLink
             to="/admin/orders"
             className={({ isActive }) =>
@@ -70,6 +67,7 @@ function Sidebar() {
             <span>Orders</span>
           </NavLink>
 
+          {/* Customers */}
           <NavLink
             to="/admin/customers"
             className={({ isActive }) =>
@@ -80,15 +78,25 @@ function Sidebar() {
             <span>Customers</span>
           </NavLink>
 
+          {/* Coupons */}
+          <NavLink
+            to="/admin/coupons"
+            className={({ isActive }) =>
+              `nav-link ${isActive ? "active" : ""}`
+            }
+          >
+            <span className="nav-icon">%</span>
+            <span>Coupons</span>
+          </NavLink>
         </div>
 
         {/* System */}
         <div className="nav-section">
-
           <p className="nav-section-title">
             SYSTEM
           </p>
 
+          {/* Settings */}
           <NavLink
             to="/admin/settings"
             className={({ isActive }) =>
@@ -99,6 +107,7 @@ function Sidebar() {
             <span>Settings</span>
           </NavLink>
 
+          {/* Logout */}
           <button
             className="nav-link nav-button"
             onClick={() => console.log("Logout later")}
@@ -106,7 +115,6 @@ function Sidebar() {
             <span className="nav-icon">↪</span>
             <span>Logout</span>
           </button>
-
         </div>
 
       </nav>
