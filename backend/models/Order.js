@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 
+// ========================================
 // ORDER ITEM SCHEMA
+// ========================================
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -31,7 +33,9 @@ const orderItemSchema = new mongoose.Schema(
   }
 );
 
+// ========================================
 // DELIVERY DETAILS SCHEMA
+// ========================================
 
 const deliveryDetailsSchema = new mongoose.Schema(
   {
@@ -64,7 +68,9 @@ const deliveryDetailsSchema = new mongoose.Schema(
   }
 );
 
+// ========================================
 // ORDER SCHEMA
+// ========================================
 
 const orderSchema = new mongoose.Schema(
   {
@@ -74,7 +80,9 @@ const orderSchema = new mongoose.Schema(
       unique: true,
     },
 
+    // ========================================
     // CUSTOMER WHO PLACED THE ORDER
+    // ========================================
 
     customer: {
       type: mongoose.Schema.Types.ObjectId,
@@ -82,14 +90,18 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    // DELIVERY INFORMATION FOR THIS ORDER
+    // ========================================
+    // DELIVERY INFORMATION
+    // ========================================
 
     deliveryDetails: {
       type: deliveryDetailsSchema,
       required: true,
     },
 
-    // DELIVERY PARTNER ASSIGNED BY ADMIN
+    // ========================================
+    // DELIVERY PARTNER
+    // ========================================
 
     deliveryPartner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -97,20 +109,42 @@ const orderSchema = new mongoose.Schema(
       default: null,
     },
 
+    // ========================================
     // ORDER ITEMS
+    // ========================================
 
     items: {
       type: [orderItemSchema],
       required: true,
+
       validate: {
         validator: (items) => items.length > 0,
         message: "Order must contain at least one item",
       },
     },
 
+    // ========================================
+    // PRICE DETAILS
+    // ========================================
+
     subtotal: {
       type: Number,
       required: true,
+      min: 0,
+    },
+
+    // Coupon code used for this order
+    couponCode: {
+      type: String,
+      default: null,
+      trim: true,
+      uppercase: true,
+    },
+
+    // Discount received from coupon
+    discount: {
+      type: Number,
+      default: 0,
       min: 0,
     },
 
@@ -126,11 +160,19 @@ const orderSchema = new mongoose.Schema(
       min: 0,
     },
 
+    // ========================================
+    // PAYMENT STATUS
+    // ========================================
+
     paymentStatus: {
       type: String,
       enum: ["Pending", "Paid", "Failed"],
       default: "Pending",
     },
+
+    // ========================================
+    // ORDER STATUS
+    // ========================================
 
     status: {
       type: String,
