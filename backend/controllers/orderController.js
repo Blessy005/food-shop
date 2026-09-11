@@ -1,6 +1,7 @@
 const Order = require("../models/Order");
 const User = require("../models/User");
 const Product = require("../models/Product");
+const Coupon = require("../models/Coupon");
 
 // ========================================
 // CREATE ORDER
@@ -11,9 +12,7 @@ const createOrder = async (req, res) => {
   try {
     const {
       items,
-      subtotal,
-      deliveryFee,
-      total,
+      couponCode,
       paymentStatus,
       name,
       phone,
@@ -21,20 +20,33 @@ const createOrder = async (req, res) => {
       specialInstructions,
     } = req.body;
 
-    // Validate required order data
+    // ========================================
+    // VALIDATE REQUIRED ORDER DATA
+    // ========================================
+
     if (!items || items.length === 0) {
       return res.status(400).json({
         message: "Order must contain at least one item",
       });
     }
 
-    if (subtotal === undefined || total === undefined) {
-      return res.status(400).json({
-        message: "Subtotal and total are required",
-      });
+    // Validate item quantities
+    for (const item of items) {
+      if (
+        !item.product ||
+        !Number.isInteger(item.quantity) ||
+        item.quantity < 1
+      ) {
+        return res.status(400).json({
+          message: "Invalid product or quantity",
+        });
+      }
     }
 
-    // Validate delivery details
+    // ========================================
+    // VALIDATE DELIVERY DETAILS
+    // ========================================
+
     if (!name || !phone || !address) {
       return res.status(400).json({
         message: "Name, phone and address are required",
@@ -42,27 +54,42 @@ const createOrder = async (req, res) => {
     }
 
     // ========================================
-    // VALIDATE PRODUCTS AND STOCK
+    // GET REAL PRODUCTS FROM DATABASE
     // ========================================
 
-    const productIds = items.map((item) => item.product);
+    const productIds = items.map(
+      (item) => item.product
+    );
+
+    const uniqueProductIds = [
+      ...new Set(
+        productIds.map((id) => id.toString())
+      ),
+    ];
 
     const products = await Product.find({
-      _id: { $in: productIds },
+      _id: { $in: uniqueProductIds },
     });
 
     // Make sure all products exist
-    if (products.length !== productIds.length) {
+    if (
+      products.length !== uniqueProductIds.length
+    ) {
       return res.status(400).json({
-        message: "One or more products are no longer available",
+        message:
+          "One or more products are no longer available",
       });
     }
 
-    // Check availability and stock
+    // ========================================
+    // VALIDATE PRODUCTS, AVAILABILITY AND STOCK
+    // ========================================
+
     for (const item of items) {
       const product = products.find(
         (product) =>
-          product._id.toString() === item.product.toString()
+          product._id.toString() ===
+          item.product.toString()
       );
 
       if (!product) {
@@ -85,28 +112,162 @@ const createOrder = async (req, res) => {
     }
 
     // ========================================
+    // CALCULATE SUBTOTAL FROM DATABASE PRICES
+    // ========================================
+
+    const orderItems = items.map((item) => {
+      const product = products.find(
+        (product) =>
+          product._id.toString() ===
+          item.product.toString()
+      );
+
+      return {
+        product: product._id,
+        name: product.name,
+        price: Number(product.price),
+        quantity: item.quantity,
+      };
+    });
+
+    const calculatedSubtotal = orderItems.reduce(
+      (total, item) =>
+        total +
+        item.price * item.quantity,
+      0
+    );
+
+    const subtotal =
+      Math.round(calculatedSubtotal * 100) / 100;
+
+    // ========================================
+    // APPLY COUPON
+    // ========================================
+
+    let appliedCouponCode = null;
+    let discount = 0;
+
+    if (
+      couponCode &&
+      couponCode.trim()
+    ) {
+      const coupon = await Coupon.findOne({
+        code: couponCode
+          .trim()
+          .toUpperCase(),
+      });
+
+      // Coupon does not exist
+      if (!coupon) {
+        return res.status(404).json({
+          message: "Invalid coupon code",
+        });
+      }
+
+      // Coupon inactive
+      if (!coupon.isActive) {
+        return res.status(400).json({
+          message: "This coupon is inactive",
+        });
+      }
+
+      // Coupon expired
+      if (
+        new Date(coupon.expiryDate) < new Date()
+      ) {
+        return res.status(400).json({
+          message: "This coupon has expired",
+        });
+      }
+
+      // Minimum order validation
+      if (
+        subtotal < coupon.minimumOrderAmount
+      ) {
+        return res.status(400).json({
+          message: `Minimum order amount is ₹${coupon.minimumOrderAmount}`,
+        });
+      }
+
+      // ========================================
+      // CALCULATE DISCOUNT
+      // ========================================
+
+      if (
+        coupon.discountType === "percentage"
+      ) {
+        discount =
+          (subtotal *
+            coupon.discountValue) /
+          100;
+
+        // Maximum discount limit
+        if (
+          coupon.maximumDiscount !== null &&
+          discount >
+            coupon.maximumDiscount
+        ) {
+          discount =
+            coupon.maximumDiscount;
+        }
+      } else {
+        // Fixed discount
+        discount = Math.min(
+          coupon.discountValue,
+          subtotal
+        );
+      }
+
+      discount =
+        Math.round(discount * 100) / 100;
+
+      appliedCouponCode = coupon.code;
+    }
+
+    // ========================================
+    // CALCULATE DELIVERY FEE
+    // ========================================
+
+    const deliveryFee = 50;
+
+    // ========================================
+    // CALCULATE FINAL TOTAL
+    // ========================================
+
+    const total =
+      Math.round(
+        (subtotal -
+          discount +
+          deliveryFee) *
+          100
+      ) / 100;
+
+    // ========================================
     // DECREASE PRODUCT STOCK
     // ========================================
 
     const updatedProducts = [];
 
     try {
-      for (const item of items) {
-        const updatedProduct = await Product.findOneAndUpdate(
-          {
-            _id: item.product,
-            isAvailable: true,
-            stock: { $gte: item.quantity },
-          },
-          {
-            $inc: {
-              stock: -item.quantity,
+      for (const item of orderItems) {
+        const updatedProduct =
+          await Product.findOneAndUpdate(
+            {
+              _id: item.product,
+              isAvailable: true,
+              stock: {
+                $gte: item.quantity,
+              },
             },
-          },
-          {
-            new: true,
-          }
-        );
+            {
+              $inc: {
+                stock: -item.quantity,
+              },
+            },
+            {
+              new: true,
+            }
+          );
 
         // Another order may have taken the stock
         // between our initial check and this update.
@@ -123,7 +284,7 @@ const createOrder = async (req, res) => {
       }
     } catch (stockError) {
       // ========================================
-      // ROLLBACK STOCK IF ANY UPDATE FAILS
+      // ROLLBACK STOCK IF UPDATE FAILS
       // ========================================
 
       for (const updated of updatedProducts) {
@@ -159,7 +320,9 @@ const createOrder = async (req, res) => {
     try {
       order = await Order.create({
         orderNumber,
+
         customer: req.user.id,
+
         deliveryDetails: {
           name,
           phone,
@@ -167,13 +330,26 @@ const createOrder = async (req, res) => {
           specialInstructions:
             specialInstructions || "",
         },
+
         deliveryPartner: null,
-        items,
+
+        // Use validated database values
+        items: orderItems,
+
+        // Use backend-calculated values
         subtotal,
-        deliveryFee: deliveryFee || 0,
+
+        couponCode: appliedCouponCode,
+
+        discount,
+
+        deliveryFee,
+
         total,
+
         paymentStatus:
           paymentStatus || "Pending",
+
         status: "Pending",
       });
     } catch (orderError) {
@@ -214,23 +390,25 @@ const createOrder = async (req, res) => {
     // POPULATE ORDER
     // ========================================
 
-    const populatedOrder = await Order.findById(
-      order._id
-    )
-      .populate(
-        "customer",
-        "name email role"
-      )
-      .populate(
-        "deliveryPartner",
-        "name email role"
-      )
-      .populate(
-        "items.product",
-        "name category image"
-      );
+    const populatedOrder =
+      await Order.findById(order._id)
+        .populate(
+          "customer",
+          "name email role"
+        )
+        .populate(
+          "deliveryPartner",
+          "name email role"
+        )
+        .populate(
+          "items.product",
+          "name category image"
+        );
 
-    // Return the newly created order
+    // ========================================
+    // RETURN CREATED ORDER
+    // ========================================
+
     res.status(201).json({
       message: "Order created successfully",
       order: populatedOrder,
