@@ -19,7 +19,8 @@ function OrderDetails() {
 
   const [deliveryPartners, setDeliveryPartners] = useState([]);
 
-  const [selectedDeliveryPartner, setSelectedDeliveryPartner] = useState("");
+  const [selectedDeliveryPartner, setSelectedDeliveryPartner] =
+    useState("");
 
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +54,9 @@ function OrderDetails() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || "Failed to fetch order.");
+          throw new Error(
+            data.message || "Failed to fetch order.",
+          );
         }
 
         setOrder(data);
@@ -61,11 +64,15 @@ function OrderDetails() {
         setPaymentStatus(data.paymentStatus);
 
         // Set currently assigned delivery partner
-        setSelectedDeliveryPartner(data.deliveryPartner?._id || "");
+        setSelectedDeliveryPartner(
+          data.deliveryPartner?._id || "",
+        );
       } catch (err) {
         console.error("Fetch Order Error:", err);
 
-        setError(err.message || "Unable to load order details.");
+        setError(
+          err.message || "Unable to load order details.",
+        );
       } finally {
         setLoading(false);
       }
@@ -94,29 +101,36 @@ function OrderDetails() {
     });
 
     // Payment status update
-    socket.on("orderPaymentStatusUpdated", (updatedOrder) => {
-      if (String(updatedOrder._id) !== String(id)) {
-        return;
-      }
+    socket.on(
+      "orderPaymentStatusUpdated",
+      (updatedOrder) => {
+        if (String(updatedOrder._id) !== String(id)) {
+          return;
+        }
 
-      setOrder(updatedOrder);
-      setPaymentStatus(updatedOrder.paymentStatus);
-    });
+        setOrder(updatedOrder);
+        setPaymentStatus(updatedOrder.paymentStatus);
+      },
+    );
 
     // Delivery availability update
-    socket.on("deliveryAvailabilityUpdated", (updatedUser) => {
-      if (updatedUser.role !== "delivery") {
-        return;
-      }
+    socket.on(
+      "deliveryAvailabilityUpdated",
+      (updatedUser) => {
+        if (updatedUser.role !== "delivery") {
+          return;
+        }
 
-      setDeliveryPartners((currentPartners) =>
-        currentPartners.map((partner) =>
-          String(partner._id) === String(updatedUser._id)
-            ? updatedUser
-            : partner,
-        ),
-      );
-    });
+        setDeliveryPartners((currentPartners) =>
+          currentPartners.map((partner) =>
+            String(partner._id) ===
+            String(updatedUser._id)
+              ? updatedUser
+              : partner,
+          ),
+        );
+      },
+    );
 
     return () => {
       socket.disconnect();
@@ -130,7 +144,8 @@ function OrderDetails() {
   useEffect(() => {
     const fetchDeliveryPartners = async () => {
       try {
-        const token = localStorage.getItem("adminToken");
+        const token =
+          localStorage.getItem("adminToken");
 
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/users`,
@@ -145,7 +160,8 @@ function OrderDetails() {
 
         if (!response.ok) {
           throw new Error(
-            data.message || "Failed to fetch delivery partners.",
+            data.message ||
+              "Failed to fetch delivery partners.",
           );
         }
 
@@ -156,7 +172,10 @@ function OrderDetails() {
 
         setDeliveryPartners(deliveryUsers);
       } catch (err) {
-        console.error("Fetch Delivery Partners Error:", err);
+        console.error(
+          "Fetch Delivery Partners Error:",
+          err,
+        );
       }
     };
 
@@ -171,7 +190,8 @@ function OrderDetails() {
     try {
       setAssigning(true);
 
-      const token = localStorage.getItem("adminToken");
+      const token =
+        localStorage.getItem("adminToken");
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/orders/${id}`,
@@ -182,7 +202,8 @@ function OrderDetails() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            deliveryPartner: selectedDeliveryPartner || null,
+            deliveryPartner:
+              selectedDeliveryPartner || null,
           }),
         },
       );
@@ -191,7 +212,8 @@ function OrderDetails() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to assign delivery partner.",
+          data.message ||
+            "Failed to assign delivery partner.",
         );
       }
 
@@ -207,7 +229,10 @@ function OrderDetails() {
           : "Delivery partner removed successfully.",
       );
     } catch (err) {
-      console.error("Assign Delivery Partner Error:", err);
+      console.error(
+        "Assign Delivery Partner Error:",
+        err,
+      );
 
       alert(
         err.message ||
@@ -226,7 +251,8 @@ function OrderDetails() {
     try {
       setUpdating(true);
 
-      const token = localStorage.getItem("adminToken");
+      const token =
+        localStorage.getItem("adminToken");
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/orders/${id}`,
@@ -246,19 +272,26 @@ function OrderDetails() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to update order status.",
+          data.message ||
+            "Failed to update order status.",
         );
       }
 
       setOrder(data.order);
       setStatus(data.order.status);
 
-      alert("Order status updated successfully.");
+      alert(
+        "Order status updated successfully.",
+      );
     } catch (err) {
-      console.error("Update Order Error:", err);
+      console.error(
+        "Update Order Error:",
+        err,
+      );
 
       alert(
-        err.message || "Something went wrong while updating the order.",
+        err.message ||
+          "Something went wrong while updating the order.",
       );
     } finally {
       setUpdating(false);
@@ -273,7 +306,8 @@ function OrderDetails() {
     try {
       setUpdating(true);
 
-      const token = localStorage.getItem("adminToken");
+      const token =
+        localStorage.getItem("adminToken");
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/orders/${id}`,
@@ -293,16 +327,24 @@ function OrderDetails() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to update payment status.",
+          data.message ||
+            "Failed to update payment status.",
         );
       }
 
       setOrder(data.order);
-      setPaymentStatus(data.order.paymentStatus);
+      setPaymentStatus(
+        data.order.paymentStatus,
+      );
 
-      alert("Payment status updated successfully.");
+      alert(
+        "Payment status updated successfully.",
+      );
     } catch (err) {
-      console.error("Update Payment Status Error:", err);
+      console.error(
+        "Update Payment Status Error:",
+        err,
+      );
 
       alert(
         err.message ||
@@ -328,7 +370,9 @@ function OrderDetails() {
 
             <h1>Order Details</h1>
 
-            <p>Loading order information...</p>
+            <p>
+              Loading order information...
+            </p>
           </div>
         </div>
 
@@ -354,17 +398,23 @@ function OrderDetails() {
 
             <h1>Order Details</h1>
 
-            <p>{error || "Order not found."}</p>
+            <p>
+              {error || "Order not found."}
+            </p>
           </div>
         </div>
 
         <div className="order-details-card">
-          <p>{error || "Order not found."}</p>
+          <p>
+            {error || "Order not found."}
+          </p>
 
           <button
             type="button"
             className="update-status-button"
-            onClick={() => navigate("/admin/orders")}
+            onClick={() =>
+              navigate("/admin/orders")
+            }
           >
             Back to Orders
           </button>
@@ -376,7 +426,9 @@ function OrderDetails() {
   const customer = order.customer || {};
 
   const formattedDate = order.createdAt
-    ? new Date(order.createdAt).toLocaleDateString("en-IN", {
+    ? new Date(
+        order.createdAt,
+      ).toLocaleDateString("en-IN", {
         day: "2-digit",
         month: "long",
         year: "numeric",
@@ -393,9 +445,13 @@ function OrderDetails() {
             Orders / Order Details
           </p>
 
-          <h1>Order #{order.orderNumber}</h1>
+          <h1>
+            Order #{order.orderNumber}
+          </h1>
 
-          <p>Placed on {formattedDate}</p>
+          <p>
+            Placed on {formattedDate}
+          </p>
         </div>
 
         <span className="order-details-status">
@@ -419,21 +475,26 @@ function OrderDetails() {
             <div className="customer-details">
               <div className="customer-avatar">
                 {customer.name
-                  ? customer.name.charAt(0).toUpperCase()
+                  ? customer.name
+                      .charAt(0)
+                      .toUpperCase()
                   : "?"}
               </div>
 
               <div className="customer-info">
                 <h3>
-                  {customer.name || "Unknown Customer"}
+                  {customer.name ||
+                    "Unknown Customer"}
                 </h3>
 
                 <p>
-                  {customer.email || "No email available"}
+                  {customer.email ||
+                    "No email available"}
                 </p>
 
                 <p>
-                  {order.deliveryDetails?.phone ||
+                  {order.deliveryDetails
+                    ?.phone ||
                     "No phone available"}
                 </p>
               </div>
@@ -452,7 +513,8 @@ function OrderDetails() {
                 <span>Name</span>
 
                 <strong>
-                  {order.deliveryDetails?.name || "N/A"}
+                  {order.deliveryDetails
+                    ?.name || "N/A"}
                 </strong>
               </div>
 
@@ -460,7 +522,8 @@ function OrderDetails() {
                 <span>Phone</span>
 
                 <strong>
-                  {order.deliveryDetails?.phone || "N/A"}
+                  {order.deliveryDetails
+                    ?.phone || "N/A"}
                 </strong>
               </div>
 
@@ -468,16 +531,23 @@ function OrderDetails() {
                 <span>Address</span>
 
                 <strong>
-                  {order.deliveryDetails?.address || "N/A"}
+                  {order.deliveryDetails
+                    ?.address || "N/A"}
                 </strong>
               </div>
 
-              {order.deliveryDetails?.specialInstructions && (
+              {order.deliveryDetails
+                ?.specialInstructions && (
                 <div className="delivery-detail-row">
-                  <span>Special Instructions</span>
+                  <span>
+                    Special Instructions
+                  </span>
 
                   <strong>
-                    {order.deliveryDetails.specialInstructions}
+                    {
+                      order.deliveryDetails
+                        .specialInstructions
+                    }
                   </strong>
                 </div>
               )}
@@ -496,53 +566,61 @@ function OrderDetails() {
             </div>
 
             <div className="order-items-list">
-              {order.items?.map((item, index) => (
-                <div className="order-item" key={index}>
-                  <div className="order-item-image">
-                    {item.product?.image ? (
-                      <img
-                        src={
-                          item.product.image.startsWith(
-                            "/uploads",
-                          )
-                            ? `${import.meta.env.VITE_SERVER_URL}${item.product.image}`
-                            : item.product.image
-                        }
-                        alt={
-                          item.name ||
-                          item.product.name
-                        }
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          borderRadius: "8px",
-                        }}
-                      />
-                    ) : (
-                      "🍴"
-                    )}
+              {order.items?.map(
+                (item, index) => (
+                  <div
+                    className="order-item"
+                    key={index}
+                  >
+                    <div className="order-item-image">
+                      {item.product?.image ? (
+                        <img
+                          src={
+                            item.product.image.startsWith(
+                              "/uploads",
+                            )
+                              ? `${import.meta.env.VITE_SERVER_URL}${item.product.image}`
+                              : item.product.image
+                          }
+                          alt={
+                            item.name ||
+                            item.product.name
+                          }
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      ) : (
+                        "🍴"
+                      )}
+                    </div>
+
+                    <div className="order-item-info">
+                      <h3>
+                        {item.name ||
+                          item.product?.name ||
+                          "Unknown Product"}
+                      </h3>
+
+                      <p>
+                        ₹{item.price} ×{" "}
+                        {item.quantity}
+                      </p>
+                    </div>
+
+                    <strong>
+                      ₹
+                      {Number(item.price) *
+                        Number(
+                          item.quantity,
+                        )}
+                    </strong>
                   </div>
-
-                  <div className="order-item-info">
-                    <h3>
-                      {item.name ||
-                        item.product?.name ||
-                        "Unknown Product"}
-                    </h3>
-
-                    <p>
-                      ₹{item.price} × {item.quantity}
-                    </p>
-                  </div>
-
-                  <strong>
-                    ₹
-                    {Number(item.price) *
-                      Number(item.quantity)}
-                  </strong>
-                </div>
-              ))}
+                ),
+              )}
             </div>
           </section>
         </div>
@@ -564,33 +642,44 @@ function OrderDetails() {
 
               <select
                 id="delivery-partner"
-                value={selectedDeliveryPartner}
+                value={
+                  selectedDeliveryPartner
+                }
                 onChange={(e) =>
-                  setSelectedDeliveryPartner(e.target.value)
+                  setSelectedDeliveryPartner(
+                    e.target.value,
+                  )
                 }
               >
                 <option value="">
                   No Delivery Partner
                 </option>
 
-                {deliveryPartners.map((partner) => (
-                  <option
-                    key={partner._id}
-                    value={partner._id}
-                    disabled={!partner.isAvailable}
-                  >
-                    {partner.name} — {partner.email} —{" "}
-                    {partner.isAvailable
-                      ? "Available"
-                      : "Unavailable"}
-                  </option>
-                ))}
+                {deliveryPartners.map(
+                  (partner) => (
+                    <option
+                      key={partner._id}
+                      value={partner._id}
+                      disabled={
+                        !partner.isAvailable
+                      }
+                    >
+                      {partner.name} —{" "}
+                      {partner.email} —{" "}
+                      {partner.isAvailable
+                        ? "Available"
+                        : "Unavailable"}
+                    </option>
+                  ),
+                )}
               </select>
 
               <button
                 type="button"
                 className="update-status-button"
-                onClick={handleAssignDeliveryPartner}
+                onClick={
+                  handleAssignDeliveryPartner
+                }
                 disabled={assigning}
               >
                 {assigning
@@ -608,22 +697,58 @@ function OrderDetails() {
             </div>
 
             <div className="payment-summary">
+              {/* Subtotal */}
+
               <div>
                 <span>Subtotal</span>
 
-                <strong>₹{order.subtotal}</strong>
+                <strong>
+                  ₹{order.subtotal}
+                </strong>
               </div>
+
+              {/* Coupon */}
+
+              {order.couponCode && (
+                <div>
+                  <span>Coupon</span>
+
+                  <strong className="order-coupon-code">
+                    {order.couponCode}
+                  </strong>
+                </div>
+              )}
+
+              {/* Discount */}
+
+              {Number(order.discount) > 0 && (
+                <div>
+                  <span>Discount</span>
+
+                  <strong className="order-discount">
+                    -₹{order.discount}
+                  </strong>
+                </div>
+              )}
+
+              {/* Delivery Fee */}
 
               <div>
                 <span>Delivery Fee</span>
 
-                <strong>₹{order.deliveryFee}</strong>
+                <strong>
+                  ₹{order.deliveryFee}
+                </strong>
               </div>
+
+              {/* Total */}
 
               <div className="payment-total">
                 <span>Total</span>
 
-                <strong>₹{order.total}</strong>
+                <strong>
+                  ₹{order.total}
+                </strong>
               </div>
             </div>
 
@@ -652,7 +777,8 @@ function OrderDetails() {
                 Current Status
               </label>
 
-              {status === "Out for Delivery" ||
+              {status ===
+                "Out for Delivery" ||
               status === "Delivered" ? (
                 <div
                   className="payment-status-badge"
@@ -675,7 +801,9 @@ function OrderDetails() {
                     id="order-status"
                     value={status}
                     onChange={(e) =>
-                      setStatus(e.target.value)
+                      setStatus(
+                        e.target.value,
+                      )
                     }
                   >
                     <option value="Pending">
@@ -698,7 +826,9 @@ function OrderDetails() {
                   <button
                     type="button"
                     className="update-status-button"
-                    onClick={handleUpdateStatus}
+                    onClick={
+                      handleUpdateStatus
+                    }
                     disabled={updating}
                   >
                     {updating
