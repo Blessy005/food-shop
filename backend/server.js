@@ -13,18 +13,35 @@ const productRoutes = require("./routes/productRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const couponRoutes = require("./routes/couponRoutes");
 
 const app = express();
 
-// Connect MongoDB
+// ========================================
+// CONNECT MONGODB
+// ========================================
+
 connectDB();
 
-// Middleware
+// ========================================
+// MIDDLEWARE
+// ========================================
+
 app.use(cors());
 app.use(express.json());
 
-// Serve uploaded product images
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// ========================================
+// SERVE UPLOADED PRODUCT IMAGES
+// ========================================
+
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"))
+);
+
+// ========================================
+// API ROUTES
+// ========================================
 
 // Product routes
 app.use("/api/products", productRoutes);
@@ -38,17 +55,29 @@ app.use("/api/users", userRoutes);
 // Order routes
 app.use("/api/orders", orderRoutes);
 
-// Test route
+// Coupon routes
+app.use("/api/coupons", couponRoutes);
+
+// ========================================
+// TEST ROUTE
+// ========================================
+
 app.get("/", (req, res) => {
   res.json({
     message: "Flavor Feast API is running",
   });
 });
 
-// Create HTTP server
+// ========================================
+// CREATE HTTP SERVER
+// ========================================
+
 const server = http.createServer(app);
 
-// Create Socket.IO server
+// ========================================
+// CREATE SOCKET.IO SERVER
+// ========================================
+
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -58,7 +87,10 @@ const io = new Server(server, {
 // Make Socket.IO available to controllers
 app.set("io", io);
 
-// Socket connection
+// ========================================
+// SOCKET CONNECTION
+// ========================================
+
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
@@ -67,7 +99,10 @@ io.on("connection", (socket) => {
   });
 });
 
-// Start server
+// ========================================
+// START SERVER
+// ========================================
+
 const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
